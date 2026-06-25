@@ -18,7 +18,7 @@ export default function CompaniesPage() {
   useEffect(() => {
 
     fetch(
-      "http://localhost:5001/companies"
+      `${import.meta.env.VITE_API_URL}/companies`
     )
       .then((res) => res.json())
       .then((data) =>

@@ -20,10 +20,10 @@ export default function TasksPage() {
 
   const fetchTasks = async () => {
 
-  let url = "http://localhost:5001/tasks";
+  let url = `${import.meta.env.VITE_API_URL}/tasks`;
 
   if (currentUser.role === "Employee") {
-    url = `http://localhost:5001/my-tasks/${currentUser.user_id}`;
+    url = `${import.meta.env.VITE_API_URL}/my-tasks/${currentUser.user_id}`;
   }
 
   const res = await fetch(url);
@@ -35,7 +35,7 @@ export default function TasksPage() {
   try {
 
     const response = await fetch(
-      "http://localhost:5001/tasks",
+      `${import.meta.env.VITE_API_URL}/tasks`,
       {
         method: "POST",
         headers: {
@@ -71,7 +71,7 @@ export default function TasksPage() {
 };
 
   const fetchUsers = async () => {
-    const res = await fetch("http://localhost:5001/users");
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/users`);
     const data = await res.json();
     setUsers(data);
   };
@@ -83,7 +83,7 @@ export default function TasksPage() {
   const updateStatus = async (taskId, status) => {
 
   await fetch(
-    `http://localhost:5001/tasks/${taskId}/status`,
+    `${import.meta.env.VITE_API_URL}/tasks/${taskId}/status`,
     {
       method: "PUT",
       headers: {

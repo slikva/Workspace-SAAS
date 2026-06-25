@@ -24,7 +24,7 @@ export default function AnalyticsPage() {
   useEffect(() => {
 
     fetch(
-      "http://localhost:5001/analytics"
+      `${import.meta.env.VITE_API_URL}/analytics`
     )
       .then((res) => res.json())
       .then((data) =>

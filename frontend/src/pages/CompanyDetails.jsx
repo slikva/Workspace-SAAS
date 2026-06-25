@@ -33,7 +33,7 @@ export default function CompanyDetailsPage() {
   useEffect(() => {
 
     fetch(
-      `http://localhost:5001/company-details/${id}`
+      `${import.meta.env.VITE_API_URL}/company-details/${id}`
     )
       .then((res) => res.json())
       .then((data) => {

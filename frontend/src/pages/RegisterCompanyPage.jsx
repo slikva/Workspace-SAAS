@@ -17,7 +17,7 @@ export default function RegisterCompanyPage() {
   const handleRegister = async () => {
 
     const res = await fetch(
-      "http://localhost:5001/register-company",
+      `${import.meta.env.VITE_API_URL}/register-company`,
       {
         method: "POST",
         headers: {

@@ -34,7 +34,7 @@ if (currentUser?.role !== "Manager") {
     fetchUsers();
   }, []);
   const fetchUsers = async () => {
-  const res = await fetch("http://localhost:5001/users");
+  const res = await fetch(`${import.meta.env.VITE_API_URL}/users`);
   const data = await res.json();
   setUsers(data);
 };
@@ -42,7 +42,7 @@ if (currentUser?.role !== "Manager") {
 const handleAddUser = async () => {
   try {
     const response = await fetch(
-      "http://localhost:5001/users",
+      `${import.meta.env.VITE_API_URL}/users`,
       {
         method: "POST",
         headers: {
@@ -78,7 +78,7 @@ const handleAddUser = async () => {
   const handleDelete = async (id) => {
   try {
     await fetch(
-      `http://localhost:5001/users/${id}`,
+      `${import.meta.env.VITE_API_URL}/users/${id}`,
       {
         method: "DELETE",
       }
@@ -94,7 +94,7 @@ const handleAddUser = async () => {
   try {
 
     await fetch(
-      `http://localhost:5001/users/${editingUser.user_id}`,
+      `${import.meta.env.VITE_API_URL}/users/${editingUser.user_id}`,
       {
         method: "PUT",
         headers: {

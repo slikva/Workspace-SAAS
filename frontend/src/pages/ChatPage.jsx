@@ -34,10 +34,10 @@ const [selectedUser, setSelectedUser] = useState("");
 }, []);
   const loadGroups = async () => {
 
-  let url = "http://localhost:5001/groups";
+  let url = `${import.meta.env.VITE_API_URL}/groups`;
 
   if (currentUser.role === "Employee") {
-    url = `http://localhost:5001/my-groups/${currentUser.user_id}`;
+    url = `${import.meta.env.VITE_API_URL}/my-groups/${currentUser.user_id}`;
   }
 
   const res = await fetch(url);
@@ -50,7 +50,7 @@ const [selectedUser, setSelectedUser] = useState("");
   }
 };
   const loadUsers = async () => {
-  const res = await fetch("http://localhost:5001/users");
+  const res = await fetch(`${import.meta.env.VITE_API_URL}/users`);
   const data = await res.json();
 
   setUsers(data);
@@ -60,7 +60,7 @@ const [selectedUser, setSelectedUser] = useState("");
   setSelectedGroup(group);
 
   const messagesRes = await fetch(
-    `http://localhost:5001/messages/${group.group_id}`
+    `${import.meta.env.VITE_API_URL}/messages/${group.group_id}`
   );
 
   const messagesData = await messagesRes.json();
@@ -71,7 +71,7 @@ const [selectedUser, setSelectedUser] = useState("");
 for (const msg of messagesData) {
 
   const res = await fetch(
-    `http://localhost:5001/reactions/${msg.message_id}`
+    `${import.meta.env.VITE_API_URL}/reactions/${msg.message_id}`
   );
 
   const data = await res.json();
@@ -82,7 +82,7 @@ for (const msg of messagesData) {
 setReactions(reactionsObj);
 
   const membersRes = await fetch(
-    `http://localhost:5001/group-members/${group.group_id}`
+    `${import.meta.env.VITE_API_URL}/group-members/${group.group_id}`
   );
 
   const membersData = await membersRes.json();
@@ -92,7 +92,7 @@ setReactions(reactionsObj);
   const createGroup = async () => {
     if (!newGroup) return;
 
-    await fetch("http://localhost:5001/groups", {
+    await fetch(`${import.meta.env.VITE_API_URL}/groups`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -110,7 +110,7 @@ setReactions(reactionsObj);
   const sendMessage = async () => {
     if (!message || !selectedGroup) return;
 
-    await fetch("http://localhost:5001/messages", {
+    await fetch(`${import.meta.env.VITE_API_URL}/messages`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -128,7 +128,7 @@ setReactions(reactionsObj);
   const deleteMessage = async (messageId) => {
 
   await fetch(
-    `http://localhost:5001/messages/${messageId}`,
+    `${import.meta.env.VITE_API_URL}/messages/${messageId}`,
     {
       method: "DELETE",
     }
@@ -142,7 +142,7 @@ const addReaction = async (
 ) => {
 
   await fetch(
-    "http://localhost:5001/reactions",
+    `${import.meta.env.VITE_API_URL}/reactions`,
     {
       method: "POST",
       headers: {
@@ -165,7 +165,7 @@ const addReaction = async (
   const addMember = async () => {
   if (!selectedUser || !selectedGroup) return;
 
-  await fetch("http://localhost:5001/group-members", {
+  await fetch(`${import.meta.env.VITE_API_URL}/group-members`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -181,7 +181,7 @@ const addReaction = async (
 const removeMember = async (userId) => {
 
   await fetch(
-    `http://localhost:5001/group-members/${selectedGroup.group_id}/${userId}`,
+    `${import.meta.env.VITE_API_URL}/group-members/${selectedGroup.group_id}/${userId}`,
     {
       method: "DELETE",
     }
@@ -198,7 +198,7 @@ const deleteGroup = async (groupId) => {
   if (!confirmDelete) return;
 
   await fetch(
-    `http://localhost:5001/groups/${groupId}`,
+    `${import.meta.env.VITE_API_URL}/groups/${groupId}`,
     {
       method: "DELETE"
     }
@@ -217,7 +217,7 @@ const renameGroup = async (group) => {
   if (!newName) return;
 
   await fetch(
-    `http://localhost:5001/groups/${group.group_id}`,
+    `${import.meta.env.VITE_API_URL}/groups/${group.group_id}`,
     {
       method: "PUT",
       headers: {

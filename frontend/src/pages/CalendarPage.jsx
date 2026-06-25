@@ -36,7 +36,7 @@ export default function CalendarPage() {
     try {
 
       const res = await fetch(
-        "http://localhost:5001/meetings"
+        `${import.meta.env.VITE_API_URL}/meetings`
       );
 
       const data = await res.json();
@@ -79,7 +79,7 @@ export default function CalendarPage() {
     try {
 
       await fetch(
-        "http://localhost:5001/meetings",
+        `${import.meta.env.VITE_API_URL}/meetings`,
         {
           method: "POST",
           headers: {
@@ -120,7 +120,7 @@ const deleteMeeting = async (id) => {
   if (!confirmDelete) return;
 
   await fetch(
-    `http://localhost:5001/meetings/${id}`,
+    `${import.meta.env.VITE_API_URL}/meetings/${id}`,
     {
       method: "DELETE"
     }

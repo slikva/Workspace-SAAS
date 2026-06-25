@@ -20,7 +20,7 @@ export default function OwnerDashboardPage() {
   useEffect(() => {
 
     fetch(
-      "http://localhost:5001/owner-dashboard"
+      `http://localhost:5001/owner-dashboard`
     )
       .then((res) => res.json())
       .then((data) =>

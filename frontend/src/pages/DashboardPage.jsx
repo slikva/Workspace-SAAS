@@ -20,7 +20,7 @@ export default function DashboardPage() {
   if (currentUser.role === "Employee") {
 
     fetch(
-      `http://localhost:5001/employee-dashboard/${currentUser.user_id}`
+      `${import.meta.env.VITE_API_URL}/employee-dashboard/${currentUser.user_id}`
     )
       .then(res => res.json())
       .then(data => setEmployeeStats(data));
@@ -36,11 +36,11 @@ export default function DashboardPage() {
   const [activities, setActivities] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:5001/dashboard-stats")
+    fetch(`${import.meta.env.VITE_API_URL}/dashboard-stats`)
       .then((res) => res.json())
       .then((data) => setStatsData(data))
       .catch((err) => console.log(err));
-      fetch("http://localhost:5001/recent-activities")
+      fetch(`${import.meta.env.VITE_API_URL}/recent-activities`)
       .then((res) => res.json())
       .then((data) => setActivities(data));
   }, []);
