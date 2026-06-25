@@ -1,0 +1,132 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background-color: #F7F8FA;
+    color: #163F68;
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+@layer components {
+
+  .btn-primary {
+    @apply text-white px-5 py-2.5 rounded-lg font-semibold text-sm transition-all duration-200 inline-flex items-center gap-2;
+    background: #163F68;
+  }
+
+  .btn-primary:hover {
+    background: #102D49;
+  }
+
+  .btn-outline {
+    @apply border bg-white px-5 py-2.5 rounded-lg font-semibold text-sm transition-all duration-200 inline-flex items-center gap-2;
+    border-color: #D6DCE5;
+    color: #163F68;
+  }
+
+  .btn-outline:hover {
+    background: #F8FAFC;
+    border-color: #C99232;
+  }
+
+  .card {
+    @apply bg-white rounded-xl transition-all duration-200;
+    border: 1px solid #E5E7EB;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  }
+
+  .card-hover:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(22,63,104,0.12);
+  }
+
+  .input {
+    @apply w-full rounded-lg px-3.5 py-2.5 text-sm bg-white placeholder-slate-400 transition-all duration-150;
+    border: 1px solid #D6DCE5;
+  }
+
+  .input:focus {
+    outline: none;
+    border-color: #163F68;
+    box-shadow: 0 0 0 3px rgba(22,63,104,0.15);
+  }
+
+  .badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+  }
+
+  .sidebar-link {
+    @apply flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150 cursor-pointer;
+    color: #4B5563;
+  }
+
+  .sidebar-link:hover {
+    background: #EEF3F8;
+    color: #163F68;
+  }
+
+  .sidebar-link-active {
+    background: #EEF3F8;
+    color: #163F68;
+  }
+}
+
+@layer utilities {
+
+  .text-gradient {
+    background: linear-gradient(
+      135deg,
+      #163F68,
+      #2B567D
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .bg-gradient-primary {
+    background: linear-gradient(
+      135deg,
+      #163F68 0%,
+      #2B567D 100%
+    );
+  }
+
+  .gold-text {
+    color: #C99232;
+  }
+
+  .gold-bg {
+    background-color: #C99232;
+  }
+
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: #CBD5E1 transparent;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background-color: #CBD5E1;
+    border-radius: 2px;
+  }
+}

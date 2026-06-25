@@ -1,0 +1,591 @@
+import React, { useEffect,useState,lazy, Suspense,} from "react";
+import Sidebar from "../components/Sidebar";
+import {
+  RiDeleteBin6Line,
+  RiThumbUpLine,
+  RiEmotionHappyLine,
+  RiHeartLine
+} from "react-icons/ri";
+
+
+const EmojiPicker = lazy(() =>
+  import("emoji-picker-react")
+);
+export default function ChatPage() {
+  const [groups, setGroups] = useState([]);
+  const [selectedGroup, setSelectedGroup] = useState(null);
+  const [activeMessage, setActiveMessage] = useState(null);
+  const [messages, setMessages] = useState([]);
+  const [message, setMessage] = useState("");
+  const [reactions, setReactions] = useState({});
+  const [showEmoji, setShowEmoji] = useState(false);
+  const currentUser = JSON.parse(
+  localStorage.getItem("user")
+);
+  const [newGroup, setNewGroup] = useState("");
+  
+  const [members, setMembers] = useState([]);
+const [users, setUsers] = useState([]);
+const [selectedUser, setSelectedUser] = useState("");
+
+  useEffect(() => {
+  loadGroups();
+  loadUsers();
+}, []);
+  const loadGroups = async () => {
+
+  let url = "http://localhost:5001/groups";
+
+  if (currentUser.role === "Employee") {
+    url = `http://localhost:5001/my-groups/${currentUser.user_id}`;
+  }
+
+  const res = await fetch(url);
+  const data = await res.json();
+
+  setGroups(data);
+
+  if (data.length > 0) {
+    selectGroup(data[0]);
+  }
+};
+  const loadUsers = async () => {
+  const res = await fetch("http://localhost:5001/users");
+  const data = await res.json();
+
+  setUsers(data);
+};
+
+ const selectGroup = async (group) => {
+  setSelectedGroup(group);
+
+  const messagesRes = await fetch(
+    `http://localhost:5001/messages/${group.group_id}`
+  );
+
+  const messagesData = await messagesRes.json();
+
+  setMessages(messagesData);
+  const reactionsObj = {};
+
+for (const msg of messagesData) {
+
+  const res = await fetch(
+    `http://localhost:5001/reactions/${msg.message_id}`
+  );
+
+  const data = await res.json();
+
+  reactionsObj[msg.message_id] = data;
+}
+
+setReactions(reactionsObj);
+
+  const membersRes = await fetch(
+    `http://localhost:5001/group-members/${group.group_id}`
+  );
+
+  const membersData = await membersRes.json();
+
+  setMembers(membersData);
+};
+  const createGroup = async () => {
+    if (!newGroup) return;
+
+    await fetch("http://localhost:5001/groups", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        group_name: newGroup,
+        created_by: 1,
+      }),
+    });
+
+    setNewGroup("");
+    loadGroups();
+  };
+
+  const sendMessage = async () => {
+    if (!message || !selectedGroup) return;
+
+    await fetch("http://localhost:5001/messages", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        group_id: selectedGroup.group_id,
+        sender_id: currentUser.user_id,
+        message,
+      }),
+    });
+
+    setMessage("");
+    selectGroup(selectedGroup);
+  };
+  const deleteMessage = async (messageId) => {
+
+  await fetch(
+    `http://localhost:5001/messages/${messageId}`,
+    {
+      method: "DELETE",
+    }
+  );
+
+  selectGroup(selectedGroup);
+};
+const addReaction = async (
+  messageId,
+  reaction
+) => {
+
+  await fetch(
+    "http://localhost:5001/reactions",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type":
+          "application/json",
+      },
+      body: JSON.stringify({
+        message_id: messageId,
+        user_id: currentUser.user_id,
+        reaction,
+      }),
+    }
+  );
+
+  selectGroup(selectedGroup);
+};
+  const handleEmojiClick = (emojiData) => {
+  setMessage((prev) => prev + emojiData.emoji);
+};
+  const addMember = async () => {
+  if (!selectedUser || !selectedGroup) return;
+
+  await fetch("http://localhost:5001/group-members", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      group_id: selectedGroup.group_id,
+      user_id: selectedUser,
+    }),
+  });
+
+  selectGroup(selectedGroup);
+};
+const removeMember = async (userId) => {
+
+  await fetch(
+    `http://localhost:5001/group-members/${selectedGroup.group_id}/${userId}`,
+    {
+      method: "DELETE",
+    }
+  );
+
+  selectGroup(selectedGroup);
+};
+const deleteGroup = async (groupId) => {
+
+  const confirmDelete = window.confirm(
+    "Delete this group?"
+  );
+
+  if (!confirmDelete) return;
+
+  await fetch(
+    `http://localhost:5001/groups/${groupId}`,
+    {
+      method: "DELETE"
+    }
+  );
+
+  loadGroups();
+
+};
+const renameGroup = async (group) => {
+
+  const newName = prompt(
+    "Enter new group name",
+    group.group_name
+  );
+
+  if (!newName) return;
+
+  await fetch(
+    `http://localhost:5001/groups/${group.group_id}`,
+    {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        group_name: newName
+      })
+    }
+  );
+
+  loadGroups();
+
+};
+
+  return (
+    <main className="flex min-h-screen bg-gray-100">
+      <Sidebar />
+
+      <div className="flex flex-1">
+
+       
+        <div className="w-72 bg-white border-r">
+
+          <div className="p-4 border-b">
+
+  <h2 className="text-xl font-bold text-[#163F68]">
+    Groups
+  </h2>
+
+  {currentUser.role === "Manager" && (
+    <div className="flex gap-2 mt-3">
+
+      <input
+        type="text"
+        value={newGroup}
+        onChange={(e) => setNewGroup(e.target.value)}
+        placeholder="New Group"
+        className="border rounded px-3 py-2 flex-1"
+      />
+
+      <button
+        onClick={createGroup}
+        className="bg-[#163F68] hover:bg-[#C99328] text-white px-4 rounded"
+      >
+        +
+      </button>
+
+    </div>
+  )}
+
+</div>
+
+         {groups.map((group) => (
+
+  <div
+    key={group.group_id}
+    className={`flex justify-between items-center p-4 border-b hover:bg-gray-50 ${
+      selectedGroup?.group_id === group.group_id
+        ? "bg-blue-50"
+        : ""
+    }`}
+  >
+
+    <div
+      onClick={() => selectGroup(group)}
+      className="flex-1 cursor-pointer"
+    >
+      {group.group_name}
+    </div>
+
+    {currentUser.role === "Manager" && (
+
+      <button
+        onClick={() =>
+          deleteGroup(group.group_id)
+        }
+        className="text-red-500 hover:text-red-700"
+      >
+        ✕
+      </button>
+
+    )}
+
+  </div>
+
+))}
+        </div>
+
+       
+        <div className="flex flex-col flex-1">
+
+         <div className="bg-gray-50 p-3 border-b">
+{currentUser.role === "Manager" && (
+
+<div className="flex gap-2 mb-3">
+  <label
+    htmlFor="groupSelect"
+    className="sr-only"
+>
+    Select Group
+</label>
+
+<select
+    id="groupSelect"
+    aria-label="Select Group"
+    className="border px-3 py-2 rounded"
+
+  
+    value={selectedUser}
+    onChange={(e) => setSelectedUser(e.target.value)}
+   
+  >
+    <option value="">Select User</option>
+
+    {users.map((user) => (
+      <option
+        key={user.user_id}
+        value={user.user_id}
+      >
+        {user.full_name}
+      </option>
+    ))}
+  </select>
+
+  <button
+    onClick={addMember}
+    className="bg-[#163F68] hover:bg-[#C99328] text-white px-4 rounded"
+  >
+    Add Member
+  </button>
+
+</div>
+
+)}
+
+  <div className="flex gap-2 flex-wrap">
+
+     
+
+ {members.map((member) => (
+
+  <div
+    key={member.user_id}
+    className="flex items-center gap-2 bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm"
+  >
+
+    <span>{member.full_name}</span>
+
+    {currentUser.role === "Manager" && (
+      
+      <button
+        onClick={() => removeMember(member.user_id)}
+        className="text-red-600 font-bold"
+      >
+        ×
+      </button>
+    )}
+
+  </div>
+
+))}
+
+
+  </div>
+
+</div>
+
+          <div className="flex-1 p-4 overflow-y-auto">
+
+           {messages.map((msg) => (
+
+  <div
+    key={msg.message_id}
+    className={`mb-4 flex ${
+      msg.sender_id === currentUser.user_id
+        ? "justify-end"
+        : "justify-start"
+    }`}
+  >
+
+    <div
+      className={`max-w-md px-4 py-3 rounded-2xl shadow-sm ${
+        msg.sender_id === currentUser.user_id
+          ? "bg-[#163F68] text-white"
+          : "bg-white"
+      }`}
+    >
+
+      <div className="flex justify-between items-center mb-1">
+
+  <span className="text-xs text-rgb[250,250,250]">
+    {msg.full_name}
+  </span>
+
+  <span className="text-[10px] text-rgb[250,250,250]">
+    {new Date(msg.created_at).toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit"
+    })}
+  </span>
+
+</div>
+
+      <div className="flex items-center gap-3">
+
+  <div
+  className="relative inline-block"
+  onClick={() =>
+    setActiveMessage(
+      activeMessage === msg.message_id
+        ? null
+        : msg.message_id
+    )
+  }
+>
+  <div>
+    {msg.message}
+  </div>
+  <div className="flex gap-2 mt-1">
+
+  {reactions[msg.message_id]?.map(
+    (r) => (
+      <span
+        key={r.reaction_id}
+        className="
+        text-xs
+        bg-gray-200
+        px-2
+        rounded-full
+        "
+      >
+        {r.reaction}
+      </span>
+    )
+  )}
+
+</div>
+
+  {/* Hover Toolbar */}
+
+ {activeMessage === msg.message_id && (
+
+  <div
+    className="
+    absolute
+    -top-12
+    right-0
+    z-50
+    bg-rgb(250,250,250)
+    shadow-lg
+    rounded-lg
+    px-3
+    py-2
+    flex
+    gap-3
+    border
+    "
+  >
+
+   <button
+  onClick={() =>
+    addReaction(
+      msg.message_id,
+      "😀"
+    )
+  }
+>
+  <RiEmotionHappyLine size={18} />
+</button>
+
+    <button
+  onClick={() =>
+    addReaction(
+      msg.message_id,
+      "👍"
+    )
+  }
+>
+  <RiThumbUpLine size={18} />
+</button>
+
+    <button
+  onClick={() =>
+    addReaction(
+      msg.message_id,
+      "❤️"
+    )
+  }
+>
+  <RiHeartLine size={18} />
+</button>
+
+    {msg.sender_id === currentUser.user_id && (
+
+      <button
+        onClick={() =>
+          deleteMessage(msg.message_id)
+        }
+        className="text-black hover:text-red-600"
+      >
+        <RiDeleteBin6Line size={18} />
+      </button>
+
+    )}
+
+  </div>
+
+)}
+</div>
+  
+
+</div>
+    </div>
+
+  </div>
+
+))}
+
+          </div>
+
+          <div className="bg-white border-t p-4">
+
+ {showEmoji && (
+  <Suspense fallback={<div>Loading emojis...</div>}>
+    <EmojiPicker
+      onEmojiClick={handleEmojiClick}
+    />
+  </Suspense>
+)}
+  <div className="flex gap-3">
+
+    <button
+      type="button"
+      aria-label="Open emoji picker"
+      title="Open emoji picker"
+      onClick={() =>
+        setShowEmoji(!showEmoji)
+      }
+      className="text-2xl"
+    >
+       <RiEmotionHappyLine size={30} />
+    </button>
+
+    <input
+      type="text"
+      value={message}
+      onChange={(e) =>
+        setMessage(e.target.value)
+      }
+      placeholder="Type message..."
+      className="border rounded px-4 py-2 flex-1"
+    />
+
+    <button
+      onClick={sendMessage}
+      className="bg-[#163F68] text-white px-6 py-2 rounded"
+    >
+      Send
+    </button>
+
+  </div>
+
+</div>
+
+        </div>
+
+      </div>
+    </main>
+  );
+}

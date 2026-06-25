@@ -1,0 +1,11 @@
+{
+  "dependencies": {
+    "@fullcalendar/daygrid": "^6.1.21",
+    "@fullcalendar/interaction": "^6.1.21",
+    "@fullcalendar/react": "^6.1.21",
+    "@fullcalendar/timegrid": "^6.1.21",
+    "emoji-picker-react": "^4.19.1",
+    "socket.io": "^4.8.3",
+    "socket.io-client": "^4.8.3"
+  }
+}
