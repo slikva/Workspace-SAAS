@@ -4,13 +4,14 @@ const cors = require("cors");
 const app = express();
 const nodemailer = require("nodemailer"); 
 const transporter = nodemailer.createTransport({
-  service: "gmail",
+  host: "smtp.gmail.com",
+  port: 465,
+  secure: true,
   auth: {
-    user: "workspace.saas.ac@gmail.com",
-    pass: "kxpzfrlygfjmfyxs"
-  }
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
+  },
 });
-
 
 
 app.use(express.json());
