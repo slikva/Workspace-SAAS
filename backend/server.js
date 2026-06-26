@@ -144,7 +144,7 @@ app.post("/users", async (req, res) => {
 
           <p>
             Login URL:
-            ${import.meta.env.VITE_API_URL}/login
+            https://workspace-saas-lime.vercel.app/login
           </p>
 
         </div>
