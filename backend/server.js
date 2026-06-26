@@ -100,8 +100,7 @@ app.post("/users", async (req, res) => {
 
     await transporter.sendMail({
 
-      from:
-        "workspace.saas.demo@gmail.com",
+      from:process.env.EMAIL_USER,
 
       to: email,
 
@@ -1164,38 +1163,6 @@ app.get(
 
   }
 );
-app.post("/users", async (req, res) => {
-
-  const {
-    full_name,
-    email,
-    password,
-    role
-  } = req.body;
-
-  await pool.query(
-    `
-    INSERT INTO users
-    (
-      full_name,
-      email,
-      password,
-      role
-    )
-    VALUES ($1,$2,$3,$4)
-    `,
-    [
-      full_name,
-      email,
-      password,
-      role
-    ]
-  );
-
-});
-
-
-
 
 
 const PORT = process.env.PORT || 5001;
