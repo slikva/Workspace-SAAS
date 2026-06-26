@@ -15,7 +15,7 @@ export default function CreateCompanyPage() {
   const handleCreate = async () => {
 
     const res = await fetch(
-      "http://localhost:5001/companies",
+      `${import.meta.env.VITE_API_URL}/companies`,
       {
         method: "POST",
         headers: {
