@@ -144,7 +144,7 @@ app.post("/users", async (req, res) => {
 
           <p>
             Login URL:
-            http://localhost:5173/login
+            ${import.meta.env.VITE_API_URL}/login
           </p>
 
         </div>
