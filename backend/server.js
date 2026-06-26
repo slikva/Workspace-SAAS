@@ -1194,36 +1194,6 @@ app.post("/users", async (req, res) => {
 
 });
 
-app.get("/test-email", async (req, res) => {
-
-  try {
-
-    await transporter.sendMail({
-
-      from: "workspace.saas.ac@gmail.com",
-
-      to: "vasavislikva@gmail.com",
-
-      subject: "SMTP Test",
-
-      html: `
-        <h2>WorkSpace SMTP Test</h2>
-        <p>If you received this email, SMTP is working.</p>
-      `
-
-    });
-
-    res.send("Email Sent");
-
-  } catch (err) {
-
-    console.error(err);
-
-    res.send(err.message);
-
-  }
-
-});
 
 
 
