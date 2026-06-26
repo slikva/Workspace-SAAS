@@ -151,7 +151,6 @@ const deleteMeeting = async (id) => {
 
         </div>
 
-        {/* Modal */}
 
         {showModal && (
 
@@ -225,11 +224,10 @@ const deleteMeeting = async (id) => {
 
         )}
 
-        {/* Main Layout */}
 
         <div className="grid lg:grid-cols-4 gap-6">
 
-          {/* Calendar */}
+
 
           <div className="lg:col-span-3 bg-white rounded-2xl p-6 shadow-sm">
 
@@ -258,7 +256,6 @@ const deleteMeeting = async (id) => {
 
           </div>
 
-          {/* Upcoming Meetings */}
 
           <div className="bg-white rounded-2xl p-6 shadow-sm">
 

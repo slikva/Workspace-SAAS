@@ -1,8 +1,7 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { RiEyeLine, RiEyeOffLine, RiArrowRightLine, RiGoogleLine, RiMicrosoftLine } from 'react-icons/ri'
-//import { useAuth } from '../context/AuthContext'
+import { RiArrowRightLine } from 'react-icons/ri'
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
@@ -10,7 +9,6 @@ export default function LoginPage() {
   const [showPw, setShowPw] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
-  //const { login } = useAuth()
   const navigate = useNavigate()
   const currentUser = JSON.parse(
   localStorage.getItem("user")
@@ -31,54 +29,37 @@ export default function LoginPage() {
         password,
       }),
     });
-
     const data = await response.json();
-
     if (data.success) {
-
   console.log(data);
-
   localStorage.setItem(
     "user",
     JSON.stringify(data)
   );
-
   if (data.role === "Software Owner") {
-
     navigate("/owner-dashboard");
 
   }
   else if (data.role === "Manager") {
-
     navigate("/dashboard");
-
   }
   else {
-
     navigate("/tasks");
-
   }
 
 } else {
-
   setError(data.message);
-
 }
 
   } catch (err) {
     console.error(err);
     setError("Server Error");
   }
-
   setLoading(false);
-  
 };
-  
-
   return (
     <main>
-    <div className="min-h-screen bg-background flex">
-      
+    <div className="min-h-screen bg-background flex">    
       {/* Right Panel */}
       <div className="flex-1 flex items-center justify-center px-4 py-10">
         <motion.div
@@ -95,20 +76,16 @@ export default function LoginPage() {
                 W
               </span>
             </div>
-
             <h2 className="text-2xl font-bold text-[#163F68]">
               WorkSpace
             </h2>
-
             <p className="text-sm text-slate-600">
               Enterprise Platform
             </p>
           </Link>
-
           <h1 className="text-3xl font-bold text-slate-900">
             Sign in to your account
           </h1>
-
           <p className="mt-2 text-sm text-slate-600">
             New to WorkSpace?
             <Link
@@ -120,10 +97,6 @@ export default function LoginPage() {
           </p>
 
         </div>
-
-         
-         
-
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-slate-700 mb-1.5">Email address</label>
@@ -163,9 +136,7 @@ export default function LoginPage() {
                 </button>
               </div>
             </div>
-
             {error && <p className="text-xs text-red-600 bg-red-50 rounded-lg px-3 py-2">{error}</p>}
-
             <button type="submit" disabled={loading} className="btn-primary w-full justify-center py-3 text-sm mt-2 disabled:opacity-70 disabled:cursor-not-allowed">
               {loading ? (
                 <span className="flex items-center gap-2">
@@ -180,11 +151,6 @@ export default function LoginPage() {
               )}
             </button>
           </form>
-
-          
-
-          
-
           <p className="mt-8 text-center text-xs text-muted">
             By signing in, you agree to our{' '}
             Terms and{' '}

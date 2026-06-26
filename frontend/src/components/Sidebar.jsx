@@ -24,10 +24,7 @@ const handleLogout = () => {
 
   localStorage.removeItem("user");
 
-  // Remove these too if you store them
-  // localStorage.removeItem("token");
-  // localStorage.removeItem("company");
-
+  
   navigate("/");
 };
   return (

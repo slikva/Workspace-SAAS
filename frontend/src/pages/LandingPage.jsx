@@ -18,14 +18,11 @@ function NavBar() {
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-[#F7F8FA]">
-      <div className="max-w-7xl mx-auto px-6 h-24 flex items-center justify-between">
-
-        {/* Logo */}
+      <div className="max-w-7xl mx-auto px-6 h-24 flex items-center justify-between">        
         <div className="flex items-center gap-3">
           <div className="w-12 h-12 rounded-xl bg-gradient-primary flex items-center justify-center">
             <span className="text-white font-bold text-lg">W</span>
           </div>
-
           <div>
             <h3 className="font-bold text-[#163F68] text-lg">
               WorkSpace
@@ -34,54 +31,38 @@ function NavBar() {
               Enterprise Platform
             </p>
           </div>
-        </div>
-
-        {/* Desktop Menu */}
+        </div>    
         <div className="hidden md:flex items-center bg-[#163F68] rounded-full px-8 py-4 gap-10">
-
           <a href="#ho" className="text-white text-sm hover:text-[#C99232] transition">
             Home
           </a>
-
           <a href="#features" className="text-white text-sm hover:text-[#C99232] transition">
             Features
           </a>
-
           <a href="#ro" className="text-white text-sm hover:text-[#C99232] transition">
             Roles
           </a>
-
           <a href="#fa" className="text-white text-sm hover:text-[#C99232] transition">
             FAQ'S
           </a>
-
           <a href="#contact" className="text-white text-sm hover:text-[#C99232] transition">
             Contact
           </a>
-
         </div>
-
-        {/* Right Side */}
         <div className="hidden md:flex items-center gap-4">
-
           <Link
             to="/login"
             className="text-[#163F68] font-medium"
           >
             Log In
           </Link>
-
           <Link
             to="/register-company"
             className="px-6 py-3 rounded-lg bg-[#163F68] text-white font-semibold hover:bg-[#102D49] transition hover:text-[#C99232] transition"
           >
             Get Started
           </Link>
-          
-
         </div>
-
-        {/* Mobile Menu Button */}
         <button
           className="md:hidden text-[#163F68]"
           onClick={() => setOpen(!open)}
@@ -93,19 +74,14 @@ function NavBar() {
           )}
         </button>
       </div>
-
-      
     </nav>
   )
 }
-
 function HeroSection() {
   return (
     <section id="ho" className="pt-32 pb-20 px-4 bg-gradient-to-b from-blue-50/60 to-white relative overflow-hidden">
       
-      <div className="max-w-4xl mx-auto text-center relative">
-        
-          
+      <div className="max-w-4xl mx-auto text-center relative">         
         <motion.h1
           initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1, duration: 0.6 }}
           className="text-5xl sm:text-6xl font-extrabold text-slate-900 leading-tight tracking-tight"
@@ -137,9 +113,6 @@ function HeroSection() {
           No credit card required · 14-day free trial · Cancel anytime
         </motion.p>
       </div>
-
-      {/* Dashboard Preview */}
-     
     </section>
   )
 }

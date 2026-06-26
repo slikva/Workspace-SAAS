@@ -82,7 +82,7 @@ export default function OwnerSettingsPage() {
 
       <div className="flex-1 p-8">
 
-        {/* Header */}
+   
 
         <div className="mb-8">
 
@@ -97,7 +97,7 @@ export default function OwnerSettingsPage() {
 
         </div>
 
-        {/* Profile */}
+    
 
         <div className="bg-white rounded-3xl p-8 shadow-sm mb-6">
 
@@ -168,8 +168,6 @@ export default function OwnerSettingsPage() {
           </button>
 
         </div>
-
-        {/* Platform Settings */}
 
         <div className="bg-white rounded-3xl p-8 shadow-sm mb-6">
 
@@ -259,7 +257,6 @@ export default function OwnerSettingsPage() {
 
         </div>
 
-        {/* Security */}
 
         <div className="bg-white rounded-3xl p-8 shadow-sm mb-6">
 
@@ -320,8 +317,6 @@ export default function OwnerSettingsPage() {
           </button>
 
         </div>
-
-        {/* System Information */}
 
         <div className="bg-white rounded-3xl p-8 shadow-sm">
 

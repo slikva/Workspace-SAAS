@@ -8,7 +8,6 @@ import {
   RiBarChartBoxLine,
   RiAddLine,
 } from "react-icons/ri";
-
 export default function DashboardPage() {
   const navigate = useNavigate();
   const currentUser = JSON.parse(
@@ -16,16 +15,13 @@ export default function DashboardPage() {
   );
   const [employeeStats, setEmployeeStats] = useState(null);
   useEffect(() => {
-
   if (currentUser.role === "Employee") {
-
     fetch(
       `${import.meta.env.VITE_API_URL}/employee-dashboard/${currentUser.user_id}`
     )
       .then(res => res.json())
       .then(data => setEmployeeStats(data));
   }
-
 }, []);
   const [statsData, setStatsData] = useState({
     totalUsers: 0,
@@ -44,10 +40,7 @@ export default function DashboardPage() {
       .then((res) => res.json())
       .then((data) => setActivities(data));
   }, []);
-
-  const stats =
-currentUser.role === "Employee"
-  ? [
+  const stats = currentUser.role === "Employee" ? [
       {
         icon: RiTaskLine,
         title: "My Tasks",
@@ -100,7 +93,6 @@ currentUser.role === "Employee"
 
       <div className="flex-1 p-8">
 
-        {/* Header */}
         <div className="mb-8">
 
           <div className="flex items-center gap-3 mb-6">
@@ -139,8 +131,6 @@ currentUser.role === "Employee"
 
         </div>
 
-        {/* Hero Banner */}
-
         <div className="bg-gradient-to-r from-[#163F68] to-[#245A90] rounded-3xl p-8 text-white shadow-lg mb-8">
 
           <h2 className="text-3xl font-bold mb-2">
@@ -153,8 +143,6 @@ currentUser.role === "Employee"
           </p>
 
         </div>
-
-        {/* Stats */}
 
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
 
@@ -198,11 +186,7 @@ currentUser.role === "Employee"
 
         </div>
 
-        {/* Main Section */}
-
         <div className="grid lg:grid-cols-3 gap-6">
-
-          {/* Recent Activities */}
 
           <div className="lg:col-span-2 bg-white rounded-2xl p-6 shadow-sm">
 
@@ -275,8 +259,6 @@ currentUser.role === "Employee"
 </div>
 
           </div>
-
-          {/* Quick Actions */}
 
           <div className="bg-white rounded-2xl p-6 shadow-sm">
 
