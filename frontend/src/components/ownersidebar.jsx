@@ -9,7 +9,20 @@ import {
   RiBuilding3Fill
 } from "react-icons/ri";
 
+
 export default function OwnerSidebar() {
+  const navigate = useNavigate();
+  const handleLogout = () => {
+    const confirmLogout = window.confirm(
+      "Are you sure you want to log out?"
+      
+    );
+  
+    if (confirmLogout) {
+      localStorage.removeItem("user");
+      navigate("/");
+    }
+  };
 
   return (
     <div className="w-64 min-h-screen bg-[#163F68] text-white p-6">
@@ -63,13 +76,10 @@ export default function OwnerSidebar() {
           Settings
         </Link>
 
-        <Link
-          to="/login"
-          className="flex items-center gap-3 p-3 rounded-xl hover:bg-[#245A90]"
-        >
+         <button onClick={handleLogout}  className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/10 w-full text-left">
           <RiLogoutBoxLine />
-          Logout
-        </Link>
+            Log Out
+        </button>
 
       </div>
 
