@@ -20,7 +20,7 @@ export default function OwnerDashboardPage() {
   useEffect(() => {
 
     fetch(
-      `http://localhost:5001/owner-dashboard`
+      `${import.meta.env.VITE_API_URL}/owner-dashboard`
     )
       .then((res) => res.json())
       .then((data) =>
