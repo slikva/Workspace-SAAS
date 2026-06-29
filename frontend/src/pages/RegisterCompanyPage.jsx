@@ -43,9 +43,16 @@ export default function RegisterCompanyPage() {
 
   return (
     
+
     <div className="min-h-screen bg-[#F7F8FA] flex justify-center items-center">
         
       <div className="bg-white p-8 rounded-3xl shadow-lg w-[700px]">
+        <div className="flex items-center gap-2 mb-4">
+              <div className="w-7 h-7 bg-gradient-primary rounded-md flex items-center justify-center">
+                <span className="text-white font-bold text-xs">W</span>
+              </div>
+              <span className="font-bold text-white text-sm">WorkSpace</span>
+            </div>
         
         <h1 className="text-4xl font-bold text-[#163F68] mb-2">
           Register Company
