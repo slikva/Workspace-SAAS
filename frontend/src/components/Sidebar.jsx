@@ -23,7 +23,7 @@ const handleLogout = () => {
 
   if (confirmLogout) {
     localStorage.removeItem("user");
-    navigate("/login");
+    navigate("/");
   }
 };
   return (
@@ -70,10 +70,10 @@ const handleLogout = () => {
           <RiSettings3Line />
           Settings
         </Link>
-        <Link  onClick={handleLogout} to="/" className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/10">
+        <button onClick={handleLogout}  className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/10 w-full text-left">
           <RiLogoutBoxLine />
-          Log Out
-        </Link>
+            Log Out
+        </button>
 
       </div>
     </div>
