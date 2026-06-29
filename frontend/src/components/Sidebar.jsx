@@ -18,14 +18,13 @@ const navigate = useNavigate();
 const handleLogout = () => {
   const confirmLogout = window.confirm(
     "Are you sure you want to log out?"
+    
   );
 
-  if (!confirmLogout) return;
-
-  localStorage.removeItem("user");
-
-  
-  navigate("/");
+  if (confirmLogout) {
+    localStorage.removeItem("user");
+    navigate("/login");
+  }
 };
   return (
     
