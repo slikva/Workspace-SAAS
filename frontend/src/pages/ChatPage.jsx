@@ -4,7 +4,7 @@ import {
   RiDeleteBin6Line,
   RiThumbUpLine,
   RiEmotionHappyLine,
-  RiHeartLine,  RiAttachment2Line
+  RiHeartLine,  RiAttachmentLine
 } from "react-icons/ri";
 
 
@@ -575,7 +575,7 @@ const renameGroup = async (group) => {
       }
       className="text-2xl"
     >
-      <RiAttachment2Line size={28} />
+      <RiAttachmentLine size={30} />
     </button>
 
     <input
