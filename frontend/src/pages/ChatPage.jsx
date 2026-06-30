@@ -115,23 +115,67 @@ setReactions(reactionsObj);
   };
 
   const sendMessage = async () => {
-    if (!message || !selectedGroup) return;
 
-    await fetch(`${import.meta.env.VITE_API_URL}/messages`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        group_id: selectedGroup.group_id,
-        sender_id: currentUser.user_id,
-        message,
-      }),
-    });
+  if ((!message && !selectedFile) || !selectedGroup) return;
 
-    setMessage("");
-    selectGroup(selectedGroup);
-  };
+  let fileUrl = "";
+  let fileName = "";
+  let fileType = "";
+
+  // Upload file to Cloudinary
+  if (selectedFile) {
+
+    const formData = new FormData();
+
+    formData.append("file", selectedFile);
+
+    const uploadRes = await fetch(
+      `${import.meta.env.VITE_API_URL}/upload`,
+      {
+        method: "POST",
+        body: formData,
+      }
+    );
+
+    const uploadData = await uploadRes.json();
+
+    fileUrl = uploadData.fileUrl;
+    fileName = uploadData.fileName;
+    fileType = uploadData.fileType;
+  }
+
+  // Save message
+  await fetch(`${import.meta.env.VITE_API_URL}/messages`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+
+    body: JSON.stringify({
+
+      group_id: selectedGroup.group_id,
+
+      sender_id: currentUser.user_id,
+
+      message,
+
+      file_url: fileUrl,
+
+      file_name: fileName,
+
+      file_type: fileType,
+
+    }),
+
+  });
+
+  setMessage("");
+
+  setSelectedFile(null);
+
+  selectGroup(selectedGroup);
+
+};
   const deleteMessage = async (messageId) => {
 
   await fetch(
@@ -470,9 +514,35 @@ const renameGroup = async (group) => {
     )
   }
 >
-  <div>
-    {msg.message}
-  </div>
+ <div>
+
+  {msg.message}
+
+  {msg.file_url && (
+
+    <div className="mt-2">
+
+      <a
+
+        href={msg.file_url}
+
+        target="_blank"
+
+        rel="noreferrer"
+
+        className="text-blue-500 underline"
+
+      >
+
+        📎 {msg.file_name}
+
+      </a>
+
+    </div>
+
+  )}
+
+</div>
   <div className="flex gap-2 mt-1">
 
   {reactions[msg.message_id]?.map(
