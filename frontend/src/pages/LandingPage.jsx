@@ -17,10 +17,10 @@ function NavBar() {
   const [open, setOpen] = useState(false)
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-[#F7F8FA]">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-rgb[255,255,255]">
       <div className="max-w-7xl mx-auto px-6 h-24 flex items-center justify-between">        
        <div className="flex items-center gap-3">
-          <img src="/shnoor_international_logo.jpeg"  alt="SHNOOR Logo" className="w-12 h-12 object-contain rounded-lg"
+          <img src="/shnoor_international_logo.jpeg"  alt="SHNOOR Logo" className="w-15 h-15 object-contain rounded-lg"
           />
 
           <div>
@@ -297,17 +297,33 @@ function Footer() {
     <footer id="contact" className="bg-slate-900 text-slate-400 py-14 px-4">
       <div className="max-w-5xl mx-auto">
         <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-8 mb-10">
+         <div className="flex items-center gap-3">
+          <img src="/shnoor.png"  alt="SHNOOR Logo" className="w-12 h-12 object-contain rounded-lg"  />
           <div>
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-7 h-7 bg-gradient-primary rounded-md flex items-center justify-center">
-                <span className="text-white font-bold text-xs">W</span>
-              </div>
-              <span className="font-bold text-white text-sm">WorkSpace</span>
-            </div>
-            <p className="text-xs leading-relaxed">Enterprise collaboration, simplified. Built for teams that scale.</p>
+            <h3 className="font-bold text-[#163F68] text-lg">
+              SHNOOR WorkSpace
+            </h3>
+
+            <p className="text-xs text-slate-600">
+              Enterprise Platform
+            </p>
           </div>
+        </div> 
+        <div className="hidden md:flex items-center bg-[#163F68] rounded-full px-8 py-4 gap-10">
+          <a href="#features" className="text-white text-sm hover:text-[#C99232] transition">
+            Features
+          </a>
+          <a href="#ro" className="text-white text-sm hover:text-[#C99232] transition">
+            Roles
+          </a>
+          <a href="#fa" className="text-white text-sm hover:text-[#C99232] transition">
+            FAQ'S
+          </a>
+          <a href="#contact" className="text-white text-sm hover:text-[#C99232] transition">
+            Contact
+          </a>
+        </div>
           {[
-            { title: 'Product', links: ['Features', 'Roles', 'FAQ', 'Contact'] },
             { title: 'Company', links: ['About', 'Blog', 'Careers', 'Press'] },
             { title: 'Legal', links: ['Privacy', 'Terms', 'Security', 'Cookies'] },
           ].map(col => (
