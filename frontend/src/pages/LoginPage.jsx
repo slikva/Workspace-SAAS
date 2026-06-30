@@ -66,8 +66,6 @@ export default function LoginPage() {
           initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}
           className="w-full max-w-sm"
         >
-          <img src="/shnoor_international_logo.jpeg"  alt="SHNOOR Logo" className="w-15 h-14 object-contain rounded-lg"
-          />
           <div className="mb-8 text-center">
           <Link
             to="/"
