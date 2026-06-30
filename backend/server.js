@@ -14,9 +14,7 @@ const transporter = nodemailer.createTransport({
     pass: process.env.EMAIL_PASS,
   },
 });
-const res = await fetch(
-  `${import.meta.env.VITE_API_URL}/meetings/${currentUser.user_id}/${currentUser.role}`
-);
+
 
 app.use(express.json());
 app.use(cors());
