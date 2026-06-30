@@ -30,7 +30,7 @@ const handleLogout = () => {
     
     <div className="w-64 min-h-screen bg-[#163F68] text-white p-6">
 
-      <h1 className="text-3xl font-bold">WorkSpace</h1>
+      <h1 className="text-3xl font-bold">Shnoor WorkSpace</h1>
       <p className="text-sm text-gray-300 mb-10">
         Enterprise Platform
       </p>

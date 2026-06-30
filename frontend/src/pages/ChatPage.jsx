@@ -4,7 +4,7 @@ import {
   RiDeleteBin6Line,
   RiThumbUpLine,
   RiEmotionHappyLine,
-  RiHeartLine
+  RiHeartLine,  RiAttachment2Line
 } from "react-icons/ri";
 
 
@@ -19,6 +19,7 @@ export default function ChatPage() {
   const [message, setMessage] = useState("");
   const [reactions, setReactions] = useState({});
   const [showEmoji, setShowEmoji] = useState(false);
+  const [selectedFile, setSelectedFile] = useState(null);
   const currentUser = JSON.parse(
   localStorage.getItem("user")
 );
@@ -548,6 +549,12 @@ const renameGroup = async (group) => {
     />
   </Suspense>
 )}
+<input
+  type="file"
+  id="fileUpload"
+  hidden
+  onChange={(e) => setSelectedFile(e.target.files[0])}
+/>
   <div className="flex gap-3">
 
     <button
@@ -560,6 +567,15 @@ const renameGroup = async (group) => {
       className="text-2xl"
     >
        <RiEmotionHappyLine size={30} />
+    </button>
+    <button
+      type="button"
+      onClick={() =>
+        document.getElementById("fileUpload").click()
+      }
+      className="text-2xl"
+    >
+      <RiAttachment2Line size={28} />
     </button>
 
     <input
@@ -580,6 +596,11 @@ const renameGroup = async (group) => {
     </button>
 
   </div>
+  {selectedFile && (
+  <p className="text-sm text-gray-500 mt-2">
+    Selected File: {selectedFile.name}
+  </p>
+)}
 
 </div>
 
