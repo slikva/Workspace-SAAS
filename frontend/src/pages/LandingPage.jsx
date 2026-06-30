@@ -17,10 +17,10 @@ function NavBar() {
   const [open, setOpen] = useState(false)
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-rgb[255,255,255]">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-[#F7F8FA]">
       <div className="max-w-7xl mx-auto px-6 h-24 flex items-center justify-between">        
        <div className="flex items-center gap-3">
-          <img src="/shnoor_international_logo.jpeg"  alt="SHNOOR Logo" className="w-15 h-15 object-contain rounded-lg"
+          <img src="/shnoor_international_logo.jpeg"  alt="SHNOOR Logo" className="w-12 h-12 object-contain rounded-lg"
           />
 
           <div>
@@ -309,28 +309,15 @@ function Footer() {
             </p>
           </div>
         </div> 
-        <div className="hidden md:flex items-center bg-[#163F68] rounded-full px-8 py-4 gap-10">
-          <a href="#features" className="text-white text-sm hover:text-[#C99232] transition">
-            Features
-          </a>
-          <a href="#ro" className="text-white text-sm hover:text-[#C99232] transition">
-            Roles
-          </a>
-          <a href="#fa" className="text-white text-sm hover:text-[#C99232] transition">
-            FAQ'S
-          </a>
-          <a href="#contact" className="text-white text-sm hover:text-[#C99232] transition">
-            Contact
-          </a>
-        </div>
           {[
+            { title: 'Product', links: [{ name: "Features", href: "#features" },{ name: "Roles", href: "#roles" },{ name: "FAQ", href: "#faq" },{ name: "Contact", href: "#contact" },] },
             { title: 'Company', links: ['About', 'Blog', 'Careers', 'Press'] },
             { title: 'Legal', links: ['Privacy', 'Terms', 'Security', 'Cookies'] },
           ].map(col => (
             <div key={col.title}>
               <p className="text-white font-semibold text-sm mb-3">{col.title}</p>
               {col.links.map(link => (
-                <a key={link} href="#" className="block text-xs text-slate-400 hover:text-white transition-colors mb-2">{link}</a>
+                <a key={link} href="#" className="block text-xs text-slate-400 hover:text-[#C99232] transition-colors mb-2">{link}</a>
               ))}
             </div>
           ))}
