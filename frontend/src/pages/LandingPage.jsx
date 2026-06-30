@@ -20,7 +20,7 @@ function NavBar() {
     <nav className="fixed top-0 left-0 right-0 z-50 bg-[#F7F8FA]">
       <div className="max-w-7xl mx-auto px-6 h-24 flex items-center justify-between">        
        <div className="flex items-center gap-3">
-          <img src="/shnoor_international_logo.jpeg"  alt="SHNOOR Logo" className="w-14 h-14 object-contain rounded-lg"
+          <img src="/shnoor_international_logo.jpeg"  alt="SHNOOR Logo" className="w-15 h-14 object-contain rounded-lg"
           />
 
           <div>
@@ -294,11 +294,11 @@ function FAQSection() {
 
 function Footer() {
   return (
-    <footer id="contact" className="bg-[#F7F8FA] text-slate-400 py-14 px-4">
+    <footer id="contact" className="bg-[#163F68] text-slate-400 py-14 px-4">
       <div className="max-w-5xl mx-auto">
         <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-8 mb-10">
          <div className="flex items-center gap-3">
-          <img src="/shnoor_international_logo.jpeg"  alt="SHNOOR Logo" className="w-13 h-13 object-contain rounded-lg"
+          <img src="/shnoor_international_logo.jpeg"  alt="SHNOOR Logo" className="w-13 h-12 object-contain rounded-lg"
           />
 
           <div>
