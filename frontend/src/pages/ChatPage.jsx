@@ -4,7 +4,10 @@ import {
   RiDeleteBin6Line,
   RiThumbUpLine,
   RiEmotionHappyLine,
-  RiHeartLine,  RiAttachmentLine
+  RiHeartLine,  RiAttachmentLine,
+  RiVolumeMuteLine,
+  RiVolumeUpLine,
+  RiGroupLine
 } from "react-icons/ri";
 
 
@@ -20,12 +23,14 @@ export default function ChatPage() {
   const [reactions, setReactions] = useState({});
   const [showEmoji, setShowEmoji] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
+  const [isMuted, setIsMuted] = useState(false);
   const currentUser = JSON.parse(
   localStorage.getItem("user")
 );
   const [newGroup, setNewGroup] = useState("");
   
   const [members, setMembers] = useState([]);
+  const [showMembers, setShowMembers] = useState(false);
 const [users, setUsers] = useState([]);
 const [selectedUser, setSelectedUser] = useState("");
 
@@ -309,9 +314,33 @@ const renameGroup = async (group) => {
         </div>
 
        
-        <div className="flex flex-col flex-1">
-
+       <div className="flex flex-col h-screen flex-1">
          <div className="bg-gray-50 p-3 border-b">
+          <div className="flex justify-between items-center mb-3">
+
+  <h2 className="text-xl font-bold text-[#163F68]">
+    {selectedGroup?.group_name || "Chat"}
+  </h2>
+
+  <div className="flex gap-3">
+
+    <button
+      onClick={() => setShowMembers(!showMembers)}
+      className="text-xl"
+    >
+      <RiGroupLine />
+    </button>
+
+    <button
+      onClick={() => setIsMuted(!isMuted)}
+      className="text-xl"
+    >
+      {isMuted ? <RiVolumeMuteLine /> : <RiVolumeUpLine />}
+    </button>
+
+  </div>
+
+</div>
 {currentUser.role === "Manager" && (
 
 <div className="flex gap-2 mb-3">
@@ -355,9 +384,15 @@ const renameGroup = async (group) => {
 
 )}
 
-  <div className="flex gap-2 flex-wrap">
+  {showMembers && (
 
-     
+<div className="bg-white rounded-xl shadow-md p-4 mb-4">
+
+<h3 className="font-bold mb-3">
+Group Members
+</h3>
+
+  <div className="flex gap-2 flex-wrap">
 
  {members.map((member) => (
 
@@ -384,10 +419,13 @@ const renameGroup = async (group) => {
 
 
   </div>
+  </div>
+
+)}
 
 </div>
 
-          <div className="flex-1 p-4 overflow-y-auto">
+          <div className="flex-1 overflow-y-auto p-4">
 
            {messages.map((msg) => (
 
