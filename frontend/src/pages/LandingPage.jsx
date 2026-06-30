@@ -5,7 +5,7 @@ import {
   RiArrowRightLine, RiCheckLine, RiTeamLine, RiCalendarLine,
   RiTaskLine, RiMessage2Line, RiBarChartLine, RiShieldLine,
   RiMenuLine, RiCloseLine, RiArrowDownSLine, RiPlayLine,
-  RiBuildingLine, RiUserLine, RiUserStarLine, RiGlobalLine, RiMailLine,RiUserLocationLine,
+  RiBuildingLine, RiUserLine, RiUserStarLine, RiGlobalLine, RiMailLine,
   RiUserLocationLine,
 } from 'react-icons/ri'
 
