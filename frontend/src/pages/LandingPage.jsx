@@ -5,7 +5,8 @@ import {
   RiArrowRightLine, RiCheckLine, RiTeamLine, RiCalendarLine,
   RiTaskLine, RiMessage2Line, RiBarChartLine, RiShieldLine,
   RiMenuLine, RiCloseLine, RiArrowDownSLine, RiPlayLine,
-  RiBuildingLine, RiUserLine, RiUserStarLine, RiGlobalLine, RiMailLine,
+  RiBuildingLine, RiUserLine, RiUserStarLine, RiGlobalLine, RiMailLine,RiUserLocationLine,
+  RiUserLocationLine,
 } from 'react-icons/ri'
 
 const fadeUp = { hidden: { opacity: 0, y: 24 }, show: { opacity: 1, y: 0 } }
@@ -306,7 +307,7 @@ function Footer() {
               SHNOOR WorkSpace
             </h3>
 
-            <p className="text-xs text-white">
+            <p className="text-xs text-slate-400">
               Enterprise Platform
             </p>
           </div>
@@ -319,7 +320,7 @@ function Footer() {
                   { name: "Features", href: "#features" },
                   { name: "Roles", href: "#ro" },
                   { name: "FAQ", href: "#fa" },
-                  { name: "Contact", href: "#contact" },
+                  { name: "Contact", href: "https://www.shnoor.com/contact-us" },
                 ],
               },
               {
@@ -336,14 +337,12 @@ function Footer() {
                 ],
               },
               {
-                title: "Legal",
+                title: "Location",
                 links: [
-                  { name: "Privacy", href: "#" },
-                  { name: "Terms", href: "#" },
-                  { name: "Security", href: "#" },
-                  { name: "Cookies", href: "#" },
+                  { name: "10009 Mount Tabor Road, Odessa Missouri, United States.", href: "https://www.google.com/maps?cid=13238476657356605198&g_mp=CiVnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLkdldFBsYWNlEAMYASAF&hl=en&source=embed" },
                 ],
               },
+              { title: "Legal", links: [ { name: "Privacy", href: "https://www.shnoor.com/privacy-policy" }, { name: "Terms", href: "https://www.shnoor.com/terms-and-conditions" }, { name: "Security", href: "#" }, { name: "Cookies", href: "#" }, ], },
             ].map((col) => (
               <div key={col.title}>
                 <p className="text-white font-bold text-sm mb-3">
@@ -357,6 +356,7 @@ function Footer() {
                     className="flex items-center gap-2 text-semibold text-slate-400 hover:text-[#C99232] transition-colors mb-2"
                   >
                     {col.title === "Contact" && <RiMailLine />}
+                     {col.title === "Location" && <RiUserLocationLine />}
                     {link.name}
                   </a>
                 ))}
