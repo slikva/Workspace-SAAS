@@ -298,7 +298,9 @@ function Footer() {
       <div className="max-w-5xl mx-auto">
         <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-8 mb-10">
          <div className="flex items-center gap-3">
-          <img src="/shnoor.png"  alt="SHNOOR Logo" className="w-12 h-12 object-contain rounded-lg"  />
+          <img src="/shnoor_international_logo.jpeg"  alt="SHNOOR Logo" className="w-12 h-12 object-contain rounded-lg"
+          />
+
           <div>
             <h3 className="font-bold text-[#163F68] text-lg">
               SHNOOR WorkSpace
@@ -309,18 +311,53 @@ function Footer() {
             </p>
           </div>
         </div> 
-          {[
-            { title: 'Product', links: [{ name: "Features", href: "#features" },{ name: "Roles", href: "#roles" },{ name: "FAQ", href: "#faq" },{ name: "Contact", href: "#contact" },] },
-            { title: 'Company', links: ['About', 'Blog', 'Careers', 'Press'] },
-            { title: 'Legal', links: ['Privacy', 'Terms', 'Security', 'Cookies'] },
-          ].map(col => (
-            <div key={col.title}>
-              <p className="text-white font-semibold text-sm mb-3">{col.title}</p>
-              {col.links.map(link => (
-                <a key={link} href="#" className="block text-xs text-slate-400 hover:text-[#C99232] transition-colors mb-2">{link}</a>
-              ))}
-            </div>
-          ))}
+          <div>
+            {[
+              {
+                title: "Product",
+                links: [
+                  { name: "Features", href: "#features" },
+                  { name: "Roles", href: "#roles" },
+                  { name: "FAQ", href: "#faq" },
+                  { name: "Contact", href: "#contact" },
+                ],
+              },
+              {
+                title: "Company",
+                links: [
+                  { name: "About", href: "#about" },
+                  { name: "Blog", href: "#" },
+                  { name: "Careers", href: "#" },
+                  { name: "Press", href: "#" },
+                ],
+              },
+              {
+                title: "Legal",
+                links: [
+                  { name: "Privacy", href: "#" },
+                  { name: "Terms", href: "#" },
+                  { name: "Security", href: "#" },
+                  { name: "Cookies", href: "#" },
+                ],
+              },
+            ].map((col) => (
+              <div key={col.title}>
+                <p className="text-white font-semibold text-sm mb-3">
+                  {col.title}
+                </p>
+
+                {col.links.map((link) => (
+                  <a
+                    key={link.name}
+                    href={link.href}
+                    className="block text-xs text-slate-400 hover:text-white transition-colors mb-2"
+                  >
+                    {link.name}
+                  </a>
+                ))}
+              </div>
+            ))}
+          </div>
         </div>
         <div className="border-t border-slate-800 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3">
           <p className="text-xs">© 2026 WorkSpace, Inc. All rights reserved.</p>
