@@ -1,3 +1,6 @@
+const multer = require("multer");
+const cloudinary = require("./config/cloudinary");
+const { CloudinaryStorage } = require("multer-storage-cloudinary");
 const dns = require("dns");
 dns.setDefaultResultOrder("ipv4first");
 const express = require("express");
@@ -14,7 +17,25 @@ const transporter = nodemailer.createTransport({
     pass: process.env.EMAIL_PASS,
   },
 });
+const storage = new CloudinaryStorage({
 
+  cloudinary,
+
+  params: {
+
+    folder: "workspace-chat",
+
+    resource_type: "auto",
+
+  },
+
+});
+
+const upload = multer({
+
+  storage,
+
+});
 
 app.use(express.json());
 app.use(cors());
@@ -486,24 +507,63 @@ app.get("/messages/:groupId", async (req, res) => {
 });
 app.post("/messages", async (req, res) => {
 
-  const {
-    group_id,
-    sender_id,
-    message
-  } = req.body;
+  try {
 
-  const result = await pool.query(
-    `INSERT INTO messages
-    (group_id,sender_id,message)
-    VALUES ($1,$2,$3)
-    RETURNING *`,
-    [group_id, sender_id, message]
-  );
+    const {
 
-  res.json(result.rows[0]);
+      group_id,
+
+      sender_id,
+
+      message,
+
+      file_url,
+
+      file_name,
+
+      file_type
+
+    } = req.body;
+
+    const result = await pool.query(
+
+      `INSERT INTO messages
+      (
+        group_id,
+        sender_id,
+        message,
+        file_url,
+        file_name,
+        file_type
+      )
+      VALUES
+      ($1,$2,$3,$4,$5,$6)
+      RETURNING *`,
+
+      [
+        group_id,
+        sender_id,
+        message,
+        file_url || null,
+        file_name || null,
+        file_type || null
+      ]
+
+    );
+
+    res.json(result.rows[0]);
+
+  } catch (err) {
+
+    console.error(err);
+
+    res.status(500).json({
+      message: "Error sending message"
+    });
+
+  }
+
 });
-
-
 
 app.post("/group-members", async (req, res) => {
   try {
