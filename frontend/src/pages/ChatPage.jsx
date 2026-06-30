@@ -122,7 +122,7 @@ setReactions(reactionsObj);
   let fileName = "";
   let fileType = "";
 
-  // Upload file to Cloudinary
+  
   if (selectedFile) {
 
     const formData = new FormData();
