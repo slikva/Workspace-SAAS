@@ -311,14 +311,14 @@ function Footer() {
             </p>
           </div>
         </div> 
-          <div>
+          
             {[
               {
                 title: "Product",
                 links: [
                   { name: "Features", href: "#features" },
-                  { name: "Roles", href: "#roles" },
-                  { name: "FAQ", href: "#faq" },
+                  { name: "Roles", href: "#ro" },
+                  { name: "FAQ", href: "#fa" },
                   { name: "Contact", href: "#contact" },
                 ],
               },
@@ -350,14 +350,14 @@ function Footer() {
                   <a
                     key={link.name}
                     href={link.href}
-                    className="block text-xs text-slate-400 hover:text-white transition-colors mb-2"
+                    className="block text-xs text-slate-400 hover:text-[#C99232] transition-colors mb-2"
                   >
                     {link.name}
                   </a>
                 ))}
               </div>
             ))}
-          </div>
+          
         </div>
         <div className="border-t border-slate-800 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3">
           <p className="text-xs">© 2026 WorkSpace, Inc. All rights reserved.</p>
