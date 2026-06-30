@@ -418,7 +418,35 @@ app.post("/group-members", async (req, res) => {
     res.status(500).send("Error");
   }
 });
+app.get("/group-members/:groupId", async (req, res) => {
 
+  try {
+
+    const result = await pool.query(
+      `
+      SELECT
+        u.user_id,
+        u.full_name
+      FROM group_members gm
+      JOIN users u
+      ON gm.user_id = u.user_id
+      WHERE gm.group_id = $1
+      ORDER BY u.full_name
+      `,
+      [req.params.groupId]
+    );
+
+    res.json(result.rows);
+
+  } catch (err) {
+
+    console.error(err);
+
+    res.status(500).send("Error");
+
+  }
+
+});
 app.get("/messages/:groupId", async (req, res) => {
 
   try {
