@@ -95,23 +95,22 @@ export default function DashboardPage() {
 
         <div className="mb-8">
 
-          <div className="flex items-center gap-3 mb-6">
+          
 
-            <div className="w-14 h-14 rounded-2xl bg-[#163F68] flex items-center justify-center shadow-md">
-              <span className="text-white font-bold text-xl">
-                W
-              </span>
-            </div>
+            <div className="flex items-center gap-3">
+          <img src="/shnoor_international_logo.jpeg"  alt="SHNOOR Logo" className="w-15 h-14 object-contain rounded-lg"
+          />
 
-            <div>
-              <h2 className="font-bold text-[#163F68] text-xl">
-                WorkSpace
-              </h2>
+          <div>
+            <h3 className="font-bold text-[#163F68] text-lg">
+              SHNOOR WorkSpace
+            </h3>
 
-              <p className="text-sm text-gray-500">
-                Enterprise Platform
-              </p>
-            </div>
+            <p className="text-xs text-slate-600">
+              Enterprise Platform
+            </p>
+          </div>
+        
 
           </div>
 
