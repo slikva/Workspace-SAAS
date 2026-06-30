@@ -5,7 +5,7 @@ import {
   RiArrowRightLine, RiCheckLine, RiTeamLine, RiCalendarLine,
   RiTaskLine, RiMessage2Line, RiBarChartLine, RiShieldLine,
   RiMenuLine, RiCloseLine, RiArrowDownSLine, RiPlayLine,
-  RiBuildingLine, RiUserLine, RiUserStarLine, RiGlobalLine,
+  RiBuildingLine, RiUserLine, RiUserStarLine, RiGlobalLine, RiMailLine,
 } from 'react-icons/ri'
 
 const fadeUp = { hidden: { opacity: 0, y: 24 }, show: { opacity: 1, y: 0 } }
