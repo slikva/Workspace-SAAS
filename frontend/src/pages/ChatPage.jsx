@@ -543,7 +543,7 @@ const renameGroup = async (group) => {
         rel="noopener noreferrer"
         className="text-blue-600 underline"
       >
-        📄 {msg.file_name}
+         {msg.file_name}
       </a>
 
     )}
