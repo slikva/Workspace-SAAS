@@ -306,7 +306,7 @@ function Footer() {
               SHNOOR WorkSpace
             </h3>
 
-            <p className="text-xs text-slate-600">
+            <p className="text-xs text-white">
               Enterprise Platform
             </p>
           </div>
@@ -323,12 +323,16 @@ function Footer() {
                 ],
               },
               {
-                title: "Company",
+                title: "Contact",
                 links: [
-                  { name: "About", href: "#about" },
-                  { name: "Blog", href: "#" },
-                  { name: "Careers", href: "#" },
-                  { name: "Press", href: "#" },
+                  {
+                    name: "info@shnoor.com (General)",
+                    href: "mailto:info@shnoor.com",
+                  },
+                  {
+                    name: "proc@shnoor.com (Sales)",
+                    href: "mailto:proc@shnoor.com",
+                  },
                 ],
               },
               {
@@ -342,7 +346,7 @@ function Footer() {
               },
             ].map((col) => (
               <div key={col.title}>
-                <p className="text-white font-semibold text-sm mb-3">
+                <p className="text-white font-bold text-sm mb-3">
                   {col.title}
                 </p>
 
@@ -350,8 +354,9 @@ function Footer() {
                   <a
                     key={link.name}
                     href={link.href}
-                    className="block text-xs text-slate-400 hover:text-[#C99232] transition-colors mb-2"
+                    className="flex items-center gap-2 text-semibold text-slate-400 hover:text-[#C99232] transition-colors mb-2"
                   >
+                    {col.title === "Contact" && <RiMailLine />}
                     {link.name}
                   </a>
                 ))}
@@ -359,7 +364,7 @@ function Footer() {
             ))}
           
         </div>
-        <div className="border-t border-slate-800 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3">
+        <div className="border-t border-[#163F68] pt-6 flex flex-col sm:flex-row items-center justify-between gap-3">
           <p className="text-xs">© 2026 WorkSpace, Inc. All rights reserved.</p>
           <div className="flex items-center gap-1">
             <RiGlobalLine size={13} />
