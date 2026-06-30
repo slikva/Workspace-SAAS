@@ -60,12 +60,14 @@ export default function LoginPage() {
   return (
     <main>
     <div className="min-h-screen bg-background flex">    
-      {/* Right Panel */}
+     
       <div className="flex-1 flex items-center justify-center px-4 py-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}
           className="w-full max-w-sm"
         >
+          <img src="/shnoor_international_logo.jpeg"  alt="SHNOOR Logo" className="w-15 h-14 object-contain rounded-lg"
+          />
           <div className="mb-8 text-center">
           <Link
             to="/"
