@@ -7,6 +7,8 @@ const express = require("express");
 const pool = require("./db");
 const cors = require("cors");
 const app = express();
+app.use(express.json());
+app.use(cors());
 const nodemailer = require("nodemailer"); 
 const transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
@@ -69,8 +71,7 @@ app.post(
   }
 );
 
-app.use(express.json());
-app.use(cors());
+
 app.get("/", async (req, res) => {
   try {
     const result = await pool.query("SELECT NOW()");
