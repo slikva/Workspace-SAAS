@@ -55,7 +55,8 @@ app.post(
         success: true,
         fileName: req.file.originalname,
         fileUrl: req.file.path,
-        fileType: req.file.mimetype
+        fileType: req.file.mimetype,
+        downloadUrl: req.file.path + "?fl_attachment"
       });
 
     } catch (err) {
