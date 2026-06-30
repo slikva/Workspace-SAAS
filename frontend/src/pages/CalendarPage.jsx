@@ -22,6 +22,15 @@ export default function CalendarPage() {
 
   const [meetingTime, setMeetingTime] =
     useState("10:00");
+    const [meetingType, setMeetingType] = useState("Employee");
+
+const [users, setUsers] = useState([]);
+
+const [groups, setGroups] = useState([]);
+
+const [selectedUser, setSelectedUser] = useState("");
+
+const [selectedGroup, setSelectedGroup] = useState("");
 
   const [selectedDate, setSelectedDate] =
     useState("");
@@ -29,9 +38,10 @@ export default function CalendarPage() {
   const [events, setEvents] = useState([]);
 
   useEffect(() => {
-    fetchMeetings();
-  }, []);
-
+  fetchMeetings();
+  fetchUsers();
+  fetchGroups();
+}, []);
   const fetchMeetings = async () => {
     try {
 
@@ -55,7 +65,36 @@ export default function CalendarPage() {
       console.error(err);
     }
   };
+  const fetchUsers = async () => {
+  try {
 
+    const res = await fetch(
+      `${import.meta.env.VITE_API_URL}/users`
+    );
+
+    const data = await res.json();
+
+    setUsers(data);
+
+  } catch (err) {
+    console.error(err);
+  }
+};
+const fetchGroups = async () => {
+  try {
+
+    const res = await fetch(
+      `${import.meta.env.VITE_API_URL}/groups`
+    );
+
+    const data = await res.json();
+
+    setGroups(data);
+
+  } catch (err) {
+    console.error(err);
+  }
+};
   const handleDateClick = (info) => {
 
     if (
@@ -184,6 +223,103 @@ const deleteMeeting = async (id) => {
                 }
                 className="w-full border rounded-xl p-3 mb-4"
               />
+              <div className="mb-4">
+
+  <label className="font-semibold text-[#163F68]">
+    Meeting With
+  </label>
+
+  <div className="flex gap-6 mt-2">
+
+    <label className="flex items-center gap-2">
+
+      <input
+        type="radio"
+        checked={meetingType === "Employee"}
+        onChange={() => setMeetingType("Employee")}
+      />
+
+      Employee
+
+    </label>
+
+    <label className="flex items-center gap-2">
+
+      <input
+        type="radio"
+        checked={meetingType === "Group"}
+        onChange={() => setMeetingType("Group")}
+      />
+
+      Group
+
+    </label>
+
+  </div>
+
+</div>
+{meetingType === "Employee" && (
+
+<select
+  value={selectedUser}
+  onChange={(e) =>
+    setSelectedUser(e.target.value)
+  }
+  className="w-full border rounded-xl p-3 mb-4"
+>
+
+  <option value="">
+    Select Employee
+  </option>
+
+  {users
+    .filter(user => user.role === "Employee")
+    .map((user) => (
+
+      <option
+        key={user.user_id}
+        value={user.user_id}
+      >
+
+        {user.full_name}
+
+      </option>
+
+    ))}
+
+</select>
+
+)}
+{meetingType === "Group" && (
+
+<select
+  value={selectedGroup}
+  onChange={(e) =>
+    setSelectedGroup(e.target.value)
+  }
+  className="w-full border rounded-xl p-3 mb-4"
+>
+
+  <option value="">
+    Select Group
+  </option>
+
+  {groups.map((group) => (
+
+    <option
+      key={group.group_id}
+      value={group.group_id}
+    >
+
+      {group.group_name}
+
+    </option>
+
+  ))}
+
+</select>
+
+)}
 
               <div className="bg-gray-100 rounded-xl p-3 mb-5">
 
