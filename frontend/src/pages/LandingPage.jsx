@@ -19,19 +19,23 @@ function NavBar() {
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-[#F7F8FA]">
       <div className="max-w-7xl mx-auto px-6 h-24 flex items-center justify-between">        
-        <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-xl bg-gradient-primary flex items-center justify-center">
-            <span className="text-white font-bold text-lg">W</span>
-          </div>
+       <div className="flex items-center gap-3">
+          <img
+            src="/shnoor-logo.png"
+            alt="SHNOOR Logo"
+            className="w-12 h-12 object-contain rounded-lg"
+          />
+
           <div>
             <h3 className="font-bold text-[#163F68] text-lg">
-              WorkSpace
+              SHNOOR WorkSpace
             </h3>
+
             <p className="text-xs text-slate-600">
               Enterprise Platform
             </p>
           </div>
-        </div>    
+        </div> 
         <div className="hidden md:flex items-center bg-[#163F68] rounded-full px-8 py-4 gap-10">
           <a href="#ho" className="text-white text-sm hover:text-[#C99232] transition">
             Home
