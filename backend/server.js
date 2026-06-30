@@ -489,21 +489,34 @@ app.post("/groups", async (req, res) => {
 
 app.get("/messages/:groupId", async (req, res) => {
 
-  const result = await pool.query(
-    `
-    SELECT
-      m.*,
-      u.full_name
-    FROM messages m
-    JOIN users u
-      ON m.sender_id = u.user_id
-    WHERE m.group_id = $1
-    ORDER BY m.created_at
-    `,
-    [req.params.groupId]
-  );
+  try {
 
-  res.json(result.rows);
+    const result = await pool.query(
+      `
+      SELECT
+        m.*,
+        u.full_name
+      FROM messages m
+      JOIN users u
+        ON m.sender_id = u.user_id
+      WHERE m.group_id = $1
+      ORDER BY m.created_at ASC
+      `,
+      [req.params.groupId]
+    );
+
+    res.json(result.rows);
+
+  } catch (err) {
+
+    console.error(err);
+
+    res.status(500).json({
+      message: "Error loading messages"
+    });
+
+  }
+
 });
 app.post("/messages", async (req, res) => {
 
