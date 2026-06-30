@@ -525,21 +525,31 @@ const renameGroup = async (group) => {
   {msg.message}
 
   {msg.file_url && (
+  <div className="mt-2">
 
-    <div className="mt-2">
+    {msg.file_type.startsWith("image") ? (
+
+      <img
+        src={msg.file_url}
+        alt={msg.file_name}
+        className="max-w-xs rounded-lg"
+      />
+
+    ) : (
 
       <a
-        href={msg.file_url}
+        href={msg.download_url || msg.file_url}
         target="_blank"
         rel="noopener noreferrer"
-        className="text-blue-500 underline"
+        className="text-blue-600 underline"
       >
-        📎 {msg.file_name}
+        📄 {msg.file_name}
       </a>
 
-    </div>
+    )}
 
-  )}
+  </div>
+)}
 
 </div>
 
