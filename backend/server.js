@@ -14,7 +14,9 @@ const transporter = nodemailer.createTransport({
     pass: process.env.EMAIL_PASS,
   },
 });
-
+const res = await fetch(
+  `${import.meta.env.VITE_API_URL}/meetings/${currentUser.user_id}/${currentUser.role}`
+);
 
 app.use(express.json());
 app.use(cors());
@@ -286,18 +288,103 @@ app.post("/tasks", async (req, res) => {
 });
 
 app.get("/meetings", async (req, res) => {
+
   try {
 
     const result = await pool.query(
-      "SELECT * FROM meetings ORDER BY meeting_date ASC"
+      `
+      SELECT
+        m.*,
+        u.full_name AS employee_name,
+        g.group_name
+      FROM meetings m
+
+      LEFT JOIN users u
+      ON m.employee_id = u.user_id
+
+      LEFT JOIN groups g
+      ON m.group_id = g.group_id
+
+      ORDER BY
+      m.meeting_date ASC,
+      m.meeting_time ASC
+      `
     );
 
     res.json(result.rows);
 
   } catch (err) {
+
     console.error(err);
+
     res.status(500).send("Database Error");
+
   }
+
+});
+app.get("/meetings/:userId/:role", async (req, res) => {
+
+  try {
+
+    const { userId, role } = req.params;
+
+    let result;
+
+    if (role === "Manager") {
+
+      result = await pool.query(`
+        SELECT
+          m.*,
+          u.full_name AS employee_name,
+          cg.group_name
+        FROM meetings m
+        LEFT JOIN users u
+          ON m.employee_id = u.user_id
+        LEFT JOIN chat_groups cg
+          ON m.group_id = cg.group_id
+        ORDER BY meeting_date ASC
+      `);
+
+    } else {
+
+      result = await pool.query(
+        `
+        SELECT
+          m.*,
+          u.full_name AS employee_name,
+          cg.group_name
+        FROM meetings m
+
+        LEFT JOIN users u
+          ON m.employee_id = u.user_id
+
+        LEFT JOIN chat_groups cg
+          ON m.group_id = cg.group_id
+
+        LEFT JOIN group_members gm
+          ON gm.group_id = m.group_id
+
+        WHERE
+          m.employee_id = $1
+          OR gm.user_id = $1
+
+        ORDER BY meeting_date ASC
+        `,
+        [userId]
+      );
+
+    }
+
+    res.json(result.rows);
+
+  } catch (err) {
+
+    console.error(err);
+
+    res.status(500).send("Error");
+
+  }
+
 });
 
 app.post("/meetings", async (req, res) => {
@@ -309,19 +396,37 @@ app.post("/meetings", async (req, res) => {
       description,
       meeting_date,
       meeting_time,
+      meeting_type,
+      employee_id,
+      group_id,
       created_by
     } = req.body;
 
     const result = await pool.query(
-      `INSERT INTO meetings
-      (title, description, meeting_date, meeting_time, created_by)
-      VALUES ($1,$2,$3,$4,$5)
-      RETURNING *`,
+      `
+      INSERT INTO meetings
+      (
+        title,
+        description,
+        meeting_date,
+        meeting_time,
+        meeting_type,
+        employee_id,
+        group_id,
+        created_by
+      )
+      VALUES
+      ($1,$2,$3,$4,$5,$6,$7,$8)
+      RETURNING *
+      `,
       [
         title,
         description,
         meeting_date,
         meeting_time,
+        meeting_type,
+        employee_id || null,
+        group_id || null,
         created_by
       ]
     );
@@ -329,8 +434,13 @@ app.post("/meetings", async (req, res) => {
     res.json(result.rows[0]);
 
   } catch (err) {
+
     console.error(err);
-    res.status(500).send("Database Error");
+
+    res.status(500).json({
+      message: "Failed to create meeting"
+    });
+
   }
 
 });
