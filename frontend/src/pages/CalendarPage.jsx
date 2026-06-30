@@ -133,31 +133,31 @@ const fetchGroups = async () => {
           "Content-Type": "application/json",
         },
 
-        body: JSON.stringify({
+       body: JSON.stringify({
 
-          title: meetingTitle,
+  title: meetingTitle,
 
-          description: meetingDescription,
+  description: "",
 
-          meeting_date: selectedDate,
+  meeting_date: selectedDate,
 
-          meeting_time: meetingTime,
+  meeting_time: meetingTime,
 
-          meeting_type: meetingType,
+  meeting_type: meetingType,
 
-          employee_id:
-            meetingType === "Employee"
-              ? selectedUser
-              : null,
+  employee_id:
+    meetingType === "Employee"
+      ? selectedUser
+      : null,
 
-          group_id:
-            meetingType === "Group"
-              ? selectedGroup
-              : null,
+  group_id:
+    meetingType === "Group"
+      ? selectedGroup
+      : null,
 
-          created_by: currentUser.user_id,
+  created_by: currentUser.user_id,
 
-        }),
+}),
       }
     );
 
@@ -167,7 +167,7 @@ const fetchGroups = async () => {
 
     setMeetingTitle("");
 
-    setMeetingDescription("");
+    
 
     setMeetingTime("10:00");
 
