@@ -540,60 +540,60 @@ const renameGroup = async (group) => {
 
           </div>
 
-          <div className="bg-white border-t p-4">
+         <div className="sticky bottom-0 bg-white border-t p-4 z-20">
 
- {showEmoji && (
-  <Suspense fallback={<div>Loading emojis...</div>}>
-    <EmojiPicker
-      onEmojiClick={handleEmojiClick}
-    />
-  </Suspense>
-)}
-<input
-  type="file"
-  id="fileUpload"
-  hidden
-  onChange={(e) => setSelectedFile(e.target.files[0])}
-/>
-  <div className="flex gap-3">
+        {showEmoji && (
+          <Suspense fallback={<div>Loading emojis...</div>}>
+            <EmojiPicker
+              onEmojiClick={handleEmojiClick}
+            />
+          </Suspense>
+        )}
+        <input
+          type="file"
+          id="fileUpload"
+          hidden
+          onChange={(e) => setSelectedFile(e.target.files[0])}
+        />
+          <div className="flex gap-3">
 
-    <button
-      type="button"
-      aria-label="Open emoji picker"
-      title="Open emoji picker"
-      onClick={() =>
-        setShowEmoji(!showEmoji)
-      }
-      className="text-2xl"
-    >
-       <RiEmotionHappyLine size={30} />
-    </button>
-    <button
-      type="button"
-      onClick={() =>
-        document.getElementById("fileUpload").click()
-      }
-      className="text-2xl"
-    >
-      <RiAttachmentLine size={30} />
-    </button>
+            <button
+              type="button"
+              aria-label="Open emoji picker"
+              title="Open emoji picker"
+              onClick={() =>
+                setShowEmoji(!showEmoji)
+              }
+              className="text-2xl"
+            >
+              <RiEmotionHappyLine size={30} />
+            </button>
+            <button
+              type="button"
+              onClick={() =>
+                document.getElementById("fileUpload").click()
+              }
+              className="text-2xl"
+            >
+              <RiAttachmentLine size={30} />
+            </button>
 
-    <input
-      type="text"
-      value={message}
-      onChange={(e) =>
-        setMessage(e.target.value)
-      }
-      placeholder="Type message..."
-      className="border rounded px-4 py-2 flex-1"
-    />
+            <input
+              type="text"
+              value={message}
+              onChange={(e) =>
+                setMessage(e.target.value)
+              }
+              placeholder="Type message..."
+              className="border rounded px-4 py-2 flex-1"
+            />
 
-    <button
-      onClick={sendMessage}
-      className="bg-[#163F68] text-white px-6 py-2 rounded"
-    >
-      Send
-    </button>
+            <button
+              onClick={sendMessage}
+              className="bg-[#163F68] text-white px-6 py-2 rounded"
+            >
+              Send
+            </button>
 
   </div>
   {selectedFile && (
