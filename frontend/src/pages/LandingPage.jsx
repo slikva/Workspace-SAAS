@@ -297,22 +297,23 @@ function Footer() {
   return (
     <footer id="contact" className="bg-[#163F68] text-slate-400 py-14 px-4">
       <div className="max-w-5xl mx-auto">
-        <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-8 mb-10">
+       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8 mb-10 items-start">
+        <div className="flex flex-col">
          <div className="flex items-center gap-3">
-          <img src="/shnoor_international_logo.jpeg"  alt="SHNOOR Logo" className="w-13 h-12 object-contain rounded-lg"
-          />
+            <img src="/shnoor_international_logo.jpeg"  alt="SHNOOR Logo" className="w-13 h-12 object-contain rounded-lg"
+            />
 
-          <div>
-            <h3 className="font-bold text-white text-lg">
-              SHNOOR WorkSpace
-            </h3>
+            <div>
+              <h3 className="font-bold text-white text-lg">
+                SHNOOR WorkSpace
+              </h3>
 
-            <p className="text-xs text-slate-400">
-              Enterprise Platform
-            </p>
+              <p className="text-xs text-slate-400">
+                Enterprise Platform
+              </p>
+            </div>
+          </div> 
           </div>
-        </div> 
-          
             {[
               {
                 title: "Product",
@@ -339,7 +340,7 @@ function Footer() {
               {
                 title: "Location",
                 links: [
-                  { name: "10009 Mount Tabor Road, Odessa Missouri, United States.", href: "https://www.google.com/maps?cid=13238476657356605198&g_mp=CiVnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLkdldFBsYWNlEAMYASAF&hl=en&source=embed" },
+                  { name: "10009 Mount Tabor Road,\n Odessa Missouri,\n United States.", href: "https://www.google.com/maps?cid=13238476657356605198&g_mp=CiVnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLkdldFBsYWNlEAMYASAF&hl=en&source=embed" },
                 ],
               },
               { title: "Legal", links: [ { name: "Privacy", href: "https://www.shnoor.com/privacy-policy" }, { name: "Terms", href: "https://www.shnoor.com/terms-and-conditions" }, { name: "Security", href: "#" }, { name: "Cookies", href: "#" }, ], },
@@ -353,7 +354,8 @@ function Footer() {
                   <a
                     key={link.name}
                     href={link.href}
-                    className="flex items-center gap-2 text-semibold text-slate-400 hover:text-[#C99232] transition-colors mb-2"
+                    
+                    className="flex items-start gap-2 whitespace-pre-line text-semibold text-slate-400 hover:text-[#C99232] transition-colors mb-2"
                   >
                     {col.title === "Contact" && <RiMailLine />}
                      {col.title === "Location" && <RiUserLocationLine />}
