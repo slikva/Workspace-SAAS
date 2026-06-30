@@ -298,7 +298,7 @@ function Footer() {
     <footer id="contact" className="bg-[#163F68] text-slate-400 py-14 px-4">
       <div className="max-w-5xl mx-auto">
        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8 mb-10 items-start">
-        <div className="flex flex-col">
+        <div className="flex flex-col pt-4">
          <div className="flex items-center gap-3">
             <img src="/shnoor_international_logo.jpeg"  alt="SHNOOR Logo" className="w-13 h-12 object-contain rounded-lg"
             />
@@ -354,11 +354,9 @@ function Footer() {
                   <a
                     key={link.name}
                     href={link.href}
-                    
-                    className="flex items-start gap-2 whitespace-pre-line text-semibold text-slate-400 hover:text-[#C99232] transition-colors mb-2"
-                  >
-                    {col.title === "Contact" && <RiMailLine />}
-                     {col.title === "Location" && <RiUserLocationLine />}
+                    className="flex items-start gap-2 text-slate-400 hover:text-[#C99232] transition-colors mb-2">
+                    {col.title === "Contact" && (<RiMailLine className="mt-1 flex-shrink-0" />)}
+                    {col.title === "Location" &&(<RiUserLocationLine className="mt-1 flex-shrink-0" />)}
                     {link.name}
                   </a>
                 ))}
