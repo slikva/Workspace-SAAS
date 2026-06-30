@@ -92,6 +92,7 @@ setReactions(reactionsObj);
   );
 
   const membersData = await membersRes.json();
+  console.log("Members:", membersData);
 
   setMembers(membersData);
 };
