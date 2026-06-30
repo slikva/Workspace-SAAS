@@ -36,6 +36,38 @@ const upload = multer({
   storage,
 
 });
+app.post(
+  "/upload",
+  upload.single("file"),
+  async (req, res) => {
+
+    try {
+
+      if (!req.file) {
+        return res.status(400).json({
+          success: false
+        });
+      }
+
+      res.json({
+        success: true,
+        fileName: req.file.originalname,
+        fileUrl: req.file.path,
+        fileType: req.file.mimetype
+      });
+
+    } catch (err) {
+
+      console.error(err);
+
+      res.status(500).json({
+        success: false
+      });
+
+    }
+
+  }
+);
 
 app.use(express.json());
 app.use(cors());
