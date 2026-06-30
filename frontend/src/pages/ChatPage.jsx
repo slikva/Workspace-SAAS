@@ -386,39 +386,35 @@ const renameGroup = async (group) => {
 
   {showMembers && (
 
-<div className="bg-white rounded-xl shadow-md p-4 mb-4">
+  <div className="bg-white rounded-xl shadow-md p-4 mb-4">
 
-<h3 className="font-bold mb-3">
-Group Members
-</h3>
+    <h3 className="font-bold mb-3">
+      Group Members
+    </h3>
 
-  <div className="flex gap-2 flex-wrap">
+    <div className="text-gray-700 text-sm">
 
- {members.map((member) => (
+      {members.map((member, index) => (
+        <React.Fragment key={member.user_id}>
 
-  <div
-    key={member.user_id}
-    className="flex items-center gap-2 bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm"
-  >
+          <span>{member.full_name}</span>
 
-    <span>{member.full_name}</span>
+          {currentUser.role === "Manager" && (
+            <button
+              onClick={() => removeMember(member.user_id)}
+              className="text-red-600 font-bold mx-1"
+            >
+              ×
+            </button>
+          )}
 
-    {currentUser.role === "Manager" && (
-      
-      <button
-        onClick={() => removeMember(member.user_id)}
-        className="text-red-600 font-bold"
-      >
-        ×
-      </button>
-    )}
+          {index !== members.length - 1 && ", "}
 
-  </div>
+        </React.Fragment>
+      ))}
 
-))}
+    </div>
 
-
-  </div>
   </div>
 
 )}
