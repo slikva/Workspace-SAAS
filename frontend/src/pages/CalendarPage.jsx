@@ -110,46 +110,86 @@ const fetchGroups = async () => {
 
   const saveMeeting = async () => {
 
-    if (!meetingTitle) {
-      alert("Enter Meeting Title");
-      return;
-    }
+  if (!meetingTitle) {
+    alert("Enter Meeting Title");
+    return;
+  }
 
-    try {
+  if (meetingType === "Employee" && !selectedUser) {
+    alert("Please select an employee");
+    return;
+  }
 
-      await fetch(
-        `${import.meta.env.VITE_API_URL}/meetings`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type":
-              "application/json",
-          },
-          body: JSON.stringify({
-            title: meetingTitle,
-            description: "",
-            meeting_date:
-              selectedDate,
-            meeting_time:
-              meetingTime,
-            created_by:
-              currentUser.user_id,
-          }),
-        }
-      );
+  if (meetingType === "Group" && !selectedGroup) {
+    alert("Please select a group");
+    return;
+  }
 
-      setShowModal(false);
+  try {
 
-      setMeetingTitle("");
+    await fetch(
+      `${import.meta.env.VITE_API_URL}/meetings`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
 
-      setMeetingTime("10:00");
+        body: JSON.stringify({
 
-      fetchMeetings();
+          title: meetingTitle,
 
-    } catch (err) {
-      console.error(err);
-    }
-  };
+          description: meetingDescription,
+
+          meeting_date: selectedDate,
+
+          meeting_time: meetingTime,
+
+          meeting_type: meetingType,
+
+          employee_id:
+            meetingType === "Employee"
+              ? selectedUser
+              : null,
+
+          group_id:
+            meetingType === "Group"
+              ? selectedGroup
+              : null,
+
+          created_by: currentUser.user_id,
+
+        }),
+      }
+    );
+
+    alert("Meeting Scheduled Successfully");
+
+    setShowModal(false);
+
+    setMeetingTitle("");
+
+    setMeetingDescription("");
+
+    setMeetingTime("10:00");
+
+    setSelectedUser("");
+
+    setSelectedGroup("");
+
+    setMeetingType("Employee");
+
+    fetchMeetings();
+
+  } catch (err) {
+
+    console.error(err);
+
+    alert("Failed to Schedule Meeting");
+
+  }
+
+};
 const deleteMeeting = async (id) => {
 
   const confirmDelete = window.confirm(
