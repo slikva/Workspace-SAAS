@@ -20,7 +20,7 @@ function NavBar() {
     <nav className="fixed top-0 left-0 right-0 z-50 bg-[#F7F8FA]">
       <div className="max-w-7xl mx-auto px-6 h-24 flex items-center justify-between">        
        <div className="flex items-center gap-3">
-          <img src="./public/shnoor_international_logo.jpeg"  alt="SHNOOR Logo" className="w-12 h-12 object-contain rounded-lg"
+          <img src="/shnoor_international_logo.jpeg"  alt="SHNOOR Logo" className="w-12 h-12 object-contain rounded-lg"
           />
 
           <div>
