@@ -520,25 +520,28 @@ const renameGroup = async (group) => {
 
   {msg.file_url && (
 
+    <div>
+
+  {msg.message}
+
+  {msg.file_url && (
+
     <div className="mt-2">
 
       <a
-
         href={msg.file_url}
-
         target="_blank"
-
-        rel="noreferrer"
-
+        rel="noopener noreferrer"
         className="text-blue-500 underline"
-
       >
-
         📎 {msg.file_name}
-
       </a>
 
     </div>
+
+  )}
+
+</div>
 
   )}
 
