@@ -512,7 +512,7 @@ const deleteMeeting = async (id) => {
 
 onClick={() => deleteMeeting(event.id)}
 
-className="mt-4 w-full bg-red-500 hover:bg-red-600 text-white py-2 rounded-lg"
+className="mt-4 w-full bg-[#163F68] hover:bg-[#C99232] text-white py-2 rounded-lg"
 
 >
 
