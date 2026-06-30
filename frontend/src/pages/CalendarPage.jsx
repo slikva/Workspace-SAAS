@@ -49,12 +49,24 @@ const [selectedGroup, setSelectedGroup] = useState("");
 
       const data = await res.json();
 
-      const formattedEvents = data.map((meeting) => ({
+     const formattedEvents = data.map((meeting) => ({
+
   id: meeting.meeting_id,
+
   title: meeting.title,
+
   start: `${meeting.meeting_date}T${meeting.meeting_time}`,
+
   meeting_date: meeting.meeting_date,
-  meeting_time: meeting.meeting_time
+
+  meeting_time: meeting.meeting_time,
+
+  meeting_type: meeting.meeting_type,
+
+  employee_name: meeting.employee_name,
+
+  group_name: meeting.group_name
+
 }));
 
       setEvents(formattedEvents);
@@ -457,7 +469,23 @@ const deleteMeeting = async (id) => {
                     <h4 className="font-semibold text-[#163F68]">
                       {event.title}
                     </h4>
+<div className="mt-3 text-sm text-gray-600">
 
+  {event.meeting_type === "Employee" ? (
+
+    <p>
+       {event.employee_name}
+    </p>
+
+  ) : (
+
+    <p>
+       {event.group_name}
+    </p>
+
+  )}
+
+</div>
                    
   
 
@@ -478,6 +506,21 @@ const deleteMeeting = async (id) => {
     </div>
 
   </div>
+  {currentUser.role === "Manager" && (
+
+<button
+
+onClick={() => deleteMeeting(event.id)}
+
+className="mt-4 w-full bg-red-500 hover:bg-red-600 text-white py-2 rounded-lg"
+
+>
+
+Delete Meeting
+
+</button>
+
+)}
 
 
 
