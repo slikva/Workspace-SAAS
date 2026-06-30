@@ -45,9 +45,7 @@ const [selectedGroup, setSelectedGroup] = useState("");
   const fetchMeetings = async () => {
     try {
 
-      const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/meetings`
-      );
+     const res = await fetch( `${import.meta.env.VITE_API_URL}/meetings/${currentUser.user_id}/${currentUser.role}`);
 
       const data = await res.json();
 
