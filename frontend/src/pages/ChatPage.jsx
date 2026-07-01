@@ -346,7 +346,7 @@ const renameGroup = async (group) => {
         onClick={() =>
           deleteGroup(group.group_id)
         }
-        className="text-red-500 hover:text-red-700"
+        className="text-[#C99232] "
       >
         ✕
       </button>
@@ -447,7 +447,7 @@ const renameGroup = async (group) => {
           {currentUser.role === "Manager" && (
             <button
               onClick={() => removeMember(member.user_id)}
-              className="text-red-600 font-bold mx-1"
+              className="text-[#C99232] font-bold mx-1"
             >
               ×
             </button>
