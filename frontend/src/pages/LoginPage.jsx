@@ -69,23 +69,21 @@ export default function LoginPage() {
           <div className="mb-8 text-center">
          <Link
           to="/"
-          className="inline-flex items-center justify-center gap-5 mb-10"
+          className="flex flex-col items-center mb-12"
         >
           <img
             src="/shnoor_international_logo.jpeg"
             alt="SHNOOR Logo"
-            className="w-20 h-20 object-contain"
+            className="w-24 h-24 object-contain mb-4"
           />
 
-          <div className="text-left">
-            <h1 className="text-[34px] font-extrabold tracking-tight text-[#163F68] leading-none">
-              SHNOOR WorkSpace
-            </h1>
+          <h1 className="text-[42px] font-extrabold text-[#163F68] leading-none tracking-tight">
+            SHNOOR WorkSpace
+          </h1>
 
-            <p className="text-gray-500 text-sm tracking-wide mt-2">
-              Enterprise Platform
-            </p>
-          </div>
+          <p className="mt-3 text-gray-500 text-lg font-medium tracking-[0.2em] uppercase">
+            Enterprise Platform
+          </p>
         </Link>
           <h1 className="text-3xl font-bold text-slate-900">
             Sign in to your account
