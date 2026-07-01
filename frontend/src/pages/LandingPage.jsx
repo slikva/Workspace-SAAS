@@ -57,7 +57,7 @@ function NavBar() {
         <div className="hidden md:flex items-center gap-4">
           <Link
             to="/login"
-            className="text-[#163F68] font-medium"
+            className="text-[#163F68] font-medium hover:text-[#C99232] transition"
           >
             Log In
           </Link>
