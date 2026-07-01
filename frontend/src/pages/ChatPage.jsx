@@ -565,7 +565,7 @@ const renameGroup = async (group) => {
       onClick={() => setIsMuted(!isMuted)}
       className="text-xl"
     >
-      {isMuted ? <RiVolumeMuteLine /> : <RiVolumeUpLine />}
+      {isMuted ? <RiNotificationOffLine /> : <RiNotificationLine />}
     </button>
 
   </div>
