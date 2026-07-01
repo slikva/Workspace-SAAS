@@ -795,82 +795,82 @@ size={18}
     )
   }
 >
- <div>
+ 
+<div>
 
   {msg.message}
 
   {msg.file_url && (
 
-    <div>
+    <div className="mt-2">
 
-  {msg.message}
+      {msg.file_type.startsWith("image") ? (
 
-  {msg.file_url && (
-  <div className="mt-2">
+        <img
+          src={msg.file_url}
+          alt={msg.file_name}
+          className="max-w-xs rounded-lg cursor-pointer"
+          onClick={() => {
+            setPreviewImage(msg.file_url);
+            setPreviewFile(msg);
+          }}
+        />
 
-    {msg.file_type.startsWith("image") ? (
+      ) : (
 
-     <img
-  src={msg.file_url}
-  alt={msg.file_name}
-  className="max-w-xs rounded-lg cursor-pointer"
-  onClick={() => {
-    setPreviewImage(msg.file_url);
-    setPreviewFile(msg);
-}}
-/>
-    ) : (
+        <div
+          onClick={() => {
+            setPreviewPdf(msg.file_url);
+            setPreviewFile(msg);
+          }}
+          className="
+            flex
+            items-center
+            justify-between
+            bg-white
+            rounded-lg
+            border
+            p-3
+            cursor-pointer
+            hover:bg-gray-50
+            transition
+            text-[#163F68]
+          "
+        >
 
-     <div
- onClick={() => {
-    setPreviewPdf(msg.file_url);
-    setPreviewFile(msg);
-}}
-  className="
-    flex
-    items-center
-    justify-between
-    bg-white
-    rounded-lg
-    border
-    p-3
-    cursor-pointer
-    hover:bg-gray-50
-    transition
-    text-[#163F68]
-  "
->
+          <div className="flex items-center gap-3">
 
-  <div className="flex items-center gap-3">
+            <RiFilePdfLine
+              size={28}
+              className="text-red-600"
+            />
 
-    <RiFilePdfLine
-      size={28}
-      className="text-red-600"
-    />
+            <div>
 
-    <div>
+              <p className="font-medium">
+                {msg.file_name}
+              </p>
 
-      <p className="font-medium">
-        {msg.file_name}
-      </p>
+              <p className="text-xs text-gray-500">
+                Click to preview
+              </p>
 
-      <p className="text-xs text-gray-500">
-        Click to preview
-      </p>
+            </div>
+
+          </div>
+
+          {msg.sender_id !== currentUser.user_id && (
+            <RiDownloadLine
+              size={20}
+              className="text-[#163F68]"
+            />
+          )}
+
+        </div>
+
+      )}
 
     </div>
-
-  </div>
-
-  <RiDownloadLine size={20} />
-
-</div>
-    )}
-
-  </div>
-)}
-
-</div>
 
   )}
 
@@ -1068,7 +1068,10 @@ size={18}
 
 )}
           <button
-            onClick={() => setPreviewPdf(null)}
+           onClick={() => {
+    setPreviewPdf(null);
+    setPreviewFile(null);
+}}
             className="text-[#163F68] hover:text-red-600 transition"
             title="Close"
           >
@@ -1089,6 +1092,71 @@ size={18}
     </div>
 
   </div>
+)}
+{previewImage && (
+
+<div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
+
+  <div className="relative">
+
+    {previewFile &&
+      previewFile.sender_id !== currentUser.user_id && (
+
+      <a
+        href={previewImage}
+        download
+        className="
+          absolute
+          top-4
+          right-14
+          bg-white
+          p-2
+          rounded-full
+          shadow
+          hover:bg-gray-100
+          z-10
+        "
+      >
+        <RiDownloadLine size={22}/>
+      </a>
+
+    )}
+
+    <button
+      onClick={() => {
+        setPreviewImage(null);
+        setPreviewFile(null);
+      }}
+      className="
+        absolute
+        top-4
+        right-4
+        bg-white
+        p-2
+        rounded-full
+        shadow
+        hover:bg-red-100
+        z-10
+      "
+    >
+      <RiCloseLine size={24}/>
+    </button>
+
+    <img
+      src={previewImage}
+      alt="Preview"
+      className="
+        max-w-[90vw]
+        max-h-[90vh]
+        rounded-xl
+        shadow-2xl
+      "
+    />
+
+  </div>
+
+</div>
+
 )}
         </div>
 
