@@ -44,6 +44,7 @@ const [openMenu, setOpenMenu] = useState(null);
 const [mutedGroups, setMutedGroups] = useState({});
 const [previewImage, setPreviewImage] = useState(null);
 const [previewPdf, setPreviewPdf] = useState(null);
+const [previewFile, setPreviewFile] = useState(null);
 const [archivedGroups, setArchivedGroups] = useState({});
 
   useEffect(() => {
@@ -814,16 +815,16 @@ size={18}
   alt={msg.file_name}
   className="max-w-xs rounded-lg cursor-pointer"
   onClick={() => {
-    alert(msg.file_url);
     setPreviewImage(msg.file_url);
-  }}
+    setPreviewFile(msg);
+}}
 />
     ) : (
 
      <div
  onClick={() => {
-  alert(msg.file_url);
-  setPreviewPdf(msg.file_url);
+    setPreviewPdf(msg.file_url);
+    setPreviewFile(msg);
 }}
   className="
     flex
@@ -1054,15 +1055,17 @@ size={18}
 
         <div className="flex items-center gap-4">
 
-         {msg.sender_id !== currentUser.user_id && (
+        {previewFile &&
+ previewFile.sender_id !== currentUser.user_id && (
     <a
-        href={msg.file_url}
+        href={previewFile.file_url}
         download
         onClick={(e) => e.stopPropagation()}
         className="text-[#163F68] hover:text-[#C99232]"
     >
         <RiDownloadLine size={20}/>
     </a>
+
 )}
           <button
             onClick={() => setPreviewPdf(null)}
@@ -1077,15 +1080,11 @@ size={18}
       </div>
 
       {/* PDF Viewer */}
-      <object
-  data={previewPdf}
-  type="application/pdf"
-  className="w-full h-full"
->
-  <p className="text-center mt-10">
-    PDF preview is not available.
-  </p>
-</object>
+     <iframe
+  src={previewPdf}
+  title="PDF Preview"
+  className="w-full h-full border-0"
+/>
 
     </div>
 
