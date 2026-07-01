@@ -1376,7 +1376,8 @@ app.post("/upload", upload.single("file"), async (req, res) => {
       });
     }
 
-    const fileUrl = `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`;
+   const fileUrl =
+  `https://${req.get("host")}/uploads/${req.file.filename}`;
 
     res.json({
       success: true,
