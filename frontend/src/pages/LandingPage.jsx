@@ -64,6 +64,13 @@ function NavBar() {
           >
             Get Started
           </Link>
+          <a
+            href="https://shnoor-lms-frontend.vercel.app/"
+            className="text-[#163F68] font-medium"
+          >
+             <RiBookOpenLine className="mt-1 flex-shrink-0" />
+            Learning HUb
+          </a>
         </div>
         <button
           className="md:hidden text-[#163F68]"
