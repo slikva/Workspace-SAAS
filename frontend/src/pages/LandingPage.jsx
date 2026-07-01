@@ -61,12 +61,7 @@ function NavBar() {
           >
             Log In
           </Link>
-          <Link
-            to="/register-company"
-            className="px-6 py-3 rounded-lg bg-[#163F68] text-white font-semibold hover:bg-[#102D49] transition hover:text-[#C99232] transition"
-          >
-            Get Started
-          </Link>
+          
           <a
             href="https://shnoor-lms-frontend.vercel.app/"
             target="_blank"
@@ -76,6 +71,12 @@ function NavBar() {
             <RiBookOpenLine size={18} />
             <span>Learning Hub</span>
           </a>
+          <Link
+            to="/register-company"
+            className="px-6 py-3 rounded-lg bg-[#163F68] text-white font-semibold hover:bg-[#102D49] transition hover:text-[#C99232] transition"
+          >
+            Get Started
+          </Link>
         </div>
         <button
           className="md:hidden text-[#163F68]"
