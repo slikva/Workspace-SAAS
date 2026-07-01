@@ -812,13 +812,19 @@ size={18}
      <img
   src={msg.file_url}
   alt={msg.file_name}
-  className="max-w-xs rounded-lg cursor-pointer hover:opacity-90"
-  onClick={() => setPreviewImage(msg.file_url)}
+  className="max-w-xs rounded-lg cursor-pointer"
+  onClick={() => {
+    alert(msg.file_url);
+    setPreviewImage(msg.file_url);
+  }}
 />
     ) : (
 
      <div
-  onClick={() => setPreviewPdf(msg.file_url)}
+ onClick={() => {
+  alert(msg.file_url);
+  setPreviewPdf(msg.file_url);
+}}
   className="
     flex
     items-center
