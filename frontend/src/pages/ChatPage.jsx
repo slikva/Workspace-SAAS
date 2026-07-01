@@ -538,7 +538,7 @@ const renameGroup = async (group) => {
     ) : (
 
       <a
-        href={msg.download_url || msg.file_url}
+        href={msg.file_url}
         target="_blank"
         rel="noopener noreferrer"
         className="text-blue-600 underline"
