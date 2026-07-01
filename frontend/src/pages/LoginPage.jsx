@@ -64,26 +64,29 @@ export default function LoginPage() {
       <div className="flex-1 flex items-center justify-center px-4 py-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}
-          className="w-full max-w-sm"
+          className="w-full max-w-md"
         >
           <div className="mb-8 text-center">
-          <Link
-            to="/"
-            className="inline-flex flex-col items-center mb-8"
-          >
-            <div className="flex items-center gap-3">
-          <img src="/shnoor_international_logo.jpeg"  alt="SHNOOR Logo" className="w-15 h-14 object-contain rounded-lg"
+         <Link
+          to="/"
+          className="inline-flex items-center justify-center gap-5 mb-10"
+        >
+          <img
+            src="/shnoor_international_logo.jpeg"
+            alt="SHNOOR Logo"
+            className="w-20 h-20 object-contain"
           />
-          <div>
-            <h3 className="font-bold text-[#163F68] text-lg">
+
+          <div className="text-left">
+            <h1 className="text-[34px] font-extrabold tracking-tight text-[#163F68] leading-none">
               SHNOOR WorkSpace
-            </h3>
-            <p className="text-xs text-slate-600">
+            </h1>
+
+            <p className="text-gray-500 text-sm tracking-wide mt-2">
               Enterprise Platform
             </p>
           </div>
-        </div> 
-          </Link>
+        </Link>
           <h1 className="text-3xl font-bold text-slate-900">
             Sign in to your account
           </h1>
