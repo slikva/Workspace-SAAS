@@ -1048,15 +1048,16 @@ size={18}
 
         <div className="flex items-center gap-4">
 
-          <a
-            href={previewPdf}
-            download
-            className="text-[#163F68] hover:text-[#C99232] transition"
-            title="Download"
-          >
-            <RiDownloadLine size={24} />
-          </a>
-
+         {msg.sender_id !== currentUser.user_id && (
+    <a
+        href={msg.file_url}
+        download
+        onClick={(e) => e.stopPropagation()}
+        className="text-[#163F68] hover:text-[#C99232]"
+    >
+        <RiDownloadLine size={20}/>
+    </a>
+)}
           <button
             onClick={() => setPreviewPdf(null)}
             className="text-[#163F68] hover:text-red-600 transition"
@@ -1070,11 +1071,15 @@ size={18}
       </div>
 
       {/* PDF Viewer */}
-      <iframe
-        src={previewPdf}
-        title="PDF Viewer"
-        className="flex-1 w-full"
-      />
+      <object
+  data={previewPdf}
+  type="application/pdf"
+  className="w-full h-full"
+>
+  <p className="text-center mt-10">
+    PDF preview is not available.
+  </p>
+</object>
 
     </div>
 
