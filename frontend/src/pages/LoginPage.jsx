@@ -74,7 +74,7 @@ export default function LoginPage() {
           <img
             src="/shnoor_international_logo.jpeg"
             alt="SHNOOR Logo"
-            className="w-24 h-24 object-contain mb-4"
+            className="w-30 h-30 object-contain mb-4"
           />
 
           <h1 className="text-[42px] font-extrabold text-[#163F68] leading-none tracking-tight">
