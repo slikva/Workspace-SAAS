@@ -6,7 +6,7 @@ import {
   RiTaskLine, RiMessage2Line, RiBarChartLine, RiShieldLine,
   RiMenuLine, RiCloseLine, RiArrowDownSLine, RiPlayLine,
   RiBuildingLine, RiUserLine, RiUserStarLine, RiGlobalLine, RiMailLine,
-  RiUserLocationLine,
+  RiUserLocationLine,RiBookOpenLine
 } from 'react-icons/ri'
 
 const fadeUp = { hidden: { opacity: 0, y: 24 }, show: { opacity: 1, y: 0 } }
@@ -66,10 +66,12 @@ function NavBar() {
           </Link>
           <a
             href="https://shnoor-lms-frontend.vercel.app/"
-            className="text-[#163F68] font-medium"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 text-[#163F68] font-medium hover:text-[#C99232] transition"
           >
-             <RiBookOpenLine className="mt-1 flex-shrink-0" />
-            Learning HUb
+            <RiBookOpenLine size={18} />
+            <span>Learning Hub</span>
           </a>
         </div>
         <button
