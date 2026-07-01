@@ -343,7 +343,7 @@ function Footer() {
                   { name: "10009 Mount Tabor Road,\n Odessa Missouri,\n United States.", href: "https://www.google.com/maps?cid=13238476657356605198&g_mp=CiVnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLkdldFBsYWNlEAMYASAF&hl=en&source=embed" },
                 ],
               },
-              { title: "Legal", links: [ { name: "Privacy", href: "https://www.shnoor.com/privacy-policy" }, { name: "Terms", href: "https://www.shnoor.com/terms-and-conditions" }, { name: "Security", href: "#" }, { name: "Cookies", href: "#" }, ], },
+              { title: "Legal", links: [ { name: "Privacy", href: "/privacy" }, { name: "Terms", href: "/terms" }, { name: "Security", href: "#" }, { name: "Cookies", href: "#" }, ], },
             ].map((col) => (
               <div key={col.title}>
                 <p className="text-white font-bold text-sm mb-3">

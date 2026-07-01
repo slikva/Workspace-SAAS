@@ -2,6 +2,7 @@
 import { Routes, Route } from "react-router-dom";
 import { lazy, Suspense } from "react";
 
+
 const LandingPage = lazy(() => import("./pages/LandingPage"));
 const LoginPage = lazy(() => import("./pages/LoginPage"));
 const DashboardPage = lazy(() => import("./pages/DashboardPage"));
@@ -17,6 +18,9 @@ const RegisterCompanyPage = lazy(() => import("./pages/RegisterCompanyPage"));
 const AnalyticsPage = lazy(() => import("./pages/AnalyticsPage"));
 const CompanyDetailsPage = lazy(() => import("./pages/CompanyDetails"));
 const OwnerSettingsPage = lazy(() => import("./pages/OwnerSettingsPage"));
+const TermsPage=lazy(()=> import("./pages/TermsPage"));
+const PrivacyPage=lazy(()=> import("./pages/PrivacyPage"));
+
 function App() {
   return (
 
@@ -45,6 +49,8 @@ function App() {
         <Route path="/analytics" element={<AnalyticsPage />} />
         <Route path="/company/:id" element={<CompanyDetailsPage />} />
         <Route path="/owner-settings" element={<OwnerSettingsPage />} />
+        <Route path="/terms" element={<TermsPage/>}/>
+        <Route path="/privacy" element={<PrivacyPage/>}/>
 
       </Routes>
 
