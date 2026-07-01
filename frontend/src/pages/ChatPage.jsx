@@ -39,6 +39,7 @@ const [users, setUsers] = useState([]);
 const [selectedUser, setSelectedUser] = useState("");
 const [openMenu, setOpenMenu] = useState(null);
 const [mutedGroups, setMutedGroups] = useState({});
+const [previewImage, setPreviewImage] = useState(null);
 const [archivedGroups, setArchivedGroups] = useState({});
 
   useEffect(() => {
@@ -804,12 +805,12 @@ size={18}
 
     {msg.file_type.startsWith("image") ? (
 
-      <img
-        src={msg.file_url}
-        alt={msg.file_name}
-        className="max-w-xs rounded-lg"
-      />
-
+     <img
+  src={msg.file_url}
+  alt={msg.file_name}
+  className="max-w-xs rounded-lg cursor-pointer hover:opacity-90"
+  onClick={() => setPreviewImage(msg.file_url)}
+/>
     ) : (
 
       <a
@@ -995,8 +996,20 @@ size={18}
   </p>
 )}
 
-</div>
 
+</div>
+{previewImage && (
+  <div
+    className="fixed inset-0 bg-black/80 flex items-center justify-center z-50"
+    onClick={() => setPreviewImage(null)}
+  >
+    <img
+      src={previewImage}
+      alt="Preview"
+      className="max-w-[90vw] max-h-[90vh] rounded-lg shadow-xl"
+    />
+  </div>
+)}
         </div>
 
       </div>
