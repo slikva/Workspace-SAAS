@@ -12,11 +12,77 @@ const fadeUp = {
 };
 
 export default function PrivacyPage() {
+    function NavBar() {
+      const [open, setOpen] = useState(false)
+    
+      return (
+        <nav className="fixed top-0 left-0 right-0 z-50 bg-[#F7F8FA]">
+          <div className="max-w-7xl mx-auto px-6 h-24 flex items-center justify-between">        
+           <div className="flex items-center gap-3">
+              <img src="/shnoor_international_logo.jpeg"  alt="SHNOOR Logo" className="w-15 h-14 object-contain rounded-lg"
+              />
+    
+              <div>
+                <h3 className="font-bold text-[#163F68] text-lg">
+                  SHNOOR WorkSpace
+                </h3>
+    
+                <p className="text-xs text-slate-600">
+                  Enterprise Platform
+                </p>
+              </div>
+            </div> 
+            <div className="hidden md:flex items-center bg-[#163F68] rounded-full px-8 py-4 gap-10">
+              <a href="#ho" className="text-white text-sm hover:text-[#C99232] transition">
+                Home
+              </a>
+              <a href="#features" className="text-white text-sm hover:text-[#C99232] transition">
+                Features
+              </a>
+              <a href="#ro" className="text-white text-sm hover:text-[#C99232] transition">
+                Roles
+              </a>
+              <a href="#fa" className="text-white text-sm hover:text-[#C99232] transition">
+                FAQ'S
+              </a>
+              <a href="#contact" className="text-white text-sm hover:text-[#C99232] transition">
+                Contact
+              </a>
+            </div>
+            <div className="hidden md:flex items-center gap-4">
+              <Link
+                to="/login"
+                className="text-[#163F68] font-medium"
+              >
+                Log In
+              </Link>
+              <Link
+                to="/register-company"
+                className="px-6 py-3 rounded-lg bg-[#163F68] text-white font-semibold hover:bg-[#102D49] transition hover:text-[#C99232] transition"
+              >
+                Get Started
+              </Link>
+            </div>
+            <button
+              className="md:hidden text-[#163F68]"
+              onClick={() => setOpen(!open)}
+            >
+              {open ? (
+                <RiCloseLine size={24} />
+              ) : (
+                <RiMenuLine size={24} />
+              )}
+            </button>
+          </div>
+        </nav>
+      )
+    }
   return (
-    <div className="min-h-screen bg-[#F7F8FA]">
+  <div className="min-h-screen bg-[#F7F8FA]">
 
-      
-      <section className="pt-36 pb-20 bg-gradient-to-b from-blue-50/60 to-white">
+    <NavBar />
+
+    <section className="pt-40 pb-20 bg-gradient-to-b from-blue-50/60 to-white">
 
         <div className="max-w-5xl mx-auto px-6 text-center">
 
