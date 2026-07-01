@@ -1,8 +1,25 @@
 const multer = require("multer");
-const cloudinary = require("./config/cloudinary");
-const { CloudinaryStorage } = require("multer-storage-cloudinary");
-const dns = require("dns");
-dns.setDefaultResultOrder("ipv4first");
+const path = require("path");
+const fs = require("fs");
+const uploadPath = path.join(__dirname, "uploads");
+
+if (!fs.existsSync(uploadPath)) {
+  fs.mkdirSync(uploadPath);
+}
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, uploadPath);
+  },
+
+  filename: (req, file, cb) => {
+    const uniqueName =
+      Date.now() + "-" + file.originalname;
+
+    cb(null, uniqueName);
+  },
+});
+
+const upload = multer({ storage });
 const express = require("express");
 const pool = require("./db");
 const cors = require("cors");
@@ -19,60 +36,11 @@ const transporter = nodemailer.createTransport({
     pass: process.env.EMAIL_PASS,
   },
 });
-const storage = new CloudinaryStorage({
-
-  cloudinary,
-
-  params: {
-
-    folder: "workspace-chat",
-
-    resource_type: "auto",
-
-  },
-
-});
-
-const upload = multer({
-
-  storage,
-
-});
-app.post(
-  "/upload",
-  upload.single("file"),
-  async (req, res) => {
-
-    try {
-
-      if (!req.file) {
-        return res.status(400).json({
-          success: false
-        });
-      }
-
-      res.json({
-        success: true,
-        fileName: req.file.originalname,
-        fileUrl: req.file.path,
-        fileType: req.file.mimetype,
-        downloadUrl: req.file.path + "?fl_attachment"
-      });
-
-    } catch (err) {
-
-      console.error(err);
-
-      res.status(500).json({
-        success: false
-      });
-
-    }
-
-  }
-);
 
 
+
+
+app.use("/uploads", express.static(uploadPath));
 app.get("/", async (req, res) => {
   try {
     const result = await pool.query("SELECT NOW()");
@@ -557,24 +525,17 @@ app.post("/messages", async (req, res) => {
   try {
 
     const {
-
       group_id,
-
       sender_id,
-
       message,
-
       file_url,
-
       file_name,
-
-      file_type
-
+      file_type,
     } = req.body;
 
     const result = await pool.query(
-
-      `INSERT INTO messages
+      `
+      INSERT INTO messages
       (
         group_id,
         sender_id,
@@ -583,19 +544,17 @@ app.post("/messages", async (req, res) => {
         file_name,
         file_type
       )
-      VALUES
-      ($1,$2,$3,$4,$5,$6)
-      RETURNING *`,
-
+      VALUES ($1,$2,$3,$4,$5,$6)
+      RETURNING *
+      `,
       [
         group_id,
         sender_id,
         message,
-        file_url || null,
-        file_name || null,
-        file_type || null
+        file_url,
+        file_name,
+        file_type,
       ]
-
     );
 
     res.json(result.rows[0]);
@@ -605,7 +564,7 @@ app.post("/messages", async (req, res) => {
     console.error(err);
 
     res.status(500).json({
-      message: "Error sending message"
+      error: err.message,
     });
 
   }
@@ -1408,6 +1367,34 @@ app.get(
 
   }
 );
+app.post("/upload", upload.single("file"), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({
+        success: false,
+        message: "No file uploaded",
+      });
+    }
+
+    const fileUrl = `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`;
+
+    res.json({
+      success: true,
+      fileName: req.file.originalname,
+      fileUrl: fileUrl,
+      fileType: req.file.mimetype,
+    });
+
+  } catch (err) {
+    console.error(err);
+
+    res.status(500).json({
+      success: false,
+      message: "File upload failed",
+    });
+  }
+});
+
 
 
 const PORT = process.env.PORT || 5001;
