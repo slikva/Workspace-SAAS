@@ -11,7 +11,6 @@ import {
   RiNotificationLine,
   RiNotificationOffLine,
   RiArchiveLine,
-  RiInboxUnarchiveLine,
   RiGroupLine
 } from "react-icons/ri";
 
