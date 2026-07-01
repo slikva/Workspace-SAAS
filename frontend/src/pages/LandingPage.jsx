@@ -27,7 +27,7 @@ function NavBar() {
               className="w-20 h-20 object-contain"
             />
 
-            <div className="max-w-7xl mx-auto px-6 h-28 flex items-center justify-between">
+            <div>
             <h3 className="font-bold text-[#163F68] text-lg">
               SHNOOR WorkSpace
             </h3>
