@@ -130,14 +130,23 @@ setReactions(reactionsObj);
     formData.append("file", selectedFile);
 
     const uploadRes = await fetch(
-      `${import.meta.env.VITE_API_URL}/upload`,
-      {
-        method: "POST",
-        body: formData,
-      }
-    );
+  `${import.meta.env.VITE_API_URL}/upload`,
+  {
+    method: "POST",
+    body: formData,
+  }
+);
 
-    const uploadData = await uploadRes.json();
+const text = await uploadRes.text();
+
+console.log(text);
+
+if (!uploadRes.ok) {
+  alert(text);
+  return;
+}
+
+const uploadData = JSON.parse(text);
 
     fileUrl = uploadData.fileUrl;
     fileName = uploadData.fileName;
