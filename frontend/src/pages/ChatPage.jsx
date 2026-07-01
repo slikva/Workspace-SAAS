@@ -338,46 +338,35 @@ const renameGroup = async (group) => {
 
 </div>
 
-         {groups
-  .filter(
-    (group) =>
-      !archivedGroups[group.group_id]
-  )
-  .map((group) => (
+        {groups
+  .filter(group => archivedGroups[group.group_id])
+  .map(group => (
 
     <div
       key={group.group_id}
-      className={`flex justify-between items-center p-4 border-b hover:bg-gray-50 transition relative ${
-        selectedGroup?.group_id === group.group_id
-          ? "bg-blue-50"
-          : ""
-      }`}
+      className="relative flex items-center justify-between px-4 py-3 border-b hover:bg-gray-50 transition"
     >
 
       <div
         onClick={() => selectGroup(group)}
-        className="flex-1 cursor-pointer font-medium text-[#163F68]"
+        className="flex items-center gap-3 cursor-pointer flex-1"
       >
+        <RiArchiveLine
+          className="text-[#C99232]"
+          size={18}
+        />
 
-        {group.group_name}
-
-        {mutedGroups[group.group_id] && (
-
-          <RiNotificationOffLine
-            className="inline ml-2 text-[#C99232]"
-            size={16}
-          />
-
-        )}
-
+        <span className="text-gray-700">
+          {group.group_name}
+        </span>
       </div>
 
       <button
         onClick={() =>
           setOpenMenu(
-            openMenu === group.group_id
+            openMenu === `archive-${group.group_id}`
               ? null
-              : group.group_id
+              : `archive-${group.group_id}`
           )
         }
         className="p-2 rounded-full hover:bg-gray-200 transition"
@@ -385,252 +374,47 @@ const renameGroup = async (group) => {
         <RiMore2Fill size={18} />
       </button>
 
-     {openMenu === group.group_id && (
+      {openMenu === `archive-${group.group_id}` && (
 
-<div
-className="
-absolute
-right-3
-top-12
-w-64
-bg-white
-rounded-xl
-shadow-2xl
-border
-border-gray-200
-z-50
-overflow-hidden
-animate-in
-fade-in
-duration-200
-"
->
+        <div
+          className="absolute right-3 top-12 w-56 bg-white rounded-xl shadow-xl border z-50"
+        >
 
-{currentUser.role === "Manager" && (
+          <button
+            onClick={() => {
 
-<button
-onClick={()=>{
-renameGroup(group);
-setOpenMenu(null);
-}}
-className="
-w-full
-flex
-items-center
-gap-3
-px-4
-py-3
-hover:bg-gray-100
-transition
-"
->
+              setArchivedGroups(prev => ({
+                ...prev,
+                [group.group_id]: false,
+              }));
 
-<RiEdit2Line
-className="text-[#163F68]"
-size={18}
-/>
+              setOpenMenu(null);
 
-<span>
-Rename Group
-</span>
+            }}
+            className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-100 transition"
+          >
 
-</button>
+            <RiInboxUnarchiveLine
+              className="text-[#163F68]"
+            />
 
-)}
+            <span>
+              Unarchive Group
+            </span>
 
-<button
-onClick={()=>{
-setMutedGroups(prev=>({
-...prev,
-[group.group_id]:
-!prev[group.group_id]
-}));
-setOpenMenu(null);
-}}
-className="
-w-full
-flex
-items-center
-gap-3
-px-4
-py-3
-hover:bg-gray-100
-transition
-"
->
+          </button>
 
-{mutedGroups[group.group_id]
-?
+        </div>
 
-<RiNotificationLine
-className="text-[#163F68]"
-size={18}
-/>
-
-:
-
-<RiNotificationOffLine
-className="text-[#163F68]"
-size={18}
-/>
-
-}
-
-<span>
-
-{mutedGroups[group.group_id]
-?
-"Unmute Notifications"
-:
-"Mute Notifications"}
-
-</span>
-
-</button>
-
-<button
-onClick={()=>{
-setArchivedGroups(prev=>({
-...prev,
-[group.group_id]:
-!prev[group.group_id]
-}));
-setOpenMenu(null);
-}}
-className="
-w-full
-flex
-items-center
-gap-3
-px-4
-py-3
-hover:bg-gray-100
-transition
-"
->
-
-{archivedGroups[group.group_id]
-?
-
-<RiInboxUnarchiveLine
-className="text-[#163F68]"
-size={18}
-/>
-
-:
-
-<RiArchiveLine
-className="text-[#163F68]"
-size={18}
-/>
-
-}
-
-<span>
-
-{archivedGroups[group.group_id]
-?
-"Unarchive Group"
-:
-"Archive Group"}
-
-</span>
-
-</button>
-
-<div className="border-t"/>
-
-{currentUser.role==="Manager"&&(
-
-<button
-onClick={()=>{
-deleteGroup(group.group_id);
-setOpenMenu(null);
-}}
-className="
-w-full
-flex
-items-center
-gap-3
-px-4
-py-3
-text-red-600
-hover:bg-red-50
-transition
-"
->
-
-<RiDeleteBinLine
-size={18}
-/>
-
-<span>
-Delete Group
-</span>
-
-</button>
-
-)}
-
-</div>
-
-)}
+      )}
 
     </div>
 
 ))}
-{Object.keys(archivedGroups).some(
-id=>archivedGroups[id]
-)&&(
 
-<>
 
-<div className="px-4 py-3 text-xs font-bold text-gray-400 uppercase">
 
-Archived
 
-</div>
-
-{groups
-.filter(group=>archivedGroups[group.group_id])
-.map(group=>(
-
-<div
-key={group.group_id}
-onClick={()=>{
-selectGroup(group);
-}}
-className="
-flex
-items-center
-gap-3
-px-4
-py-3
-border-b
-cursor-pointer
-hover:bg-gray-50
-transition
-"
->
-
-<RiArchiveLine
-className="text-[#C99232]"
-size={18}
-/>
-
-<span className="text-gray-600">
-
-{group.group_name}
-
-</span>
-
-</div>
-
-))}
-
-</>
-
-)}
         </div>
 
        
