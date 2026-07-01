@@ -350,16 +350,41 @@ function Footer() {
                   {col.title}
                 </p>
 
-                {col.links.map((link) => (
-                  <a
-                    key={link.name}
-                    href={link.href}
-                    className="flex items-start gap-2 text-slate-400 hover:text-[#C99232] transition-colors mb-2">
-                    {col.title === "Contact" && (<RiMailLine className="mt-1 flex-shrink-0" />)}
-                    {col.title === "Location" &&(<RiUserLocationLine className="mt-1 flex-shrink-0" />)}
-                    {link.name}
-                  </a>
-                ))}
+                {col.links.map((link) => {
+
+  if (link.to) {
+    return (
+      <Link
+        key={link.name}
+        to={link.to}
+        className="flex items-start gap-2 text-slate-400 hover:text-[#C99232] transition-colors mb-2"
+      >
+        {link.name}
+      </Link>
+    );
+  }
+
+  return (
+    <a
+      key={link.name}
+      href={link.href}
+      target={link.href?.startsWith("http") ? "_blank" : "_self"}
+      rel="noreferrer"
+      className="flex items-start gap-2 text-slate-400 hover:text-[#C99232] transition-colors mb-2"
+    >
+      {col.title === "Contact" && (
+        <RiMailLine className="mt-1 flex-shrink-0" />
+      )}
+
+      {col.title === "Location" && (
+        <RiUserLocationLine className="mt-1 flex-shrink-0" />
+      )}
+
+      {link.name}
+    </a>
+  );
+
+})}
               </div>
             ))}
           
