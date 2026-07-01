@@ -385,162 +385,252 @@ const renameGroup = async (group) => {
         <RiMore2Fill size={18} />
       </button>
 
-      {openMenu === group.group_id && (
+     {openMenu === group.group_id && (
 
-        <div
-          className="
-          absolute
-          right-3
-          top-12
-          w-56
-          bg-white
-          rounded-xl
-          shadow-xl
-          border
-          z-50
-          overflow-hidden
-          "
-        >
+<div
+className="
+absolute
+right-3
+top-12
+w-64
+bg-white
+rounded-xl
+shadow-2xl
+border
+border-gray-200
+z-50
+overflow-hidden
+animate-in
+fade-in
+duration-200
+"
+>
 
-          {currentUser.role === "Manager" && (
+{currentUser.role === "Manager" && (
 
-            <button
-              onClick={() => {
+<button
+onClick={()=>{
+renameGroup(group);
+setOpenMenu(null);
+}}
+className="
+w-full
+flex
+items-center
+gap-3
+px-4
+py-3
+hover:bg-gray-100
+transition
+"
+>
 
-                renameGroup(group);
+<RiEdit2Line
+className="text-[#163F68]"
+size={18}
+/>
 
-                setOpenMenu(null);
+<span>
+Rename Group
+</span>
 
-              }}
-              className="
-              w-full
-              px-4
-              py-3
-              flex
-              items-center
-              gap-3
-              hover:bg-gray-100
-              text-left
-              "
-            >
+</button>
 
-              <RiEdit2Line />
+)}
 
-              Rename Group
+<button
+onClick={()=>{
+setMutedGroups(prev=>({
+...prev,
+[group.group_id]:
+!prev[group.group_id]
+}));
+setOpenMenu(null);
+}}
+className="
+w-full
+flex
+items-center
+gap-3
+px-4
+py-3
+hover:bg-gray-100
+transition
+"
+>
 
-            </button>
+{mutedGroups[group.group_id]
+?
 
-          )}
+<RiNotificationLine
+className="text-[#163F68]"
+size={18}
+/>
 
-          <button
-            onClick={() => {
+:
 
-              setMutedGroups((prev) => ({
-                ...prev,
-                [group.group_id]:
-                  !prev[group.group_id],
-              }));
+<RiNotificationOffLine
+className="text-[#163F68]"
+size={18}
+/>
 
-              setOpenMenu(null);
+}
 
-            }}
-            className="
-            w-full
-            px-4
-            py-3
-            flex
-            items-center
-            gap-3
-            hover:bg-gray-100
-            text-left
-            "
-          >
+<span>
 
-            {mutedGroups[group.group_id] ? (
+{mutedGroups[group.group_id]
+?
+"Unmute Notifications"
+:
+"Mute Notifications"}
 
-              <RiNotificationLine />
+</span>
 
-            ) : (
+</button>
 
-              <RiNotificationOffLine />
+<button
+onClick={()=>{
+setArchivedGroups(prev=>({
+...prev,
+[group.group_id]:
+!prev[group.group_id]
+}));
+setOpenMenu(null);
+}}
+className="
+w-full
+flex
+items-center
+gap-3
+px-4
+py-3
+hover:bg-gray-100
+transition
+"
+>
 
-            )}
+{archivedGroups[group.group_id]
+?
 
-            {mutedGroups[group.group_id]
-              ? "Unmute Notifications"
-              : "Mute Notifications"}
+<RiInboxUnarchiveLine
+className="text-[#163F68]"
+size={18}
+/>
 
-          </button>
+:
 
-          <button
-            onClick={() => {
+<RiArchiveLine
+className="text-[#163F68]"
+size={18}
+/>
 
-              setArchivedGroups((prev) => ({
-                ...prev,
-                [group.group_id]: true,
-              }));
+}
 
-              setOpenMenu(null);
+<span>
 
-            }}
-            className="
-            w-full
-            px-4
-            py-3
-            flex
-            items-center
-            gap-3
-            hover:bg-gray-100
-            text-left
-            "
-          >
+{archivedGroups[group.group_id]
+?
+"Unarchive Group"
+:
+"Archive Group"}
 
-            <RiArchiveLine />
+</span>
 
-            Archive Group
+</button>
 
-          </button>
+<div className="border-t"/>
 
-          <div className="border-t" />
+{currentUser.role==="Manager"&&(
 
-          {currentUser.role === "Manager" && (
+<button
+onClick={()=>{
+deleteGroup(group.group_id);
+setOpenMenu(null);
+}}
+className="
+w-full
+flex
+items-center
+gap-3
+px-4
+py-3
+text-red-600
+hover:bg-red-50
+transition
+"
+>
 
-            <button
-              onClick={() => {
+<RiDeleteBinLine
+size={18}
+/>
 
-                deleteGroup(group.group_id);
+<span>
+Delete Group
+</span>
 
-                setOpenMenu(null);
+</button>
 
-              }}
-              className="
-              w-full
-              px-4
-              py-3
-              flex
-              items-center
-              gap-3
-              hover:bg-red-50
-              text-red-600
-              text-left
-              "
-            >
+)}
 
-              <RiDeleteBinLine />
+</div>
 
-              Delete Group
-
-            </button>
-
-          )}
-
-        </div>
-
-      )}
+)}
 
     </div>
 
 ))}
+{Object.keys(archivedGroups).some(
+id=>archivedGroups[id]
+)&&(
+
+<>
+
+<div className="px-4 py-3 text-xs font-bold text-gray-400 uppercase">
+
+Archived
+
+</div>
+
+{groups
+.filter(group=>archivedGroups[group.group_id])
+.map(group=>(
+
+<div
+key={group.group_id}
+onClick={()=>{
+selectGroup(group);
+}}
+className="
+flex
+items-center
+gap-3
+px-4
+py-3
+border-b
+cursor-pointer
+hover:bg-gray-50
+transition
+"
+>
+
+<RiArchiveLine
+className="text-[#C99232]"
+size={18}
+/>
+
+<span className="text-gray-600">
+
+{group.group_name}
+
+</span>
+
+</div>
+
+))}
+
+</>
+
+)}
         </div>
 
        
