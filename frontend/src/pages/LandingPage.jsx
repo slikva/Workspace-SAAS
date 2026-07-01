@@ -19,7 +19,7 @@ function NavBar() {
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-[#F7F8FA]">
-      <div className="max-w-7xl mx-auto px-6 h-24 flex items-center justify-between">        
+      <div className="max-w-[1500px] mx-auto px-10 h-28 flex items-center justify-between">      
        <div className="flex items-center gap-3">
          <img
               src="/shnoor_international_logo.jpeg"
@@ -37,7 +37,7 @@ function NavBar() {
             </p>
           </div>
         </div> 
-        <div className="hidden md:flex items-center bg-[#163F68] rounded-full px-8 py-4 gap-10">
+        <div className="hidden md:flex items-center justify-center bg-[#163F68] rounded-full w-[650px] h-14 gap-14">
           <a href="#ho" className="text-white text-sm hover:text-[#C99232] transition">
             Home
           </a>
