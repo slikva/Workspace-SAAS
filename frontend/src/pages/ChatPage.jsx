@@ -5,8 +5,13 @@ import {
   RiThumbUpLine,
   RiEmotionHappyLine,
   RiHeartLine,  RiAttachmentLine,
-  RiVolumeMuteLine,
-  RiVolumeUpLine,
+  RiMore2Fill,
+  RiEdit2Line,
+  RiDeleteBinLine,
+  RiNotificationLine,
+  RiNotificationOffLine,
+  RiArchiveLine,
+  RiInboxUnarchiveLine,
   RiGroupLine
 } from "react-icons/ri";
 
@@ -33,6 +38,9 @@ export default function ChatPage() {
   const [showMembers, setShowMembers] = useState(false);
 const [users, setUsers] = useState([]);
 const [selectedUser, setSelectedUser] = useState("");
+const [openMenu, setOpenMenu] = useState(null);
+const [mutedGroups, setMutedGroups] = useState({});
+const [archivedGroups, setArchivedGroups] = useState({});
 
   useEffect(() => {
   loadGroups();
@@ -331,38 +339,207 @@ const renameGroup = async (group) => {
 
 </div>
 
-         {groups.map((group) => (
-
-  <div
-    key={group.group_id}
-    className={`flex justify-between items-center p-4 border-b hover:bg-gray-50 ${
-      selectedGroup?.group_id === group.group_id
-        ? "bg-blue-50"
-        : ""
-    }`}
-  >
+         {groups
+  .filter(
+    (group) =>
+      !archivedGroups[group.group_id]
+  )
+  .map((group) => (
 
     <div
-      onClick={() => selectGroup(group)}
-      className="flex-1 cursor-pointer"
+      key={group.group_id}
+      className={`flex justify-between items-center p-4 border-b hover:bg-gray-50 transition relative ${
+        selectedGroup?.group_id === group.group_id
+          ? "bg-blue-50"
+          : ""
+      }`}
     >
-      {group.group_name}
-    </div>
 
-    {currentUser.role === "Manager" && (
+      <div
+        onClick={() => selectGroup(group)}
+        className="flex-1 cursor-pointer font-medium text-[#163F68]"
+      >
+
+        {group.group_name}
+
+        {mutedGroups[group.group_id] && (
+
+          <RiNotificationOffLine
+            className="inline ml-2 text-[#C99232]"
+            size={16}
+          />
+
+        )}
+
+      </div>
 
       <button
         onClick={() =>
-          deleteGroup(group.group_id)
+          setOpenMenu(
+            openMenu === group.group_id
+              ? null
+              : group.group_id
+          )
         }
-        className="text-[#C99232] "
+        className="p-2 rounded-full hover:bg-gray-200 transition"
       >
-        ✕
+        <RiMore2Fill size={18} />
       </button>
 
-    )}
+      {openMenu === group.group_id && (
 
-  </div>
+        <div
+          className="
+          absolute
+          right-3
+          top-12
+          w-56
+          bg-white
+          rounded-xl
+          shadow-xl
+          border
+          z-50
+          overflow-hidden
+          "
+        >
+
+          {currentUser.role === "Manager" && (
+
+            <button
+              onClick={() => {
+
+                renameGroup(group);
+
+                setOpenMenu(null);
+
+              }}
+              className="
+              w-full
+              px-4
+              py-3
+              flex
+              items-center
+              gap-3
+              hover:bg-gray-100
+              text-left
+              "
+            >
+
+              <RiEdit2Line />
+
+              Rename Group
+
+            </button>
+
+          )}
+
+          <button
+            onClick={() => {
+
+              setMutedGroups((prev) => ({
+                ...prev,
+                [group.group_id]:
+                  !prev[group.group_id],
+              }));
+
+              setOpenMenu(null);
+
+            }}
+            className="
+            w-full
+            px-4
+            py-3
+            flex
+            items-center
+            gap-3
+            hover:bg-gray-100
+            text-left
+            "
+          >
+
+            {mutedGroups[group.group_id] ? (
+
+              <RiNotificationLine />
+
+            ) : (
+
+              <RiNotificationOffLine />
+
+            )}
+
+            {mutedGroups[group.group_id]
+              ? "Unmute Notifications"
+              : "Mute Notifications"}
+
+          </button>
+
+          <button
+            onClick={() => {
+
+              setArchivedGroups((prev) => ({
+                ...prev,
+                [group.group_id]: true,
+              }));
+
+              setOpenMenu(null);
+
+            }}
+            className="
+            w-full
+            px-4
+            py-3
+            flex
+            items-center
+            gap-3
+            hover:bg-gray-100
+            text-left
+            "
+          >
+
+            <RiArchiveLine />
+
+            Archive Group
+
+          </button>
+
+          <div className="border-t" />
+
+          {currentUser.role === "Manager" && (
+
+            <button
+              onClick={() => {
+
+                deleteGroup(group.group_id);
+
+                setOpenMenu(null);
+
+              }}
+              className="
+              w-full
+              px-4
+              py-3
+              flex
+              items-center
+              gap-3
+              hover:bg-red-50
+              text-red-600
+              text-left
+              "
+            >
+
+              <RiDeleteBinLine />
+
+              Delete Group
+
+            </button>
+
+          )}
+
+        </div>
+
+      )}
+
+    </div>
 
 ))}
         </div>
