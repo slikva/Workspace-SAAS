@@ -38,19 +38,19 @@ function NavBar() {
           </div>
         </div> 
         <div className="hidden md:flex items-center justify-center bg-[#163F68] rounded-full w-[650px] h-14 gap-14">
-          <a href="#ho" className="text-white text-sm hover:text-[#C99232] transition">
+          <a href="#ho" className="text-white text-md hover:text-[#C99232] transition">
             Home
           </a>
-          <a href="#features" className="text-white text-sm hover:text-[#C99232] transition">
+          <a href="#features" className="text-white text-md hover:text-[#C99232] transition">
             Features
           </a>
-          <a href="#ro" className="text-white text-sm hover:text-[#C99232] transition">
+          <a href="#ro" className="text-white text-md hover:text-[#C99232] transition">
             Roles
           </a>
-          <a href="#fa" className="text-white text-sm hover:text-[#C99232] transition">
+          <a href="#fa" className="text-white text-md hover:text-[#C99232] transition">
             FAQ'S
           </a>
-          <a href="#contact" className="text-white text-sm hover:text-[#C99232] transition">
+          <a href="#contact" className="text-white text-md hover:text-[#C99232] transition">
             Contact
           </a>
         </div>
