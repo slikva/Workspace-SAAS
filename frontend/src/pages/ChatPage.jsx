@@ -11,7 +11,10 @@ import {
   RiNotificationLine,
   RiNotificationOffLine,
   RiArchiveLine,
-  RiGroupLine
+  RiGroupLine,
+  RiDownloadLine,
+  RiCloseLine,
+  RiFilePdfLine,
 } from "react-icons/ri";
 
 
@@ -40,6 +43,7 @@ const [selectedUser, setSelectedUser] = useState("");
 const [openMenu, setOpenMenu] = useState(null);
 const [mutedGroups, setMutedGroups] = useState({});
 const [previewImage, setPreviewImage] = useState(null);
+const [previewPdf, setPreviewPdf] = useState(null);
 const [archivedGroups, setArchivedGroups] = useState({});
 
   useEffect(() => {
@@ -813,15 +817,47 @@ size={18}
 />
     ) : (
 
-      <a
-        href={msg.file_url}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="text-blue-600 underline"
-      >
-         {msg.file_name}
-      </a>
+     <div
+  onClick={() => setPreviewPdf(msg.file_url)}
+  className="
+    flex
+    items-center
+    justify-between
+    bg-white
+    rounded-lg
+    border
+    p-3
+    cursor-pointer
+    hover:bg-gray-50
+    transition
+    text-[#163F68]
+  "
+>
 
+  <div className="flex items-center gap-3">
+
+    <RiFilePdfLine
+      size={28}
+      className="text-red-600"
+    />
+
+    <div>
+
+      <p className="font-medium">
+        {msg.file_name}
+      </p>
+
+      <p className="text-xs text-gray-500">
+        Click to preview
+      </p>
+
+    </div>
+
+  </div>
+
+  <RiDownloadLine size={20} />
+
+</div>
     )}
 
   </div>
@@ -998,16 +1034,50 @@ size={18}
 
 
 </div>
-{previewImage && (
-  <div
-    className="fixed inset-0 bg-black/80 flex items-center justify-center z-50"
-    onClick={() => setPreviewImage(null)}
-  >
-    <img
-      src={previewImage}
-      alt="Preview"
-      className="max-w-[90vw] max-h-[90vh] rounded-lg shadow-xl"
-    />
+{previewPdf && (
+  <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
+
+    <div className="bg-white rounded-xl shadow-2xl w-[90%] h-[90%] flex flex-col overflow-hidden">
+
+      {/* Header */}
+      <div className="flex items-center justify-between px-5 py-4 border-b">
+
+        <h2 className="text-lg font-semibold text-[#163F68]">
+          PDF Preview
+        </h2>
+
+        <div className="flex items-center gap-4">
+
+          <a
+            href={previewPdf}
+            download
+            className="text-[#163F68] hover:text-[#C99232] transition"
+            title="Download"
+          >
+            <RiDownloadLine size={24} />
+          </a>
+
+          <button
+            onClick={() => setPreviewPdf(null)}
+            className="text-[#163F68] hover:text-red-600 transition"
+            title="Close"
+          >
+            <RiCloseLine size={26} />
+          </button>
+
+        </div>
+
+      </div>
+
+      {/* PDF Viewer */}
+      <iframe
+        src={previewPdf}
+        title="PDF Viewer"
+        className="flex-1 w-full"
+      />
+
+    </div>
+
   </div>
 )}
         </div>
