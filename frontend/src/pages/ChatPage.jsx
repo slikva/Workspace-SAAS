@@ -56,6 +56,7 @@ const unreadCount = notifications.filter(n => !n.is_read).length;
   useEffect(() => {
   loadGroups();
   loadUsers();
+  loadGroupUnread();
 }, []);
 useEffect(() => {
 
@@ -80,14 +81,7 @@ useEffect(() => {
   return () => clearInterval(interval);
 
 }, []);
-  const loadGroups = async () => {
-
-  let url = `${import.meta.env.VITE_API_URL}/groups`;
-
-  if (currentUser.role === "Employee") {
-    url = `${import.meta.env.VITE_API_URL}/my-groups/${currentUser.user_id}`;
-  }
-  const loadGroupUnread = async () => {
+const loadGroupUnread = async () => {
 
   const res = await fetch(
     `${import.meta.env.VITE_API_URL}/group-unread/${currentUser.user_id}`
@@ -104,6 +98,14 @@ useEffect(() => {
   setGroupUnread(unreadMap);
 
 };
+  const loadGroups = async () => {
+
+  let url = `${import.meta.env.VITE_API_URL}/groups`;
+
+  if (currentUser.role === "Employee") {
+    url = `${import.meta.env.VITE_API_URL}/my-groups/${currentUser.user_id}`;
+  }
+ 
   const res = await fetch(url);
   const data = await res.json();
 
