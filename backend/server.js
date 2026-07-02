@@ -1,8 +1,13 @@
 const express = require("express");
+const admin = require("firebase-admin");
+const { initializeApp, cert } = require("firebase-admin/app");
+const { getMessaging } = require("firebase-admin/messaging");
+const serviceAccount = require("./workspace-saas-8873f-firebase-adminsdk-fbsvc-1b35531270.json");
 
+initializeApp({
+  credential: cert(serviceAccount),
+});
 const app = express();
-
-
 const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
@@ -570,6 +575,45 @@ group_id,
 "chat"
 ]
 );
+const receiver = await pool.query(
+  `
+  SELECT
+    fcm_token
+  FROM users
+  WHERE user_id = $1
+  `,
+  [member.user_id]
+);
+
+const token = receiver.rows[0]?.fcm_token;
+
+if (token) {
+
+  try {
+
+    await getMessaging().send({
+
+      token,
+
+      notification: {
+
+        title: senderName,
+
+        body: message || "📎 Sent an attachment"
+
+      }
+
+    });
+
+    console.log("Push notification sent");
+
+  } catch (err) {
+
+    console.error("Firebase Error:", err);
+
+  }
+
+}
 
     }
 
@@ -1667,6 +1711,43 @@ app.post("/save-fcm-token", async (req, res) => {
   }
 
 });
+app.post("/test-notification", async (req, res) => {
+
+  try {
+
+    const { token } = req.body;
+
+    await getMessaging().send({
+
+      token,
+
+      notification: {
+
+        title: "Workspace",
+
+        body: "🎉 Push Notifications are working!"
+
+      }
+
+    });
+
+    res.json({
+
+      success: true
+
+    });
+
+  } catch (err) {
+
+    console.error(err);
+
+    res.status(500).json(err);
+
+  }
+
+});
+
+
 
 
 const PORT = process.env.PORT || 5001;
