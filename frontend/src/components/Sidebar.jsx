@@ -34,7 +34,7 @@ useEffect(() => {
 
   loadUnread();
 
-  const interval = setInterval(loadUnread, 3000);
+  const interval = setInterval(loadUnread, 1000);
 
   window.addEventListener("notificationsUpdated", loadUnread);
 
@@ -96,17 +96,11 @@ const handleLogout = () => {
 
        <Link
           to="/chat"
-          className="flex items-center justify-between px-4 py-3"
+          className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/10"
         >
-
-          <div className="flex items-center gap-3">
-
             <RiMessage2Line />
 
-            <span>Chat</span>
-
-          </div>
-
+            Chat
           {totalUnread > 0 && (
 
             <span className="bg-[#C99232] text-white text-xs font-semibold rounded-full min-w-[22px] h-[22px] flex items-center justify-center px-2">
