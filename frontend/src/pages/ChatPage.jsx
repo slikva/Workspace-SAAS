@@ -1099,28 +1099,7 @@ size={18}
 
   <div className="relative">
 
-    {previewFile &&
-      previewFile.sender_id !== currentUser.user_id && (
-
-      <a
-        href={previewImage}
-        download
-        className="
-          absolute
-          top-4
-          right-14
-          bg-white
-          p-2
-          rounded-full
-          shadow
-          hover:bg-gray-100
-          z-10
-        "
-      >
-        <RiDownloadLine size={22}/>
-      </a>
-
-    )}
+    
 
     <button
       onClick={() => {
