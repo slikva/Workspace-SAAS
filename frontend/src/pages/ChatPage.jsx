@@ -11,10 +11,11 @@ import {
   RiDeleteBinLine,
   RiNotificationLine,
   RiNotificationOffLine,
-  RiArchiveLine,
   RiGroupLine,
   RiDownloadLine,
   RiCloseLine,
+  RiArchiveLine,
+  RiInboxUnarchiveLine,
   RiFilePdfLine,
 } from "react-icons/ri";
 
@@ -41,6 +42,7 @@ export default function ChatPage() {
   const [members, setMembers] = useState([]);
   const [showMembers, setShowMembers] = useState(false);
 const [users, setUsers] = useState([]);
+const [showUsers, setShowUsers] = useState(false);
 const [selectedUser, setSelectedUser] = useState("");
 const [openMenu, setOpenMenu] = useState(null);
 const [mutedGroups, setMutedGroups] = useState({});
