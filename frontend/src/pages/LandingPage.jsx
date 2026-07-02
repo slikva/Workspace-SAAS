@@ -106,7 +106,7 @@ function HeroSection() {
           initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3, duration: 0.6 }}
           className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-3"
         >
-          <Link to="/" className="btn-primary text-base px-7 py-3 shadow-lg shadow-blue-200 hover:text-[#C99232] transition">
+          <Link to="/register-company" className="btn-primary text-base px-7 py-3 shadow-lg shadow-blue-200 hover:text-[#C99232] transition">
             Start free trial <RiArrowRightLine size={16} />
           </Link>
           <button className="btn-outline text-base px-7 py-3 gap-2">
