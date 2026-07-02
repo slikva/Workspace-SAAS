@@ -2,7 +2,8 @@
 import { Routes, Route } from "react-router-dom";
 import { lazy, Suspense } from "react";
 
-
+import { useEffect } from "react";
+import { requestNotificationPermission } from "./notification";
 const LandingPage = lazy(() => import("./pages/LandingPage"));
 const LoginPage = lazy(() => import("./pages/LoginPage"));
 const DashboardPage = lazy(() => import("./pages/DashboardPage"));
@@ -22,6 +23,42 @@ const TermsPage=lazy(()=> import("./pages/TermsPage"));
 const PrivacyPage=lazy(()=> import("./pages/PrivacyPage"));
 
 function App() {
+  useEffect(() => {
+
+  async function enableNotifications() {
+
+    const token = await requestNotificationPermission();
+
+    if (!token) return;
+
+    const user = JSON.parse(localStorage.getItem("user"));
+
+    await fetch(`${import.meta.env.VITE_API_URL}/save-fcm-token`, {
+
+      method: "POST",
+
+      headers: {
+        "Content-Type": "application/json"
+      },
+
+      body: JSON.stringify({
+
+        user_id: user.user_id,
+
+        token
+
+      })
+
+    });
+
+    console.log("Token saved");
+
+  }
+
+  enableNotifications();
+
+}, []);
+
   return (
 
     <Suspense
