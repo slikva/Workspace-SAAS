@@ -1,4 +1,5 @@
 import React, { useEffect,useState,lazy, Suspense,} from "react";
+import socket from "../socket";
 import Sidebar from "../components/Sidebar";
 import {
   RiDeleteBin6Line,
@@ -34,6 +35,17 @@ export default function ChatPage() {
   const currentUser = JSON.parse(
   localStorage.getItem("user")
 );
+useEffect(() => {
+
+  if (currentUser) {
+
+    socket.emit("join", currentUser.user_id);
+
+    console.log("Joined Socket Room:", currentUser.user_id);
+
+  }
+
+}, []);
   const [newGroup, setNewGroup] = useState("");
   
   const [members, setMembers] = useState([]);
