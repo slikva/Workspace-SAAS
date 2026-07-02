@@ -128,57 +128,51 @@ app.post("/users", async (req, res) => {
       ]
     );
 
-    await transporter.sendMail({
+    try {
 
-      from:process.env.EMAIL_USER,
+  await transporter.sendMail({
 
-      to: email,
+    from: process.env.EMAIL_USER,
+    to: email,
+    subject: "Welcome to Shnoor WorkSpace",
 
-      subject:
-        "Welcome to WorkSpace",
+    html: `
+      <div style="font-family:Arial;padding:20px">
+        <h2>Welcome to Shnoor WorkSpace</h2>
 
-      html: `
-        <div style="font-family:Arial;padding:20px">
+        <p>Hello ${full_name},</p>
 
-          <h2>
-            Welcome to WorkSpace
-          </h2>
+        <p>Your account has been created successfully.</p>
 
-          <p>
-            Hello ${full_name},
-          </p>
+        <hr/>
 
-          <p>
-            Your account has been created successfully.
-          </p>
+        <p><strong>Email:</strong> ${email}</p>
+        <p><strong>Password:</strong> ${password}</p>
+        <p><strong>Role:</strong> ${role}</p>
 
-          <hr/>
+        <hr/>
 
-          <p>
-            <strong>Email:</strong>
-            ${email}
-          </p>
+        <p>
+          Login URL:
+          https://workspace-saas-lime.vercel.app/login
+        </p>
+      </div>
+    `
 
-          <p>
-            <strong>Password:</strong>
-            ${password}
-          </p>
+  });
 
-          <p>
-            <strong>Role:</strong>
-            ${role}
-          </p>
+  console.log("Welcome email sent.");
 
-          <hr/>
+} catch (mailError) {
 
-          <p>
-            Login URL:
-            https://workspace-saas-lime.vercel.app/login
-          </p>
+  console.error("Email sending failed:", mailError.message);
 
-        </div>
-      `
-    });
+}
+
+res.json({
+  success: true,
+  user: result.rows[0]
+});
 
     res.json({
       success: true,
