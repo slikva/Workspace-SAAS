@@ -576,6 +576,7 @@ app.post("/messages", async (req, res) => {
     );
 
     const senderName = sender.rows[0].full_name;
+    console.log("Sender:", senderName);
 
     // ==========================
     // NEW: Get all group members
@@ -590,13 +591,14 @@ app.post("/messages", async (req, res) => {
       `,
       [group_id, sender_id]
     );
+    console.log("Members:", members.rows);
 
     // ==========================
     // NEW: Create notification
     // for every member
     // ==========================
     for (const member of members.rows) {
-
+       console.log("Creating notification for:", member.user_id);
       await pool.query(
         `
         INSERT INTO notifications
