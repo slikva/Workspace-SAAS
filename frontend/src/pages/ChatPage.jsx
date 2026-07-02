@@ -76,7 +76,7 @@ useEffect(() => {
 
   loadNotifications();
 
-  const interval = setInterval(loadNotifications,3000);
+  const interval = setInterval(loadNotifications,1000);
 
   return () => clearInterval(interval);
 
@@ -352,6 +352,31 @@ const deleteGroup = async (groupId) => {
   loadGroups();
 
 };
+const startPrivateChat = async (user) => {
+
+    const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/private-chat`,
+        {
+            method:"POST",
+            headers:{
+                "Content-Type":"application/json"
+            },
+            body:JSON.stringify({
+                user1:currentUser.user_id,
+                user2:user.user_id
+            })
+        }
+    );
+
+    const group = await res.json();
+
+    setShowUsers(false);
+
+    loadGroups();
+
+    selectGroup(group);
+
+};
 const renameGroup = async (group) => {
 
   const newName = prompt(
@@ -410,10 +435,36 @@ const renameGroup = async (group) => {
       >
         +
       </button>
-
+      
     </div>
   )}
+  <button
+    onClick={() => setShowUsers(true)}
+    className="bg-[#163F68] text-white px-3 py-2 rounded-lg"
+  >
+      + New Chat
+  </button>
+  {showUsers && (
 
+<div className="absolute bg-white shadow-xl rounded-lg p-4">
+
+{users.map(user => (
+
+<div
+key={user.user_id}
+onClick={()=>startPrivateChat(user)}
+className="p-3 hover:bg-gray-100 cursor-pointer"
+>
+
+{user.full_name}
+
+</div>
+
+))}
+
+</div>
+
+)}
 </div>
 
          {groups
