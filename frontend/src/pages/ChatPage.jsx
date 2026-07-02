@@ -161,6 +161,7 @@ const selectGroup = async (group) => {
         method: "PUT",
       }
     );
+    window.dispatchEvent(new Event("notificationsUpdated"));
     await loadGroupUnread();
 
   } catch (err) {

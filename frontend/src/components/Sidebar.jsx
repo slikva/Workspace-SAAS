@@ -36,7 +36,15 @@ useEffect(() => {
 
   const interval = setInterval(loadUnread, 3000);
 
-  return () => clearInterval(interval);
+  window.addEventListener("notificationsUpdated", loadUnread);
+
+  return () => {
+
+    clearInterval(interval);
+
+    window.removeEventListener("notificationsUpdated", loadUnread);
+
+  };
 
 }, []);
 const navigate = useNavigate();
