@@ -451,15 +451,11 @@ const renameGroup = async (group) => {
 
 <div
   className="
-    absolute
-    left-4
-    top-32
-    w-64
+    mt-2
     bg-white
     border
-    rounded-xl
-    shadow-2xl
-    z-50
+    rounded-lg
+    shadow
     overflow-hidden
 "
 >
@@ -478,7 +474,7 @@ const renameGroup = async (group) => {
 
   </div>
 
-  <div className="max-h-80 overflow-y-auto">
+  <div className="max-h-56 overflow-y-auto">
 
     {users.map(user => (
 
