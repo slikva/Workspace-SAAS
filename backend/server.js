@@ -1,40 +1,8 @@
 const express = require("express");
-const http = require("http");
-const { Server } = require("socket.io");
 
 const app = express();
 
-const server = http.createServer(app);
 
-const io = new Server(server, {
-  cors: {
-    origin: [
-      "http://localhost:5173",
-      "https://workspace-saas-lime.vercel.app"
-    ],
-    methods: ["GET", "POST"]
-  }
-});
-
-io.on("connection", (socket) => {
-
-  console.log("User Connected:", socket.id);
-
-  socket.on("join", (userId) => {
-
-    socket.join(userId.toString());
-
-    console.log(`User ${userId} joined room ${userId}`);
-
-  });
-
-  socket.on("disconnect", () => {
-
-    console.log("User Disconnected:", socket.id);
-
-  });
-
-});
 const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
@@ -1499,31 +1467,33 @@ app.post("/upload", upload.single("file"), async (req, res) => {
 });
 
 app.get("/notifications/:userId", async (req, res) => {
+
   try {
-    const { userId } = req.params;
 
     const result = await pool.query(
       `
       SELECT
         n.*,
-        u.full_name AS sender_name
+        u.full_name
       FROM notifications n
       LEFT JOIN users u
       ON n.sender_id = u.user_id
       WHERE n.user_id = $1
       ORDER BY n.created_at DESC
       `,
-      [userId]
+      [req.params.userId]
     );
 
     res.json(result.rows);
 
   } catch (err) {
+
     console.error(err);
-    res.status(500).json({
-      message: "Failed to fetch notifications"
-    });
+
+    res.status(500).send("Error");
+
   }
+
 });
 
 app.get("/notifications/count/:userId", async (req, res) => {
@@ -1588,6 +1558,6 @@ app.put("/notifications/read/:id", async (req, res) => {
 
 const PORT = process.env.PORT || 5001;
 
-server.listen(PORT, () => {
+app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
