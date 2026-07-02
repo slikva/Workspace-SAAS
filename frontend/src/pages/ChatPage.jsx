@@ -1046,7 +1046,7 @@ size={18}
 
         {activeMessage===msg.message_id&&(
 
-        <div className="absolute -top-12 right-0 z-50 bg-white shadow-lg rounded-lg px-3 py-2 flex gap-3 border">
+        <div className="absolute -top-12 right-0 z-50  text-black shadow-lg rounded-lg px-3 py-2 flex gap-3 border">
 
         <button onClick={()=>addReaction(msg.message_id,"😀")}>
         <RiEmotionHappyLine size={18}/>
