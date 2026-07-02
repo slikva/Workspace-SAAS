@@ -538,6 +538,7 @@ app.post("/messages", async (req, res) => {
       file_type,
     } = req.body;
 
+    // Save message
     const result = await pool.query(
       `
       INSERT INTO messages
@@ -562,6 +563,64 @@ app.post("/messages", async (req, res) => {
       ]
     );
 
+    // ==========================
+    // NEW: Get sender name
+    // ==========================
+    const sender = await pool.query(
+      `
+      SELECT full_name
+      FROM users
+      WHERE user_id = $1
+      `,
+      [sender_id]
+    );
+
+    const senderName = sender.rows[0].full_name;
+
+    // ==========================
+    // NEW: Get all group members
+    // except sender
+    // ==========================
+    const members = await pool.query(
+      `
+      SELECT user_id
+      FROM group_members
+      WHERE group_id = $1
+      AND user_id <> $2
+      `,
+      [group_id, sender_id]
+    );
+
+    // ==========================
+    // NEW: Create notification
+    // for every member
+    // ==========================
+    for (const member of members.rows) {
+
+      await pool.query(
+        `
+        INSERT INTO notifications
+        (
+          user_id,
+          sender_id,
+          title,
+          message,
+          type
+        )
+        VALUES
+        ($1,$2,$3,$4,$5)
+        `,
+        [
+          member.user_id,
+          sender_id,
+          "New Chat Message",
+          `${senderName} sent a message`,
+          "chat",
+        ]
+      );
+
+    }
+
     res.json(result.rows[0]);
 
   } catch (err) {
@@ -575,7 +634,6 @@ app.post("/messages", async (req, res) => {
   }
 
 });
-
 app.post("/group-members", async (req, res) => {
   try {
 
@@ -1399,6 +1457,92 @@ app.post("/upload", upload.single("file"), async (req, res) => {
       message: "File upload failed",
     });
   }
+});
+
+app.get("/notifications/:userId", async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    const result = await pool.query(
+      `
+      SELECT
+        n.*,
+        u.full_name AS sender_name
+      FROM notifications n
+      LEFT JOIN users u
+      ON n.sender_id = u.user_id
+      WHERE n.user_id = $1
+      ORDER BY n.created_at DESC
+      `,
+      [userId]
+    );
+
+    res.json(result.rows);
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      message: "Failed to fetch notifications"
+    });
+  }
+});
+
+app.get("/notifications/count/:userId", async (req, res) => {
+
+  try {
+
+    const { userId } = req.params;
+
+    const result = await pool.query(
+      `
+      SELECT COUNT(*) AS unread
+      FROM notifications
+      WHERE user_id=$1
+      AND is_read=false
+      `,
+      [userId]
+    );
+
+    res.json(result.rows[0]);
+
+  } catch (err) {
+
+    console.error(err);
+
+    res.status(500).json({
+      message: "Error"
+    });
+
+  }
+
+});
+app.put("/notifications/read/:id", async (req, res) => {
+
+  try {
+
+    await pool.query(
+      `
+      UPDATE notifications
+      SET is_read=true
+      WHERE notification_id=$1
+      `,
+      [req.params.id]
+    );
+
+    res.json({
+      success: true
+    });
+
+  } catch (err) {
+
+    console.error(err);
+
+    res.status(500).json({
+      success: false
+    });
+
+  }
+
 });
 
 
