@@ -440,29 +440,61 @@ const renameGroup = async (group) => {
       
     </div>
   )}
-  <button
-    onClick={() => setShowUsers(true)}
-    className="bg-[#163F68] text-white px-3 py-2 rounded-lg"
-  >
-      + New Chat
-  </button>
-  {showUsers && (
+ <button
+  onClick={() => setShowUsers(true)}
+  className="bg-[#163F68] text-white px-3 py-2 rounded-lg mt-3"
+>
+  + New Chat
+</button>
 
-<div className="absolute bg-white shadow-xl rounded-lg p-4">
-
-{users.map(user => (
+{showUsers && (
 
 <div
-key={user.user_id}
-onClick={()=>startPrivateChat(user)}
-className="p-3 hover:bg-gray-100 cursor-pointer"
+  className="
+    absolute
+    left-4
+    top-32
+    w-64
+    bg-white
+    border
+    rounded-xl
+    shadow-2xl
+    z-50
+    overflow-hidden
+"
 >
+  <div className="flex justify-between items-center p-3 border-b">
 
-{user.full_name}
+    <h3 className="font-semibold">
+      Start New Chat
+    </h3>
 
-</div>
+    <button
+      onClick={() => setShowUsers(false)}
+      className="text-xl hover:text-red-600"
+    >
+      ×
+    </button>
 
-))}
+  </div>
+
+  <div className="max-h-80 overflow-y-auto">
+
+    {users.map(user => (
+
+      <div
+        key={user.user_id}
+        onClick={() => startPrivateChat(user)}
+        className="p-3 hover:bg-gray-100 cursor-pointer border-b"
+      >
+
+        {user.full_name}
+
+      </div>
+
+    ))}
+
+  </div>
 
 </div>
 
