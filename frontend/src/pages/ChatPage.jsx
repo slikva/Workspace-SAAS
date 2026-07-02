@@ -48,9 +48,11 @@ const [previewImage, setPreviewImage] = useState(null);
 const [previewPdf, setPreviewPdf] = useState(null);
 const [previewFile, setPreviewFile] = useState(null);
 const [archivedGroups, setArchivedGroups] = useState({});
+const [groupUnread, setGroupUnread] = useState({});
 const [notifications, setNotifications] = useState([]);
 const [showUnread, setShowUnread] = useState(false);
 const unreadCount = notifications.filter(n => !n.is_read).length;
+
   useEffect(() => {
   loadGroups();
   loadUsers();
@@ -85,7 +87,23 @@ useEffect(() => {
   if (currentUser.role === "Employee") {
     url = `${import.meta.env.VITE_API_URL}/my-groups/${currentUser.user_id}`;
   }
+  const loadGroupUnread = async () => {
 
+  const res = await fetch(
+    `${import.meta.env.VITE_API_URL}/group-unread/${currentUser.user_id}`
+  );
+
+  const data = await res.json();
+
+  const unreadMap = {};
+
+  data.forEach(item => {
+    unreadMap[item.group_id] = Number(item.unread);
+  });
+
+  setGroupUnread(unreadMap);
+
+};
   const res = await fetch(url);
   const data = await res.json();
 
@@ -652,7 +670,25 @@ size={18}
 
 <span className="text-gray-600">
 
-{group.group_name}
+<div className="flex justify-between items-center w-full">
+
+  <span>
+
+    {group.group_name}
+
+  </span>
+
+  {groupUnread[group.group_id] > 0 && (
+
+    <span className="bg-green-600 text-white text-xs rounded-full min-w-[20px] h-5 px-2 flex items-center justify-center">
+
+      {groupUnread[group.group_id]}
+
+    </span>
+
+  )}
+
+</div>
 
 </span>
 
@@ -852,174 +888,174 @@ size={18}
 
          <div className="flex-1 overflow-y-auto p-4">
 
-{selectedGroup ? (
+        {selectedGroup ? (
 
-messages.map((msg) => (
+        messages.map((msg) => (
 
-<div
-  key={msg.message_id}
-  className={`mb-4 flex ${
-    msg.sender_id === currentUser.user_id
-      ? "justify-end"
-      : "justify-start"
-  }`}
->
+        <div
+          key={msg.message_id}
+          className={`mb-4 flex ${
+            msg.sender_id === currentUser.user_id
+              ? "justify-end"
+              : "justify-start"
+          }`}
+        >
 
-<div
-className={`max-w-md px-4 py-3 rounded-2xl shadow-sm ${
-msg.sender_id===currentUser.user_id
-? "bg-[#163F68] text-white"
-: "bg-white"
-}`}
->
+        <div
+        className={`max-w-md px-4 py-3 rounded-2xl shadow-sm ${
+        msg.sender_id===currentUser.user_id
+        ? "bg-[#163F68] text-white"
+        : "bg-white"
+        }`}
+        >
 
-<div className="flex justify-between items-center mb-1">
+        <div className="flex justify-between items-center mb-1">
 
-<span className="text-xs">
-{msg.full_name}
-</span>
+        <span className="text-xs">
+        {msg.full_name}
+        </span>
 
-<span className="text-[10px]">
-{new Date(msg.created_at).toLocaleTimeString([],{
-hour:"2-digit",
-minute:"2-digit"
-})}
-</span>
+        <span className="text-[10px]">
+        {new Date(msg.created_at).toLocaleTimeString([],{
+        hour:"2-digit",
+        minute:"2-digit"
+        })}
+        </span>
 
-</div>
+        </div>
 
-<div className="flex items-center gap-3">
+        <div className="flex items-center gap-3">
 
-<div
-className="relative inline-block"
-onClick={()=>
-setActiveMessage(
-activeMessage===msg.message_id
-? null
-: msg.message_id
-)
-}
->
+        <div
+        className="relative inline-block"
+        onClick={()=>
+        setActiveMessage(
+        activeMessage===msg.message_id
+        ? null
+        : msg.message_id
+        )
+        }
+        >
 
-<div>
+        <div>
 
-{msg.message}
+        {msg.message}
 
-{msg.file_url && (
+        {msg.file_url && (
 
-<div className="mt-2">
+        <div className="mt-2">
 
-{msg.file_type.startsWith("image") ? (
+        {msg.file_type.startsWith("image") ? (
 
-<img
-src={msg.file_url}
-alt={msg.file_name}
-className="max-w-xs rounded-lg cursor-pointer"
-onClick={()=>{
-setPreviewImage(msg.file_url);
-setPreviewFile(msg);
-}}
-/>
+        <img
+        src={msg.file_url}
+        alt={msg.file_name}
+        className="max-w-xs rounded-lg cursor-pointer"
+        onClick={()=>{
+        setPreviewImage(msg.file_url);
+        setPreviewFile(msg);
+        }}
+        />
 
-) : (
+        ) : (
 
-<div
-onClick={()=>{
-setPreviewPdf(msg.file_url);
-setPreviewFile(msg);
-}}
-className="flex items-center justify-between bg-white rounded-lg border p-3 cursor-pointer hover:bg-gray-50 transition text-[#163F68]"
->
+        <div
+        onClick={()=>{
+        setPreviewPdf(msg.file_url);
+        setPreviewFile(msg);
+        }}
+        className="flex items-center justify-between bg-white rounded-lg border p-3 cursor-pointer hover:bg-gray-50 transition text-[#163F68]"
+        >
 
-<div className="flex items-center gap-3">
+        <div className="flex items-center gap-3">
 
-<RiFilePdfLine
-size={28}
-className="text-red-600"
-/>
+        <RiFilePdfLine
+        size={28}
+        className="text-red-600"
+        />
 
-<div>
+        <div>
 
-<p className="font-medium">
-{msg.file_name}
-</p>
+        <p className="font-medium">
+        {msg.file_name}
+        </p>
 
-<p className="text-xs text-gray-500">
-Click to preview
-</p>
+        <p className="text-xs text-gray-500">
+        Click to preview
+        </p>
 
-</div>
+        </div>
 
-</div>
+        </div>
 
-{msg.sender_id!==currentUser.user_id&&(
+        {msg.sender_id!==currentUser.user_id&&(
 
-<RiDownloadLine
-size={20}
-className="text-[#163F68]"
-/>
+        <RiDownloadLine
+        size={20}
+        className="text-[#163F68]"
+        />
 
-)}
+        )}
 
-</div>
+        </div>
 
-)}
+        )}
 
-</div>
+        </div>
 
-)}
+        )}
 
-</div>
+        </div>
 
-<div className="flex gap-2 mt-1">
+        <div className="flex gap-2 mt-1">
 
-{reactions[msg.message_id]?.map((r)=>(
+        {reactions[msg.message_id]?.map((r)=>(
 
-<span
-key={r.reaction_id}
-className="text-xs bg-gray-200 px-2 rounded-full"
->
+        <span
+        key={r.reaction_id}
+        className="text-xs bg-gray-200 px-2 rounded-full"
+        >
 
-{r.reaction}
+        {r.reaction}
 
-</span>
+        </span>
 
-))}
+        ))}
 
-</div>
+        </div>
 
-{activeMessage===msg.message_id&&(
+        {activeMessage===msg.message_id&&(
 
-<div className="absolute -top-12 right-0 z-50 bg-white shadow-lg rounded-lg px-3 py-2 flex gap-3 border">
+        <div className="absolute -top-12 right-0 z-50 bg-white shadow-lg rounded-lg px-3 py-2 flex gap-3 border">
 
-<button onClick={()=>addReaction(msg.message_id,"😀")}>
-<RiEmotionHappyLine size={18}/>
-</button>
+        <button onClick={()=>addReaction(msg.message_id,"😀")}>
+        <RiEmotionHappyLine size={18}/>
+        </button>
 
-<button onClick={()=>addReaction(msg.message_id,"👍")}>
-<RiThumbUpLine size={18}/>
-</button>
+        <button onClick={()=>addReaction(msg.message_id,"👍")}>
+        <RiThumbUpLine size={18}/>
+        </button>
 
-<button onClick={()=>addReaction(msg.message_id,"❤️")}>
-<RiHeartLine size={18}/>
-</button>
+        <button onClick={()=>addReaction(msg.message_id,"❤️")}>
+        <RiHeartLine size={18}/>
+        </button>
 
-{msg.sender_id===currentUser.user_id&&(
+        {msg.sender_id===currentUser.user_id&&(
 
-<button
-onClick={()=>deleteMessage(msg.message_id)}
-className="text-black hover:text-red-600"
->
+        <button
+        onClick={()=>deleteMessage(msg.message_id)}
+        className="text-black hover:text-red-600"
+        >
 
-<RiDeleteBin6Line size={18}/>
+        <RiDeleteBin6Line size={18}/>
 
-</button>
+        </button>
 
-)}
+        )}
 
-</div>
+        </div>
 
-)}
+        )}
 
 </div>
 
