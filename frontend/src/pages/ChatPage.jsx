@@ -1,5 +1,5 @@
 import React, { useEffect,useState,lazy, Suspense,} from "react";
-import socket from "../socket";
+
 import Sidebar from "../components/Sidebar";
 import {
   RiDeleteBin6Line,
@@ -35,17 +35,7 @@ export default function ChatPage() {
   const currentUser = JSON.parse(
   localStorage.getItem("user")
 );
-useEffect(() => {
 
-  if (currentUser) {
-
-    socket.emit("join", currentUser.user_id);
-
-    console.log("Joined Socket Room:", currentUser.user_id);
-
-  }
-
-}, []);
   const [newGroup, setNewGroup] = useState("");
   
   const [members, setMembers] = useState([]);
@@ -58,10 +48,35 @@ const [previewImage, setPreviewImage] = useState(null);
 const [previewPdf, setPreviewPdf] = useState(null);
 const [previewFile, setPreviewFile] = useState(null);
 const [archivedGroups, setArchivedGroups] = useState({});
-
+const [notifications, setNotifications] = useState([]);
+const [showUnread, setShowUnread] = useState(false);
+const unreadCount = notifications.filter(n => !n.is_read).length;
   useEffect(() => {
   loadGroups();
   loadUsers();
+}, []);
+useEffect(() => {
+
+  if (!currentUser) return;
+
+  const loadNotifications = async () => {
+
+    const res = await fetch(
+      `${import.meta.env.VITE_API_URL}/notifications/${currentUser.user_id}`
+    );
+
+    const data = await res.json();
+
+    setNotifications(data);
+
+  };
+
+  loadNotifications();
+
+  const interval = setInterval(loadNotifications,3000);
+
+  return () => clearInterval(interval);
+
 }, []);
   const loadGroups = async () => {
 
@@ -669,15 +684,92 @@ size={18}
       <RiGroupLine />
     </button>
 
-    <button
-      onClick={() => setIsMuted(!isMuted)}
-      className="text-xl"
-    >
-      {isMuted ? <RiNotificationOffLine /> : <RiNotificationLine />}
-    </button>
+   <div className="relative">
+
+  <button
+    onClick={() => setShowUnread(!showUnread)}
+    className="font-semibold text-[#163F68]"
+  >
+
+    Unread
+
+    {unreadCount > 0 && (
+
+      <span className="ml-2 bg-red-600 text-white rounded-full px-2 py-0.5 text-xs">
+
+        {unreadCount}
+
+      </span>
+
+    )}
+
+  </button>
+
+</div>
 
   </div>
+{showUnread && (
 
+<div className="bg-white rounded-xl shadow-lg border mb-4">
+
+  {notifications.length === 0 ? (
+
+    <div className="p-4 text-gray-500">
+
+      No unread notifications
+
+    </div>
+
+  ) : (
+
+    notifications.map((item) => (
+
+      <div
+        key={item.notification_id}
+        onClick={async () => {
+
+          await fetch(
+            `${import.meta.env.VITE_API_URL}/notifications/read/${item.notification_id}`,
+            {
+              method:"PUT"
+            }
+          );
+
+          setNotifications(prev =>
+            prev.map(n =>
+              n.notification_id===item.notification_id
+              ? {...n,is_read:true}
+              : n
+            )
+          );
+
+        }}
+        className={`p-4 border-b cursor-pointer ${
+          item.is_read ? "bg-white" : "bg-blue-50"
+        }`}
+      >
+
+        <div className="font-semibold">
+
+          {item.title}
+
+        </div>
+
+        <div className="text-sm text-gray-600">
+
+          {item.message}
+
+        </div>
+
+      </div>
+
+    ))
+
+  )}
+
+</div>
+
+)}
 </div>
 {currentUser.role === "Manager" && (
 
