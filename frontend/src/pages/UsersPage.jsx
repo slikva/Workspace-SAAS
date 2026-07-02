@@ -34,13 +34,21 @@ if (currentUser?.role !== "Manager") {
     fetchUsers();
   }, []);
   const fetchUsers = async () => {
-  const res = await fetch(`${import.meta.env.VITE_API_URL}/users`);
+
+  const res = await fetch(
+    `${import.meta.env.VITE_API_URL}/users`
+  );
+
   const data = await res.json();
-  setUsers(data);
+
+  setUsers([...data]);
+
 };
 
 const handleAddUser = async () => {
+
   try {
+
     const response = await fetch(
       `${import.meta.env.VITE_API_URL}/users`,
       {
@@ -54,41 +62,35 @@ const handleAddUser = async () => {
 
     const data = await response.json();
 
-      if (data.success) {
-        alert("User Created Successfully");
+    if (!response.ok) {
 
-        setShowForm(false);
+      alert(data.message || "Failed to Create User");
+      return;
 
-        setNewUser({
-          company_id: 1,
-          full_name: "",
-          email: "",
-          password: "",
-          role: "Employee",
-        });
-
-        fetchUsers();
-      }
-
-    } catch (err) {
-      console.error(err);
-      alert("Failed to Create User");
     }
-  };
-  const handleDelete = async (id) => {
-  try {
-    await fetch(
-      `${import.meta.env.VITE_API_URL}/users/${id}`,
-      {
-        method: "DELETE",
-      }
-    );
 
-    fetchUsers();
+    await fetchUsers();
+
+    setShowForm(false);
+
+    setNewUser({
+      company_id: 1,
+      full_name: "",
+      email: "",
+      password: "",
+      role: "Employee",
+    });
+
+    alert("User Created Successfully");
 
   } catch (err) {
+
     console.error(err);
+
+    alert("Failed to Create User");
+
   }
+
 };
  const handleUpdateUser = async () => {
   try {
