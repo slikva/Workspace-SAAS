@@ -354,31 +354,7 @@ const deleteGroup = async (groupId) => {
   loadGroups();
 
 };
-const startPrivateChat = async (user) => {
 
-    const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/private-chat`,
-        {
-            method:"POST",
-            headers:{
-                "Content-Type":"application/json"
-            },
-            body:JSON.stringify({
-                user1:currentUser.user_id,
-                user2:user.user_id
-            })
-        }
-    );
-
-    const group = await res.json();
-
-    setShowUsers(false);
-
-    loadGroups();
-
-    selectGroup(group);
-
-};
 const renameGroup = async (group) => {
 
   const newName = prompt(
@@ -402,6 +378,31 @@ const renameGroup = async (group) => {
   );
 
   loadGroups();
+
+};
+const startPrivateChat = async (user) => {
+
+    const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/private-chat`,
+        {
+            method:"POST",
+            headers:{
+                "Content-Type":"application/json"
+            },
+            body:JSON.stringify({
+                user1:currentUser.user_id,
+                user2:user.user_id
+            })
+        }
+    );
+
+    const group = await res.json();
+
+    setShowUsers(false);
+
+    loadGroups();
+
+    selectGroup(group);
 
 };
 
