@@ -1189,12 +1189,10 @@ className="mx-auto mb-4"
 />
 
 <h2 className="text-3xl font-semibold">
-Select a Chat
+Shnoor Connect
 </h2>
 
-<p className="mt-2">
-Choose a group from the left to start chatting.
-</p>
+
 
 </div>
 
