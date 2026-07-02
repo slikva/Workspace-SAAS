@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-
+import { useState, useEffect } from "react";
 import {
   RiUserLine,
   RiDashboardLine,
@@ -13,7 +13,32 @@ import {
 export default function Sidebar() {
   const currentUser = JSON.parse(
   localStorage.getItem("user") || "{}"
+  
 );
+const [totalUnread, setTotalUnread] = useState(0);
+useEffect(() => {
+
+  if (!currentUser.user_id) return;
+
+  const loadUnread = async () => {
+
+    const res = await fetch(
+      `${import.meta.env.VITE_API_URL}/notifications/${currentUser.user_id}`
+    );
+
+    const data = await res.json();
+
+    setTotalUnread(data.length);
+
+  };
+
+  loadUnread();
+
+  const interval = setInterval(loadUnread, 3000);
+
+  return () => clearInterval(interval);
+
+}, []);
 const navigate = useNavigate();
 const handleLogout = () => {
   const confirmLogout = window.confirm(
