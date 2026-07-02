@@ -41,6 +41,15 @@ const transporter = nodemailer.createTransport({
     pass: process.env.EMAIL_PASS,
   },
 });
+transporter.verify((error, success) => {
+
+  if (error) {
+    console.log("SMTP ERROR:", error);
+  } else {
+    console.log("SMTP READY");
+  }
+
+});
 
 
 
@@ -1620,6 +1629,44 @@ app.put("/notifications/read/:id", async (req, res) => {
 
 });
 
+app.post("/save-fcm-token", async (req, res) => {
+
+  try {
+
+    console.log("BODY:", req.body);
+
+    const { user_id, token } = req.body;
+
+    console.log("USER:", user_id);
+    console.log("TOKEN:", token);
+
+    const result = await pool.query(
+      `
+      UPDATE users
+      SET fcm_token = $1
+      WHERE user_id = $2
+      RETURNING *
+      `,
+      [token, user_id]
+    );
+
+    console.log("UPDATED:", result.rows);
+
+    res.json({
+      success: true
+    });
+
+  } catch (err) {
+
+    console.error(err);
+
+    res.status(500).json({
+      success: false
+    });
+
+  }
+
+});
 
 
 const PORT = process.env.PORT || 5001;
