@@ -98,6 +98,16 @@ const loadGroupUnread = async () => {
   setGroupUnread(unreadMap);
 
 };
+const total = Object.values(groupUnread).reduce(
+  (sum, count) => sum + count,
+  0
+);
+
+window.dispatchEvent(
+  new CustomEvent("updateSidebarBadge", {
+    detail: total,
+  })
+);
   const loadGroups = async () => {
 
   let url = `${import.meta.env.VITE_API_URL}/groups`;
