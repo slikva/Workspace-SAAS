@@ -61,9 +61,29 @@ const handleLogout = () => {
           Calendar
         </Link>
 
-        <Link to="/chat" className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/10">
-          <RiMessage2Line />
-          Chat
+       <Link
+          to="/chat"
+          className="flex items-center justify-between px-4 py-3"
+        >
+
+          <div className="flex items-center gap-3">
+
+            <RiMessage2Line />
+
+            <span>Chat</span>
+
+          </div>
+
+          {totalUnread > 0 && (
+
+            <span className="bg-red-500 text-white text-xs font-semibold rounded-full min-w-[22px] h-[22px] flex items-center justify-center px-2">
+
+              {totalUnread}
+
+            </span>
+
+          )}
+
         </Link>
 
         <Link to="/settings" className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/10">
