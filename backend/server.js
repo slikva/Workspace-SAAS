@@ -607,15 +607,15 @@ app.post("/messages", async (req, res) => {
       await pool.query(
         `
         INSERT INTO notifications
-        (
-          user_id,
-          sender_id,
-          title,
-          message,
-          type
-        )
-        VALUES
-        ($1,$2,$3,$4,$5)
+          (
+            user_id,
+            sender_id,
+            group_id,
+            title,
+            message,
+            type
+          )
+          VALUES ($1,$2,$3,$4,$5,$6)
         `,
         [
           member.user_id,
@@ -637,6 +637,34 @@ app.post("/messages", async (req, res) => {
     res.status(500).json({
       error: err.message,
     });
+
+  }
+
+});
+app.get("/group-unread/:userId", async (req, res) => {
+
+  try {
+
+    const result = await pool.query(
+      `
+      SELECT
+        group_id,
+        COUNT(*) AS unread
+      FROM notifications
+      WHERE user_id = $1
+      AND is_read = false
+      GROUP BY group_id
+      `,
+      [req.params.userId]
+    );
+
+    res.json(result.rows);
+
+  } catch (err) {
+
+    console.error(err);
+
+    res.status(500).send("Error");
 
   }
 
