@@ -1,11 +1,14 @@
 const express = require("express");
-const admin = require("firebase-admin");
 const { initializeApp, cert } = require("firebase-admin/app");
 const { getMessaging } = require("firebase-admin/messaging");
-const serviceAccount = require("./workspace-saas-8873f-firebase-adminsdk-fbsvc-1b35531270.json");
+const admin = require("firebase-admin");
 
-initializeApp({
-  credential: cert(serviceAccount),
+admin.initializeApp({
+  credential: admin.credential.cert({
+    projectId: process.env.FIREBASE_PROJECT_ID,
+    clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+    privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, "\n"),
+  }),
 });
 const app = express();
 const multer = require("multer");
