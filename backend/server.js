@@ -1545,6 +1545,7 @@ app.get("/notifications/:userId", async (req, res) => {
       LEFT JOIN users u
       ON n.sender_id = u.user_id
       WHERE n.user_id = $1
+      AND n.is_read = false
       ORDER BY n.created_at DESC
       `,
       [req.params.userId]
