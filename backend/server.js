@@ -182,12 +182,17 @@ app.post("/users", async (req, res) => {
 
   } catch (err) {
 
-    console.error(err);
+  console.error("========== SMTP ERROR ==========");
+  console.error(err);
+  console.error("Message:", err.message);
+  console.error("Code:", err.code);
+  console.error("Response:", err.response);
 
-    res.status(500).json({
-      success: false,
-      message: "Failed to create user"
-    });
+  res.status(500).json({
+    success: false,
+    message: err.message,
+  });
+
 
   }
 
