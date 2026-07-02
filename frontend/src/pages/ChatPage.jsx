@@ -121,39 +121,54 @@ const loadGroupUnread = async () => {
   setUsers(data);
 };
 
- const selectGroup = async (group) => {
-  setSelectedGroup(group);
+const selectGroup = async (group) => {
 
-  const messagesRes = await fetch(
-    `${import.meta.env.VITE_API_URL}/messages/${group.group_id}`
-  );
+  try {
 
-  const messagesData = await messagesRes.json();
+    setSelectedGroup(group);
+    const messagesRes = await fetch(
+      `${import.meta.env.VITE_API_URL}/messages/${group.group_id}`
+    );
 
-  setMessages(messagesData);
-  const reactionsObj = {};
+    const messagesData = await messagesRes.json();
 
-for (const msg of messagesData) {
+    setMessages(messagesData);
+    const reactionsObj = {};
 
-  const res = await fetch(
-    `${import.meta.env.VITE_API_URL}/reactions/${msg.message_id}`
-  );
+    for (const msg of messagesData) {
 
-  const data = await res.json();
+      const reactionRes = await fetch(
+        `${import.meta.env.VITE_API_URL}/reactions/${msg.message_id}`
+      );
 
-  reactionsObj[msg.message_id] = data;
-}
+      const reactionData = await reactionRes.json();
 
-setReactions(reactionsObj);
+      reactionsObj[msg.message_id] = reactionData;
 
-  const membersRes = await fetch(
-    `${import.meta.env.VITE_API_URL}/group-members/${group.group_id}`
-  );
+    }
 
-  const membersData = await membersRes.json();
-  console.log("Members:", membersData);
+    setReactions(reactionsObj);
+    const membersRes = await fetch(
+      `${import.meta.env.VITE_API_URL}/group-members/${group.group_id}`
+    );
 
-  setMembers(membersData);
+    const membersData = await membersRes.json();
+
+    setMembers(membersData);
+    await fetch(
+      `${import.meta.env.VITE_API_URL}/notifications/read-group/${group.group_id}/${currentUser.user_id}`,
+      {
+        method: "PUT",
+      }
+    );
+    await loadGroupUnread();
+
+  } catch (err) {
+
+    console.error(err);
+
+  }
+
 };
   const createGroup = async () => {
     if (!newGroup) return;
@@ -741,24 +756,6 @@ size={18}
 
    <div className="relative">
 
-  <button
-    onClick={() => setShowUnread(!showUnread)}
-    className="font-semibold text-[#163F68]"
-  >
-
-    Unread
-
-    {unreadCount > 0 && (
-
-      <span className="ml-2 bg-red-600 text-white rounded-full px-2 py-0.5 text-xs">
-
-        {unreadCount}
-
-      </span>
-
-    )}
-
-  </button>
 
 </div>
 
