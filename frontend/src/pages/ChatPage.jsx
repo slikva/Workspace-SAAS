@@ -1055,7 +1055,18 @@ size={18}
 
         <div className="flex items-center gap-4">
 
-       
+        {previewFile &&
+ previewFile.sender_id !== currentUser.user_id && (
+    <a
+        href={previewFile.file_url}
+        download
+        onClick={(e) => e.stopPropagation()}
+        className="text-[#163F68] hover:text-[#C99232]"
+    >
+        <RiDownloadLine size={20}/>
+    </a>
+
+)}
           <button
            onClick={() => {
     setPreviewPdf(null);
