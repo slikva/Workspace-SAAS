@@ -643,6 +643,36 @@ group_id,
   }
 
 });
+app.put("/notifications/read-group/:groupId/:userId", async (req, res) => {
+
+  try {
+
+    await pool.query(
+      `
+      UPDATE notifications
+      SET is_read = true
+      WHERE group_id = $1
+      AND user_id = $2
+      `,
+      [
+        req.params.groupId,
+        req.params.userId
+      ]
+    );
+
+    res.json({
+      success: true
+    });
+
+  } catch (err) {
+
+    console.error(err);
+
+    res.status(500).send("Error");
+
+  }
+
+});
 app.get("/group-unread/:userId", async (req, res) => {
 
   try {
