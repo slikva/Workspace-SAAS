@@ -62,15 +62,7 @@ function NavBar() {
             Log In
           </Link>
           
-          <a
-            href="https://shnoor-lms-frontend.vercel.app/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-2 text-[#163F68] font-medium hover:text-[#C99232] transition"
-          >
-            <RiBookOpenLine size={18} />
-            <span>Learning Hub</span>
-          </a>
+         
           <Link
             to="/register-company"
             className="px-6 py-3 rounded-lg bg-[#163F68] text-white font-semibold hover:bg-[#102D49] transition hover:text-[#C99232] transition"
@@ -334,8 +326,8 @@ function Footer() {
                   { name: "Features", href: "#features" },
                   { name: "Roles", href: "#ro" },
                   { name: "FAQ", href: "#fa" },
-                  { name: "Contact", href: "https://www.shnoor.com/contact-us" },
-                ],
+                  { name: "Contact", href: "#contact" },
+                  {name: "Learning Hub", href: "https://shnoor-lms-frontend.vercel.app/"},                ],
               },
               {
                 title: "Contact",
