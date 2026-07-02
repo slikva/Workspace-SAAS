@@ -447,7 +447,7 @@ const renameGroup = async (group) => {
 
   {groupUnread[group.group_id] > 0 && (
 
-    <span className="bg-green-600 text-white text-xs rounded-full min-w-[20px] h-5 px-2 flex items-center justify-center">
+    <span className="bg-[#C99232] text-white text-xs rounded-full min-w-[20px] h-5 px-2 flex items-center justify-center">
 
       {groupUnread[group.group_id]}
 
@@ -726,7 +726,7 @@ size={18}
 
   {groupUnread[group.group_id] > 0 && (
 
-    <span className="bg-green-600 text-white text-xs rounded-full min-w-[20px] h-5 px-2 flex items-center justify-center">
+    <span className="bg-[#C99232] text-white text-xs rounded-full min-w-[20px] h-5 px-2 flex items-center justify-center">
 
       {groupUnread[group.group_id]}
 

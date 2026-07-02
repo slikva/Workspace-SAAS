@@ -109,7 +109,7 @@ const handleLogout = () => {
 
           {totalUnread > 0 && (
 
-            <span className="bg-red-500 text-white text-xs font-semibold rounded-full min-w-[22px] h-[22px] flex items-center justify-center px-2">
+            <span className="bg-[#C99232] text-white text-xs font-semibold rounded-full min-w-[22px] h-[22px] flex items-center justify-center px-2">
 
               {totalUnread}
 
