@@ -409,7 +409,25 @@ const renameGroup = async (group) => {
         className="flex-1 cursor-pointer font-medium text-[#163F68]"
       >
 
-        {group.group_name}
+       <div className="flex justify-between items-center w-full">
+
+  <span>
+
+    {group.group_name}
+
+  </span>
+
+  {groupUnread[group.group_id] > 0 && (
+
+    <span className="bg-green-600 text-white text-xs rounded-full min-w-[20px] h-5 px-2 flex items-center justify-center">
+
+      {groupUnread[group.group_id]}
+
+    </span>
+
+  )}
+
+</div>
 
         {mutedGroups[group.group_id] && (
 
