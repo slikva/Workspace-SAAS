@@ -400,9 +400,9 @@ const startPrivateChat = async (user) => {
 
     setShowUsers(false);
 
-    loadGroups();
+    await loadGroups();
 
-    selectGroup(group);
+    await selectGroup(group);
 
 };
 
