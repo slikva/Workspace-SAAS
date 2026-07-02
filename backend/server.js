@@ -632,9 +632,10 @@ app.post("/private-chat", async (req, res) => {
   try {
 
     const { user1, user2 } = req.body;
+
     const existing = await pool.query(
       `
-      SELECT cg.group_id
+      SELECT cg.*
       FROM chat_groups cg
       JOIN group_members gm1
       ON cg.group_id = gm1.group_id
@@ -650,6 +651,16 @@ app.post("/private-chat", async (req, res) => {
     if (existing.rows.length > 0) {
       return res.json(existing.rows[0]);
     }
+
+    const otherUser = await pool.query(
+      `
+      SELECT full_name
+      FROM users
+      WHERE user_id=$1
+      `,
+      [user2]
+    );
+
     const chat = await pool.query(
       `
       INSERT INTO chat_groups
@@ -657,7 +668,7 @@ app.post("/private-chat", async (req, res) => {
       VALUES ($1,$2,'private')
       RETURNING *
       `,
-      ["Private Chat", user1]
+      [otherUser.rows[0].full_name, user1]
     );
 
     const groupId = chat.rows[0].group_id;
@@ -667,12 +678,12 @@ app.post("/private-chat", async (req, res) => {
       INSERT INTO group_members(group_id,user_id)
       VALUES ($1,$2),($1,$3)
       `,
-      [groupId,user1,user2]
+      [groupId, user1, user2]
     );
 
     res.json(chat.rows[0]);
 
-  } catch(err){
+  } catch (err) {
 
     console.error(err);
 
