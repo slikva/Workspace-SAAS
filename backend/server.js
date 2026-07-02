@@ -647,21 +647,27 @@ app.put("/notifications/read-group/:groupId/:userId", async (req, res) => {
 
   try {
 
-    await pool.query(
+    const result = await pool.query(
       `
       UPDATE notifications
       SET is_read = true
       WHERE group_id = $1
       AND user_id = $2
+      RETURNING *;
       `,
       [
-        req.params.groupId,
-        req.params.userId
+        Number(req.params.groupId),
+        Number(req.params.userId)
       ]
     );
 
+    console.log("Group:", req.params.groupId);
+    console.log("User:", req.params.userId);
+    console.log("Rows Updated:", result.rowCount);
+
     res.json({
-      success: true
+      success: true,
+      updated: result.rowCount
     });
 
   } catch (err) {
