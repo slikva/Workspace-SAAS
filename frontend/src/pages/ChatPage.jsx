@@ -1055,18 +1055,7 @@ size={18}
 
         <div className="flex items-center gap-4">
 
-        {previewFile &&
- previewFile.sender_id !== currentUser.user_id && (
-    <a
-        href={previewFile.file_url}
-        download
-        onClick={(e) => e.stopPropagation()}
-        className="text-[#163F68] hover:text-[#C99232]"
-    >
-        <RiDownloadLine size={20}/>
-    </a>
-
-)}
+       
           <button
            onClick={() => {
     setPreviewPdf(null);
@@ -1099,7 +1088,28 @@ size={18}
 
   <div className="relative">
 
-    
+    {previewFile &&
+      previewFile.sender_id !== currentUser.user_id && (
+
+      <a
+        href={previewImage}
+        download
+        className="
+          absolute
+          top-4
+          right-14
+          bg-white
+          p-2
+          rounded-full
+          shadow
+          hover:bg-gray-100
+          z-10
+        "
+      >
+        <RiDownloadLine size={22}/>
+      </a>
+
+    )}
 
     <button
       onClick={() => {
