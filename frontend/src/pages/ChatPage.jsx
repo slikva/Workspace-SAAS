@@ -91,9 +91,8 @@ useEffect(() => {
 
   setGroups(data);
 
-  if (data.length > 0) {
-    selectGroup(data[0]);
-  }
+  setSelectedGroup(null);
+  setMessages([]);
 };
   const loadUsers = async () => {
   const res = await fetch(`${import.meta.env.VITE_API_URL}/users`);
@@ -851,235 +850,214 @@ size={18}
 
 </div>
 
-          <div className="flex-1 overflow-y-auto p-4">
+         <div className="flex-1 overflow-y-auto p-4">
 
-           {messages.map((msg) => (
+{selectedGroup ? (
 
-  <div
-    key={msg.message_id}
-    className={`mb-4 flex ${
-      msg.sender_id === currentUser.user_id
-        ? "justify-end"
-        : "justify-start"
-    }`}
-  >
+messages.map((msg) => (
 
-    <div
-      className={`max-w-md px-4 py-3 rounded-2xl shadow-sm ${
-        msg.sender_id === currentUser.user_id
-          ? "bg-[#163F68] text-white"
-          : "bg-white"
-      }`}
-    >
+<div
+  key={msg.message_id}
+  className={`mb-4 flex ${
+    msg.sender_id === currentUser.user_id
+      ? "justify-end"
+      : "justify-start"
+  }`}
+>
 
-      <div className="flex justify-between items-center mb-1">
+<div
+className={`max-w-md px-4 py-3 rounded-2xl shadow-sm ${
+msg.sender_id===currentUser.user_id
+? "bg-[#163F68] text-white"
+: "bg-white"
+}`}
+>
 
-  <span className="text-xs text-rgb[250,250,250]">
-    {msg.full_name}
-  </span>
+<div className="flex justify-between items-center mb-1">
 
-  <span className="text-[10px] text-rgb[250,250,250]">
-    {new Date(msg.created_at).toLocaleTimeString([], {
-      hour: "2-digit",
-      minute: "2-digit"
-    })}
-  </span>
+<span className="text-xs">
+{msg.full_name}
+</span>
+
+<span className="text-[10px]">
+{new Date(msg.created_at).toLocaleTimeString([],{
+hour:"2-digit",
+minute:"2-digit"
+})}
+</span>
 
 </div>
 
-      <div className="flex items-center gap-3">
+<div className="flex items-center gap-3">
 
-  <div
-  className="relative inline-block"
-  onClick={() =>
-    setActiveMessage(
-      activeMessage === msg.message_id
-        ? null
-        : msg.message_id
-    )
-  }
+<div
+className="relative inline-block"
+onClick={()=>
+setActiveMessage(
+activeMessage===msg.message_id
+? null
+: msg.message_id
+)
+}
 >
- 
+
 <div>
 
-  {msg.message}
+{msg.message}
 
-  {msg.file_url && (
+{msg.file_url && (
 
-    <div className="mt-2">
+<div className="mt-2">
 
-      {msg.file_type.startsWith("image") ? (
+{msg.file_type.startsWith("image") ? (
 
-        <img
-          src={msg.file_url}
-          alt={msg.file_name}
-          className="max-w-xs rounded-lg cursor-pointer"
-          onClick={() => {
-            setPreviewImage(msg.file_url);
-            setPreviewFile(msg);
-          }}
-        />
+<img
+src={msg.file_url}
+alt={msg.file_name}
+className="max-w-xs rounded-lg cursor-pointer"
+onClick={()=>{
+setPreviewImage(msg.file_url);
+setPreviewFile(msg);
+}}
+/>
 
-      ) : (
+) : (
 
-        <div
-          onClick={() => {
-            setPreviewPdf(msg.file_url);
-            setPreviewFile(msg);
-          }}
-          className="
-            flex
-            items-center
-            justify-between
-            bg-white
-            rounded-lg
-            border
-            p-3
-            cursor-pointer
-            hover:bg-gray-50
-            transition
-            text-[#163F68]
-          "
-        >
+<div
+onClick={()=>{
+setPreviewPdf(msg.file_url);
+setPreviewFile(msg);
+}}
+className="flex items-center justify-between bg-white rounded-lg border p-3 cursor-pointer hover:bg-gray-50 transition text-[#163F68]"
+>
 
-          <div className="flex items-center gap-3">
+<div className="flex items-center gap-3">
 
-            <RiFilePdfLine
-              size={28}
-              className="text-red-600"
-            />
+<RiFilePdfLine
+size={28}
+className="text-red-600"
+/>
 
-            <div>
+<div>
 
-              <p className="font-medium">
-                {msg.file_name}
-              </p>
+<p className="font-medium">
+{msg.file_name}
+</p>
 
-              <p className="text-xs text-gray-500">
-                Click to preview
-              </p>
-
-            </div>
-
-          </div>
-
-          {msg.sender_id !== currentUser.user_id && (
-            <RiDownloadLine
-              size={20}
-              className="text-[#163F68]"
-            />
-          )}
-
-        </div>
-
-      )}
-
-    </div>
-
-  )}
-
-</div>
-  <div className="flex gap-2 mt-1">
-
-  {reactions[msg.message_id]?.map(
-    (r) => (
-      <span
-        key={r.reaction_id}
-        className="
-        text-xs
-        bg-gray-200
-        px-2
-        rounded-full
-        "
-      >
-        {r.reaction}
-      </span>
-    )
-  )}
+<p className="text-xs text-gray-500">
+Click to preview
+</p>
 
 </div>
 
-  {/* Hover Toolbar */}
+</div>
 
- {activeMessage === msg.message_id && (
+{msg.sender_id!==currentUser.user_id&&(
 
-  <div
-    className="
-    absolute
-    -top-12
-    right-0
-    z-50
-    bg-rgb(250,250,250)
-    shadow-lg
-    rounded-lg
-    px-3
-    py-2
-    flex
-    gap-3
-    border
-    "
-  >
-
-   <button
-  onClick={() =>
-    addReaction(
-      msg.message_id,
-      "😀"
-    )
-  }
->
-  <RiEmotionHappyLine size={18} />
-</button>
-
-    <button
-  onClick={() =>
-    addReaction(
-      msg.message_id,
-      "👍"
-    )
-  }
->
-  <RiThumbUpLine size={18} />
-</button>
-
-    <button
-  onClick={() =>
-    addReaction(
-      msg.message_id,
-      "❤️"
-    )
-  }
->
-  <RiHeartLine size={18} />
-</button>
-
-    {msg.sender_id === currentUser.user_id && (
-
-      <button
-        onClick={() =>
-          deleteMessage(msg.message_id)
-        }
-        className="text-black hover:text-red-600"
-      >
-        <RiDeleteBin6Line size={18} />
-      </button>
-
-    )}
-
-  </div>
+<RiDownloadLine
+size={20}
+className="text-[#163F68]"
+/>
 
 )}
-</div>
-  
 
 </div>
-    </div>
 
-  </div>
+)}
+
+</div>
+
+)}
+
+</div>
+
+<div className="flex gap-2 mt-1">
+
+{reactions[msg.message_id]?.map((r)=>(
+
+<span
+key={r.reaction_id}
+className="text-xs bg-gray-200 px-2 rounded-full"
+>
+
+{r.reaction}
+
+</span>
 
 ))}
 
-          </div>
+</div>
+
+{activeMessage===msg.message_id&&(
+
+<div className="absolute -top-12 right-0 z-50 bg-white shadow-lg rounded-lg px-3 py-2 flex gap-3 border">
+
+<button onClick={()=>addReaction(msg.message_id,"😀")}>
+<RiEmotionHappyLine size={18}/>
+</button>
+
+<button onClick={()=>addReaction(msg.message_id,"👍")}>
+<RiThumbUpLine size={18}/>
+</button>
+
+<button onClick={()=>addReaction(msg.message_id,"❤️")}>
+<RiHeartLine size={18}/>
+</button>
+
+{msg.sender_id===currentUser.user_id&&(
+
+<button
+onClick={()=>deleteMessage(msg.message_id)}
+className="text-black hover:text-red-600"
+>
+
+<RiDeleteBin6Line size={18}/>
+
+</button>
+
+)}
+
+</div>
+
+)}
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+))
+
+) : (
+
+<div className="flex items-center justify-center h-full">
+
+<div className="text-center text-gray-400">
+
+<RiGroupLine
+size={70}
+className="mx-auto mb-4"
+/>
+
+<h2 className="text-3xl font-semibold">
+Select a Chat
+</h2>
+
+<p className="mt-2">
+Choose a group from the left to start chatting.
+</p>
+
+</div>
+
+</div>
+
+)}
+
+</div>
+        {selectedGroup && (
 
          <div className="sticky bottom-0 bg-white border-t p-4 z-20">
 
@@ -1142,9 +1120,8 @@ size={18}
     Selected File: {selectedFile.name}
   </p>
 )}
-
-
 </div>
+)}
 {previewPdf && (
   <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
 
