@@ -605,26 +605,28 @@ app.post("/messages", async (req, res) => {
     for (const member of members.rows) {
        console.log("Creating notification for:", member.user_id);
       await pool.query(
-        `
-        INSERT INTO notifications
-          (
-            user_id,
-            sender_id,
-            group_id,
-            title,
-            message,
-            type
-          )
-          VALUES ($1,$2,$3,$4,$5,$6)
-        `,
-        [
-          member.user_id,
-          sender_id,
-          "New Chat Message",
-          `${senderName} sent a message`,
-          "chat",
-        ]
-      );
+`
+INSERT INTO notifications
+(
+user_id,
+sender_id,
+group_id,
+title,
+message,
+type
+)
+VALUES
+($1,$2,$3,$4,$5,$6)
+`,
+[
+member.user_id,
+sender_id,
+group_id,
+"New Chat Message",
+`${senderName} sent a message`,
+"chat"
+]
+);
 
     }
 
