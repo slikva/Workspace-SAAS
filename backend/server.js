@@ -542,8 +542,6 @@ app.post("/messages", async (req, res) => {
       file_name,
       file_type,
     } = req.body;
-
-    // Save message
     const result = await pool.query(
       `
       INSERT INTO messages
@@ -567,10 +565,6 @@ app.post("/messages", async (req, res) => {
         file_type,
       ]
     );
-
-    // ==========================
-    // NEW: Get sender name
-    // ==========================
     const sender = await pool.query(
       `
       SELECT full_name
@@ -582,11 +576,6 @@ app.post("/messages", async (req, res) => {
 
     const senderName = sender.rows[0].full_name;
     console.log("Sender:", senderName);
-
-    // ==========================
-    // NEW: Get all group members
-    // except sender
-    // ==========================
     const members = await pool.query(
       `
       SELECT user_id
@@ -597,11 +586,6 @@ app.post("/messages", async (req, res) => {
       [group_id, sender_id]
     );
     console.log("Members:", members.rows);
-
-    // ==========================
-    // NEW: Create notification
-    // for every member
-    // ==========================
     for (const member of members.rows) {
        console.log("Creating notification for:", member.user_id);
       await pool.query(
@@ -639,6 +623,60 @@ group_id,
     res.status(500).json({
       error: err.message,
     });
+
+  }
+
+});
+app.post("/private-chat", async (req, res) => {
+
+  try {
+
+    const { user1, user2 } = req.body;
+    const existing = await pool.query(
+      `
+      SELECT cg.group_id
+      FROM chat_groups cg
+      JOIN group_members gm1
+      ON cg.group_id = gm1.group_id
+      JOIN group_members gm2
+      ON cg.group_id = gm2.group_id
+      WHERE cg.chat_type='private'
+      AND gm1.user_id=$1
+      AND gm2.user_id=$2
+      `,
+      [user1, user2]
+    );
+
+    if (existing.rows.length > 0) {
+      return res.json(existing.rows[0]);
+    }
+    const chat = await pool.query(
+      `
+      INSERT INTO chat_groups
+      (group_name,created_by,chat_type)
+      VALUES ($1,$2,'private')
+      RETURNING *
+      `,
+      ["Private Chat", user1]
+    );
+
+    const groupId = chat.rows[0].group_id;
+
+    await pool.query(
+      `
+      INSERT INTO group_members(group_id,user_id)
+      VALUES ($1,$2),($1,$3)
+      `,
+      [groupId,user1,user2]
+    );
+
+    res.json(chat.rows[0]);
+
+  } catch(err){
+
+    console.error(err);
+
+    res.status(500).send("Error");
 
   }
 
