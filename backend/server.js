@@ -1720,7 +1720,8 @@ app.post("/test-notification", async (req, res) => {
   try {
 
     const { token } = req.body;
-
+    console.log("Sending notification to:", req.body.user_id);
+    console.log("Receiver token:", token);
     await getMessaging().send({
 
       token,
