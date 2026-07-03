@@ -590,6 +590,10 @@ const receiver = await pool.query(
 );
 
 const token = receiver.rows[0]?.fcm_token;
+console.log("Receiver User ID:", member.user_id);
+console.log("Receiver Name:", receiver.rows[0]);
+console.log("Receiver Token:", token);
+console.log("Sending notification...");
 
 if (token) {
 
