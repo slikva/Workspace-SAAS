@@ -123,36 +123,48 @@ app.post("/users", async (req, res) => {
       role
     } = req.body;
 
-    const result = await pool.query(
-      `
-      INSERT INTO users
-      (
-        company_id,
-        full_name,
-        email,
-        password,
-        role
-      )
-      VALUES
-      ($1,$2,$3,$4,$5)
-      RETURNING *
-      `,
-      [
-        company_id,
-        full_name,
-        email,
-        password,
-        role
-      ]
-    );
+   const result = await pool.query(
+  `
+  INSERT INTO users
+  (
+    company_id,
+    full_name,
+    email,
+    password,
+    role
+  )
+  VALUES
+  ($1,$2,$3,$4,$5)
+  RETURNING *
+  `,
+  [
+    company_id,
+    full_name,
+    email,
+    password,
+    role
+  ]
+);
 
-    
+// SEND EMAIL
+await transporter.sendMail({
+  from: process.env.BREVO_SMTP_USER,
+  to: email,
+  subject: "Welcome to Workspace SaaS",
+  html: `
+    <h2>Welcome ${full_name}</h2>
+    <p>Your account has been created successfully.</p>
 
-    res.json({
-      success: true,
-      user: result.rows[0]
-    });
+    <p><b>Email:</b> ${email}</p>
+    <p><b>Password:</b> ${password}</p>
+    <p><b>Role:</b> ${role}</p>
+  `
+});
 
+res.json({
+  success: true,
+  user: result.rows[0]
+});
   } catch (err) {
 
   console.error("========== SMTP ERROR ==========");
