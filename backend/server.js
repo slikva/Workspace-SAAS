@@ -1730,7 +1730,7 @@ app.post("/test-notification", async (req, res) => {
 
         title: "Workspace",
 
-        body: "🎉 Push Notifications are working!"
+        body: " Push Notifications are working!"
 
       }
 
