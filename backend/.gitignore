@@ -1,6 +1,2 @@
 .env
 *.json
-node_modules/
-uploads/
-*.log
-npm-debug.log*
