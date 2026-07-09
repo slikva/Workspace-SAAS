@@ -21,7 +21,9 @@ const CompanyDetailsPage = lazy(() => import("./pages/CompanyDetails"));
 const OwnerSettingsPage = lazy(() => import("./pages/OwnerSettingsPage"));
 const TermsPage=lazy(()=> import("./pages/TermsPage"));
 const PrivacyPage=lazy(()=> import("./pages/PrivacyPage"));
-
+const MailPage = lazy(() => import("./pages/MailPAge"));
+const MeetPage = lazy(() => import("./pages/MeetPage"));
+const MeetingRoom = lazy(() => import("./pages/MeetingRoom"));
 function App() {
   useEffect(() => {
 
@@ -88,7 +90,9 @@ function App() {
         <Route path="/owner-settings" element={<OwnerSettingsPage />} />
         <Route path="/terms" element={<TermsPage/>}/>
         <Route path="/privacy" element={<PrivacyPage/>}/>
-
+        <Route path="/mail" element={<MailPage />} />
+        <Route path="/meet" element={<MeetPage />} />
+        <Route path="meeting-room" element={<MeetingRoom />} />
       </Routes>
 
     </Suspense>
@@ -96,4 +100,4 @@ function App() {
   );
 }
 
-export default App
+export default App;

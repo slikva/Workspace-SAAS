@@ -1,5 +1,86 @@
-const express = require("express");
+require("dotenv").config();
 
+const express = require("express");
+const { AccessToken } = require("livekit-server-sdk");
+const { google } = require("googleapis");
+const multer = require("multer");
+const path = require("path");
+const fs = require("fs");
+
+const oauth2Client = new google.auth.OAuth2(
+  process.env.GOOGLE_CLIENT_ID,
+  process.env.GOOGLE_CLIENT_SECRET,
+  process.env.GOOGLE_REDIRECT_URI
+);
+async function createGoogleMeet(
+    title,
+    description,
+    startDateTime,
+    endDateTime
+) {
+    console.log("createGoogleMeet() called");
+
+    oauth2Client.setCredentials(global.gmailTokens);
+
+    const calendar = google.calendar({
+
+        version: "v3",
+
+        auth: oauth2Client
+
+    });
+
+    const event = {
+
+        summary: title,
+
+        description: description,
+
+        start: {
+
+            dateTime: startDateTime,
+
+            timeZone: "Asia/Kolkata"
+
+        },
+
+        end: {
+
+            dateTime: endDateTime,
+
+            timeZone: "Asia/Kolkata"
+
+        },
+
+        conferenceData: {
+
+            createRequest: {
+
+                requestId: Date.now().toString(),
+
+                conferenceSolutionKey: {
+
+                    type: "hangoutsMeet"
+
+                }
+
+            }
+
+        }
+
+    };
+
+   const response = await calendar.events.insert({
+    calendarId: "primary",
+    conferenceDataVersion: 1,
+    requestBody: event
+});
+
+console.log("Google Calendar Response:");
+console.log(JSON.stringify(response.data, null, 2));
+
+return response.data.hangoutLink;
+}
 const { initializeApp, cert } = require("firebase-admin/app");
 const { getMessaging } = require("firebase-admin/messaging");
 
@@ -12,44 +93,49 @@ initializeApp({
 });
 
 const app = express();
-const multer = require("multer");
-const path = require("path");
-const fs = require("fs");
+
 const uploadPath = path.join(__dirname, "uploads");
 
 if (!fs.existsSync(uploadPath)) {
   fs.mkdirSync(uploadPath);
 }
+
 const storage = multer.diskStorage({
+
   destination: (req, file, cb) => {
+
     cb(null, uploadPath);
+
   },
 
   filename: (req, file, cb) => {
-    const uniqueName =
-      Date.now() + "-" + file.originalname;
 
-    cb(null, uniqueName);
-  },
+    cb(null, `${Date.now()}-${file.originalname}`);
+
+  }
+
 });
 
-const upload = multer({ storage });
+const upload = multer({
+  storage
+});
+const memoryUpload = multer({
+  storage: multer.memoryStorage()
+});
 
 const pool = require("./db");
 const cors = require("cors");
-
 app.use(express.json());
 app.use(cors());
 const nodemailer = require("nodemailer"); 
 const transporter = nodemailer.createTransport({
-  host: "smtp-relay.brevo.com",
-  port: 587,
-  secure: false,
+  service: "gmail",
   auth: {
-    user: process.env.BREVO_SMTP_USER,
-    pass: process.env.BREVO_SMTP_KEY,
-  },
+    user: "workspace.saas.ac@gmail.com",
+    pass: "kxpzfrlygfjmfyxs"
+  }
 });
+
 transporter.verify((error, success) => {
 
   if (error) {
@@ -146,19 +232,258 @@ app.post("/users", async (req, res) => {
   ]
 );
 
-// SEND EMAIL
 await transporter.sendMail({
-  from: process.env.BREVO_SMTP_USER,
+  from: '"SHNOOR WorkSpace" <workspace.saas.demo@gmail.com>',
   to: email,
-  subject: "Welcome to Workspace SaaS",
+  subject: "Welcome to SHNOOR WorkSpace",
   html: `
-    <h2>Welcome ${full_name}</h2>
-    <p>Your account has been created successfully.</p>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Welcome to SHNOOR WorkSpace</title>
+</head>
 
-    <p><b>Email:</b> ${email}</p>
-    <p><b>Password:</b> ${password}</p>
-    <p><b>Role:</b> ${role}</p>
-  `
+<body style="margin:0;padding:0;background:#f4f7fb;font-family:Arial,Helvetica,sans-serif;">
+
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f7fb;padding:40px 0;">
+
+<tr>
+<td align="center">
+
+<table width="650" cellpadding="0" cellspacing="0"
+style="background:#ffffff;border-radius:14px;overflow:hidden;box-shadow:0 8px 30px rgba(0,0,0,.08);">
+
+<!-- Header -->
+
+<tr>
+
+<td align="center"
+style="background:#163F68;padding:40px;">
+
+<img
+src="./public/shnoor_international_logo.png"
+width="120"
+alt="SHNOOR Logo"
+style="display:block;margin-bottom:15px;"
+>
+
+<h1
+style="color:#ffffff;margin:0;font-size:32px;">
+SHNOOR WorkSpace
+</h1>
+
+<p
+style="color:#d8e8f8;margin-top:10px;font-size:15px;">
+Enterprise Collaboration Platform
+</p>
+
+</td>
+
+</tr>
+
+<!-- Welcome -->
+
+<tr>
+
+<td style="padding:45px;">
+
+<h2
+style="margin-top:0;color:#163F68;">
+Welcome, ${full_name}!
+</h2>
+
+<p
+style="color:#555;font-size:16px;line-height:28px;">
+
+Your account has been successfully created in
+<strong>SHNOOR WorkSpace.</strong>
+
+You can now securely access your workspace using the credentials below.
+
+</p>
+
+<!-- Login Details -->
+
+<table
+width="100%"
+style="
+margin-top:30px;
+border:1px solid #e5e7eb;
+border-radius:10px;
+background:#f8fafc;
+">
+
+<tr>
+
+<td
+style="
+padding:18px;
+border-bottom:1px solid #e5e7eb;
+">
+
+<b>Email</b><br>
+
+<span style="color:#555;">
+${email}
+</span>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td
+style="
+padding:18px;
+border-bottom:1px solid #e5e7eb;
+">
+
+<b>Temporary Password</b><br>
+
+<span style="color:#555;">
+${password}
+</span>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td
+style="padding:18px;">
+
+<b>Role</b><br>
+
+<span style="color:#555;">
+${role}
+</span>
+
+</td>
+
+</tr>
+
+</table>
+
+<!-- Button -->
+
+<div
+style="
+text-align:center;
+margin-top:40px;
+">
+
+<a
+href="https://workspace-saas.vercel.app/login"
+style="
+display:inline-block;
+background:#163F68;
+color:#ffffff;
+padding:16px 40px;
+text-decoration:none;
+border-radius:8px;
+font-size:16px;
+font-weight:bold;
+">
+
+Login to WorkSpace
+
+</a>
+
+</div>
+
+<!-- Notice -->
+
+<div
+style="
+margin-top:35px;
+padding:18px;
+background:#FFF8E7;
+border-left:5px solid #F59E0B;
+border-radius:6px;
+">
+
+<p
+style="margin:0;color:#444;line-height:26px;">
+
+<b>Security Notice</b><br>
+
+For your account security, please change your password immediately after your first login.
+
+</p>
+
+</div>
+
+<!-- Support -->
+
+<div
+style="margin-top:40px;">
+
+<h3
+style="color:#163F68;margin-bottom:12px;">
+Need Help?
+</h3>
+
+<p
+style="margin:0;color:#555;line-height:28px;">
+
+📧 workspace.saas.demo@gmail.com
+
+<br>
+
+🌐 https://workspace-saas.vercel.app
+
+</p>
+
+</div>
+
+</td>
+
+</tr>
+
+<!-- Footer -->
+
+<tr>
+
+<td
+align="center"
+style="
+background:#163F68;
+padding:25px;
+">
+
+<p
+style="
+margin:0;
+color:#dbeafe;
+font-size:14px;
+">
+
+© 2026 SHNOOR International LLC
+
+<br>
+
+All Rights Reserved
+
+</p>
+
+</td>
+
+</tr>
+
+</table>
+
+</td>
+
+</tr>
+
+</table>
+
+</body>
+</html>
+`
 });
 
 res.json({
@@ -258,7 +583,8 @@ app.post("/tasks", async (req, res) => {
     } = req.body;
 
     const result = await pool.query(
-      `INSERT INTO tasks
+      `
+      INSERT INTO tasks
       (
         assigned_by,
         assigned_to,
@@ -269,7 +595,8 @@ app.post("/tasks", async (req, res) => {
         due_date
       )
       VALUES ($1,$2,$3,$4,$5,$6,$7)
-      RETURNING *`,
+      RETURNING *
+      `,
       [
         assigned_by,
         assigned_to,
@@ -280,6 +607,69 @@ app.post("/tasks", async (req, res) => {
         due_date
       ]
     );
+
+    // GET EMPLOYEE
+    const employee = await pool.query(
+      `
+      SELECT full_name,email
+      FROM users
+      WHERE user_id=$1
+      `,
+      [assigned_to]
+    );
+
+    // GET MANAGER
+    const manager = await pool.query(
+      `
+      SELECT full_name
+      FROM users
+      WHERE user_id=$1
+      `,
+      [assigned_by]
+    );
+
+    const employeeName = employee.rows[0]?.full_name;
+    const employeeEmail = employee.rows[0]?.email;
+    const managerName = manager.rows[0]?.full_name;
+
+    console.log(employeeEmail);
+
+    try {
+
+      await transporter.sendMail({
+
+        from: "workspace.saas.ac@gmail.com",
+
+        to: employeeEmail,
+
+        subject: " New Task Assigned",
+
+        html: `
+          <h2>Hello ${employeeName}</h2>
+
+          <p>A new task has been assigned.</p>
+
+          <p><b>Task:</b> ${title}</p>
+
+          <p><b>Description:</b> ${description}</p>
+
+          <p><b>Priority:</b> ${priority}</p>
+
+          <p><b>Status:</b> ${status}</p>
+
+          <p><b>Due Date:</b> ${due_date}</p>
+
+          <p><b>Assigned By:</b> ${managerName}</p>
+        `
+      });
+
+      console.log("Task email sent");
+
+    } catch (mailErr) {
+
+      console.error("Mail Error:", mailErr);
+
+    }
 
     res.json({
       success: true,
@@ -296,8 +686,8 @@ app.post("/tasks", async (req, res) => {
     });
 
   }
-});
 
+});
 app.get("/meetings", async (req, res) => {
 
   try {
@@ -399,7 +789,6 @@ app.get("/meetings/:userId/:role", async (req, res) => {
 });
 
 app.post("/meetings", async (req, res) => {
-
   try {
 
     const {
@@ -410,24 +799,27 @@ app.post("/meetings", async (req, res) => {
       meeting_type,
       employee_id,
       group_id,
-      created_by
+      created_by,
+      end_time
     } = req.body;
+  const roomName = `call-${created_by}-${employee_id}-${Date.now()}`;
 
     const result = await pool.query(
       `
-      INSERT INTO meetings
-      (
-        title,
-        description,
-        meeting_date,
-        meeting_time,
-        meeting_type,
-        employee_id,
-        group_id,
-        created_by
-      )
-      VALUES
-      ($1,$2,$3,$4,$5,$6,$7,$8)
+     INSERT INTO meetings
+(
+    title,
+    description,
+    meeting_date,
+    meeting_time,
+    meeting_type,
+    employee_id,
+    group_id,
+    created_by,
+    room_name
+)
+VALUES
+($1,$2,$3,$4,$5,$6,$7,$8,$9)
       RETURNING *
       `,
       [
@@ -438,24 +830,354 @@ app.post("/meetings", async (req, res) => {
         meeting_type,
         employee_id || null,
         group_id || null,
-        created_by
+        created_by,
+        roomName
       ]
     );
+
+  
+    if (meeting_type === "Employee") {
+
+      const employee = await pool.query(
+        `
+        SELECT full_name,email
+        FROM users
+        WHERE user_id=$1
+        `,
+        [employee_id]
+      );
+
+      if (employee.rows.length > 0) {
+
+        const user = employee.rows[0];
+
+        await transporter.sendMail({
+
+          from: "workspace.saas.ac@gmail.com",
+
+          to: user.email,
+
+          subject: " Meeting Invitation",
+
+          html: `
+            <h2>Hello ${user.full_name}</h2>
+
+            <p>You have been invited to a meeting.</p>
+
+            <hr>
+
+            <h2>Hello ${user.full_name}</h2>
+
+            <p>You have been invited to a meeting.</p>
+
+            <hr>
+
+            <p><b>Title:</b> ${title}</p>
+
+            <p><b>Date:</b> ${meeting_date}</p>
+
+            <p><b>Time:</b> ${meeting_time}</p>
+
+            <p>${description}</p>
+
+            <br>
+
+            <a
+            href="https://workspace-saas.vercel.app/meeting-room?room=${roomName}"
+            style="
+            background:#163F68;
+            color:white;
+            padding:12px 22px;
+            text-decoration:none;
+            border-radius:8px;
+            display:inline-block;
+            font-weight:bold;
+            ">
+
+            Join Workspace Meet
+
+            </a>
+
+            <br><br>
+
+            <p>
+
+            Or copy this link:
+
+            <br>
+
+            https://workspace-saas.vercel.app/meeting-room?room=${roomName}
+
+            </p>
+
+            <br>
+
+            <p>Please login to Workspace.</p>
+          `
+        });
+
+      }
+
+    }
+
+    
+    else if (meeting_type === "Group") {
+
+      const members = await pool.query(
+        `
+        SELECT
+            u.full_name,
+            u.email
+        FROM group_members gm
+
+        JOIN users u
+        ON gm.user_id = u.user_id
+
+        WHERE gm.group_id = $1
+        `,
+        [group_id]
+      );
+
+      for (const member of members.rows) {
+
+        await transporter.sendMail({
+
+          from: "workspace.saas.ac@gmail.com",
+
+          to: member.email,
+
+          subject: " Group Meeting Invitation",
+
+          html: `
+            <h2>Hello ${member.full_name}</h2>
+
+            <p>You have been invited to a group meeting.</p>
+
+            <hr>
+
+            <p><b>Title:</b> ${title}</p>
+
+            <p><b>Date:</b> ${meeting_date}</p>
+
+            <p><b>Time:</b> ${meeting_time}</p>
+
+            <p>${description}</p>
+
+            <br>
+
+            <p>Please login to Workspace.</p>
+          `
+        });
+
+      }
+
+    }
 
     res.json(result.rows[0]);
 
   } catch (err) {
 
+    console.log("====================================");
+    console.log("MEETING CREATION ERROR");
+    console.log("====================================");
+
     console.error(err);
 
+    console.log("Message:", err.message);
+
+    if (err.errors) {
+        console.log(err.errors);
+    }
+
+    if (err.response) {
+        console.log(err.response.data);
+    }
+
     res.status(500).json({
-      message: "Failed to create meeting"
+        success: false,
+        message: err.message
     });
 
-  }
+}
 
 });
+app.post("/calls/start", async (req, res) => {
 
+    try {
+
+        const {
+
+            employee_id,
+
+            created_by
+
+        } = req.body;
+
+        // Get employee details
+
+        const employeeResult = await pool.query(
+            `
+            SELECT
+                full_name,
+                email
+            FROM users
+            WHERE user_id = $1
+            `,
+            [employee_id]
+        );
+
+        if (employeeResult.rows.length === 0) {
+
+            return res.status(404).json({
+                success: false,
+                message: "Employee not found"
+            });
+
+        }
+
+        const employee = employeeResult.rows[0];
+
+        // Get caller details
+
+        const managerResult = await pool.query(
+            `
+            SELECT
+                full_name
+            FROM users
+            WHERE user_id = $1
+            `,
+            [created_by]
+        );
+
+        const manager = managerResult.rows[0];
+
+        const now = new Date();
+
+        const end = new Date(now);
+
+        end.setHours(end.getHours() + 1);
+
+        const title = `Instant Call - ${manager.full_name}`;
+
+        const description =
+            `${manager.full_name} started an instant call.`;
+
+        
+        const roomName = `call-${Date.now()}`;
+
+        // Save Meeting
+
+        const meeting = await pool.query(
+
+            `
+            INSERT INTO meetings
+            (
+                title,
+                description,
+                meeting_date,
+                meeting_time,
+                meeting_type,
+                employee_id,
+                created_by,
+                room_name
+            )
+            VALUES
+            ($1,$2,$3,$4,$5,$6,$7,$8)
+            RETURNING *
+            `,
+
+            [
+
+                title,
+
+                description,
+
+                now.toISOString().split("T")[0],
+
+                now.toTimeString().slice(0,5),
+
+                "Employee",
+
+                employee_id,
+
+                created_by,
+
+                roomName
+
+            ]
+
+        );
+
+        // Send Email
+
+        await transporter.sendMail({
+
+            from: "workspace.saas.ac@gmail.com",
+
+            to: employee.email,
+
+            subject: "Instant Call Invitation",
+
+            html: `
+
+                <h2>Hello ${employee.full_name}</h2>
+
+                <p>${manager.full_name} has started an instant call with you.</p>
+
+                <br>
+
+                <a
+                    href="https://workspace-saas.vercel.app/meeting-room?room=${roomName}"
+                    style="
+                        background:#163F68;
+                        color:white;
+                        padding:12px 20px;
+                        text-decoration:none;
+                        border-radius:8px;
+                        display:inline-block;
+                    "
+                >
+                    Join Call
+                </a>
+
+                <br><br>
+
+               <p>
+https://workspace-saas.vercel.app/meeting-room?room=${roomName}
+</p>
+
+            `
+
+        });
+
+        res.json({
+
+    success: true,
+
+    meeting: meeting.rows[0],
+
+    room_name: roomName,
+
+    meeting_link: `https://workspace-saas.vercel.app/meeting-room?room=${roomName}`
+
+});
+    }
+
+    catch (err) {
+
+        console.error(err);
+
+        res.status(500).json({
+
+            success: false,
+
+            message: err.message
+
+        });
+
+    }
+
+});
 app.get("/groups", async (req, res) => {
   const result = await pool.query(
     "SELECT * FROM chat_groups"
@@ -1034,16 +1756,73 @@ app.put("/tasks/:id/status", async (req, res) => {
     const result = await pool.query(
       `
       UPDATE tasks
-      SET status=$1
-      WHERE task_id=$2
+      SET status = $1
+      WHERE task_id = $2
       RETURNING *
       `,
       [status, req.params.id]
     );
 
+    const task = result.rows[0];
+
+   
+    const employee = await pool.query(
+      `
+      SELECT full_name
+      FROM users
+      WHERE user_id = $1
+      `,
+      [task.assigned_to]
+    );
+
+    
+    const manager = await pool.query(
+      `
+      SELECT email, full_name
+      FROM users
+      WHERE user_id = $1
+      `,
+      [task.assigned_by]
+    );
+
+    if (manager.rows.length > 0) {
+
+      const managerEmail = manager.rows[0].email;
+      const managerName = manager.rows[0].full_name;
+      const employeeName = employee.rows[0].full_name;
+
+      await transporter.sendMail({
+
+        from: "workspace.saas.ac@gmail.com",
+
+        to: managerEmail,
+
+        subject: ` Task Status Updated`,
+
+        html: `
+          <h2>Hello ${managerName}</h2>
+
+          <p>Your employee has updated a task.</p>
+
+          <hr>
+
+          <p><b>Employee:</b> ${employeeName}</p>
+
+          <p><b>Task:</b> ${task.title}</p>
+
+          <p><b>Current Status:</b> ${status}</p>
+
+          <br>
+
+          <p>Please login to Workspace for more details.</p>
+        `
+      });
+
+    }
+
     res.json({
       success: true,
-      task: result.rows[0]
+      task
     });
 
   } catch (err) {
@@ -1055,6 +1834,7 @@ app.put("/tasks/:id/status", async (req, res) => {
     });
 
   }
+
 });
 app.get("/dashboard-stats", async (req, res) => {
 
@@ -1768,6 +2548,1230 @@ app.post("/test-notification", async (req, res) => {
 
 });
 
+
+app.get("/auth/google", (req, res) => {
+
+  const url = oauth2Client.generateAuthUrl({
+    access_type: "offline",
+    prompt: "consent",
+    scope: [
+      "https://www.googleapis.com/auth/gmail.readonly",
+      "https://www.googleapis.com/auth/gmail.send",
+      "https://www.googleapis.com/auth/gmail.modify",
+      "https://www.googleapis.com/auth/calendar"
+    ]
+  });
+
+  res.redirect(url);
+
+});
+app.get("/auth/google/callback", async (req, res) => {
+
+  try {
+
+    const { tokens } = await oauth2Client.getToken(req.query.code);
+
+    oauth2Client.setCredentials(tokens);
+
+    console.log("Access Token:");
+    console.log(tokens.access_token);
+
+    console.log("Refresh Token:");
+    console.log(tokens.refresh_token);
+    global.gmailTokens = tokens;
+
+    res.send(`
+      <h2>Gmail Connected Successfully</h2>
+      <p>You can close this page.</p>
+    `);
+
+  } catch (err) {
+
+    console.error(err);
+
+    res.status(500).send("Authentication Failed");
+
+  }
+
+});
+app.get("/gmail/inbox", async (req, res) => {
+
+  try {
+
+    oauth2Client.setCredentials(global.gmailTokens);
+
+    const gmail = google.gmail({
+      version: "v1",
+      auth: oauth2Client
+    });
+
+    const list = await gmail.users.messages.list({
+      userId: "me",
+      maxResults: 20,
+    });
+
+    const emails = [];
+
+    for (const message of list.data.messages || []) {
+
+      const mail = await gmail.users.messages.get({
+        userId: "me",
+        id: message.id,
+      });
+
+      const headers = mail.data.payload.headers;
+
+      const getHeader = (name) =>
+        headers.find(h => h.name === name)?.value || "";
+
+     const bodyPart = mail.data.payload.parts
+  ? mail.data.payload.parts.find(
+      part => part.mimeType === "text/plain"
+    )
+  : mail.data.payload;
+
+let body = "";
+
+if (bodyPart?.body?.data) {
+
+  body = Buffer.from(
+    bodyPart.body.data,
+    "base64"
+  )
+    .toString("utf8")
+    .replace(/\0/g, "");
+
+}
+
+emails.push({
+
+  id: mail.data.id,
+
+  from: getHeader("From"),
+
+  to: getHeader("To"),
+
+  subject: getHeader("Subject"),
+
+  date: getHeader("Date"),
+
+  snippet: mail.data.snippet,
+
+  body,
+
+  starred: mail.data.labelIds?.includes("STARRED")
+
+});
+
+    }
+
+    res.json(emails);
+
+  } catch (err) {
+
+    console.error(err);
+
+    res.status(500).json(err);
+
+  }
+
+});
+
+app.post("/gmail/send", memoryUpload.array("attachments"), async (req, res) => {
+
+  try {
+
+    oauth2Client.setCredentials(global.gmailTokens);
+
+    const gmail = google.gmail({
+      version: "v1",
+      auth: oauth2Client
+    });
+
+    const { to, subject, body } = req.body;
+
+    const attachments = req.files || [];
+
+    const boundary = "workspace_mail_boundary";
+
+let message = [
+
+  `To: ${to}`,
+
+  "MIME-Version: 1.0",
+
+  `Subject: ${subject}`,
+
+  `Content-Type: multipart/mixed; boundary="${boundary}"`,
+
+  "",
+
+  `--${boundary}`,
+
+  "Content-Type: text/html; charset=UTF-8",
+
+  "",
+
+  body,
+
+  ""
+
+];
+attachments.forEach(file => {
+
+    message.push(
+
+        `--${boundary}`,
+
+        `Content-Type: ${file.mimetype}; name="${file.originalname}"`,
+
+        "Content-Transfer-Encoding: base64",
+
+        `Content-Disposition: attachment; filename="${file.originalname}"`,
+
+        "",
+
+        file.buffer.toString("base64"),
+
+        ""
+
+    );
+
+});
+message.push(
+
+    `--${boundary}--`
+
+);
+
+message = message.join("\n");
+
+    const encodedMessage = Buffer
+      .from(message)
+      .toString("base64")
+      .replace(/\+/g, "-")
+      .replace(/\//g, "_")
+      .replace(/=+$/, "");
+
+    await gmail.users.messages.send({
+
+      userId: "me",
+
+      requestBody: {
+
+        raw: encodedMessage
+
+      }
+
+    });
+
+    res.json({
+
+      success: true
+
+    });
+
+  } catch (err) {
+
+    console.error(err);
+
+    res.status(500).json({
+
+      success: false,
+
+      error: err.message
+
+    });
+
+  }
+
+});
+app.post("/gmail/archive", async (req, res) => {
+
+  try {
+
+    oauth2Client.setCredentials(global.gmailTokens);
+
+    const gmail = google.gmail({
+      version: "v1",
+      auth: oauth2Client
+    });
+
+    const { messageId } = req.body;
+
+    await gmail.users.messages.modify({
+
+      userId: "me",
+
+      id: messageId,
+
+      requestBody: {
+
+        removeLabelIds: ["INBOX"]
+
+      }
+
+    });
+
+    res.json({
+
+      success: true
+
+    });
+
+  } catch (err) {
+
+    console.error(err);
+
+    res.status(500).json({
+
+      success: false,
+
+      error: err.message
+
+    });
+
+  }
+
+});
+app.get("/gmail/starred", async (req, res) => {
+
+  try {
+
+    oauth2Client.setCredentials(global.gmailTokens);
+
+    const gmail = google.gmail({
+      version: "v1",
+      auth: oauth2Client
+    });
+
+    const list = await gmail.users.messages.list({
+
+      userId: "me",
+
+      labelIds: ["STARRED"],
+
+      maxResults: 20
+
+    });
+
+    const emails = [];
+
+    for (const message of list.data.messages || []) {
+
+      const mail = await gmail.users.messages.get({
+
+        userId: "me",
+
+        id: message.id
+
+      });
+
+      const headers = mail.data.payload.headers;
+
+      const getHeader = (name) =>
+        headers.find(h => h.name === name)?.value || "";
+
+      const bodyPart = mail.data.payload.parts
+        ? mail.data.payload.parts.find(
+            part => part.mimeType === "text/plain"
+          )
+        : mail.data.payload;
+
+      let body = "";
+
+      if (bodyPart?.body?.data) {
+
+        body = Buffer.from(
+          bodyPart.body.data,
+          "base64"
+        )
+          .toString("utf8")
+          .replace(/\0/g, "");
+
+      }
+
+      emails.push({
+
+        id: mail.data.id,
+
+        from: getHeader("From"),
+
+        to: getHeader("To"),
+
+        subject: getHeader("Subject"),
+
+        date: getHeader("Date"),
+
+        snippet: mail.data.snippet,
+
+        body,
+        starred: mail.data.labelIds?.includes("STARRED")
+
+      });
+
+    }
+
+    res.json(emails);
+
+  } catch (err) {
+
+    console.error(err);
+
+    res.status(500).json(err);
+
+  }
+
+});
+app.get("/gmail/important", async (req, res) => {
+
+  try {
+
+    oauth2Client.setCredentials(global.gmailTokens);
+
+    const gmail = google.gmail({
+      version: "v1",
+      auth: oauth2Client
+    });
+
+    const list = await gmail.users.messages.list({
+
+      userId: "me",
+
+      labelIds: ["IMPORTANT"],
+
+      maxResults: 20
+
+    });
+
+    const emails = [];
+
+    for (const message of list.data.messages || []) {
+
+      const mail = await gmail.users.messages.get({
+
+        userId: "me",
+
+        id: message.id
+
+      });
+
+      const headers = mail.data.payload.headers;
+
+      const getHeader = (name) =>
+        headers.find(h => h.name === name)?.value || "";
+
+      const bodyPart = mail.data.payload.parts
+        ? mail.data.payload.parts.find(
+            part => part.mimeType === "text/plain"
+          )
+        : mail.data.payload;
+
+      let body = "";
+
+      if (bodyPart?.body?.data) {
+
+        body = Buffer.from(
+          bodyPart.body.data,
+          "base64"
+        ).toString("utf8").replace(/\0/g, "");
+
+      }
+
+      emails.push({
+
+        id: mail.data.id,
+
+        from: getHeader("From"),
+
+        to: getHeader("To"),
+
+        subject: getHeader("Subject"),
+
+        date: getHeader("Date"),
+
+        snippet: mail.data.snippet,
+
+        body,
+
+        labels: mail.data.labelIds || []
+
+      });
+
+    }
+
+    res.json(emails);
+
+  } catch (err) {
+
+    console.error(err);
+
+    res.status(500).json(err);
+
+  }
+
+});
+app.get("/gmail/spam", async (req, res) => {
+
+  try {
+
+    oauth2Client.setCredentials(global.gmailTokens);
+
+    const gmail = google.gmail({
+      version: "v1",
+      auth: oauth2Client
+    });
+
+    const list = await gmail.users.messages.list({
+
+      userId: "me",
+
+      labelIds: ["SPAM"],
+
+      maxResults: 20
+
+    });
+
+    const emails = [];
+
+    for (const message of list.data.messages || []) {
+
+      const mail = await gmail.users.messages.get({
+
+        userId: "me",
+
+        id: message.id
+
+      });
+
+      const headers = mail.data.payload.headers;
+
+      const getHeader = (name)=>
+        headers.find(h=>h.name===name)?.value || "";
+
+      const bodyPart = mail.data.payload.parts
+        ? mail.data.payload.parts.find(
+            part=>part.mimeType==="text/plain"
+          )
+        : mail.data.payload;
+
+      let body="";
+
+      if(bodyPart?.body?.data){
+
+        body=Buffer.from(
+          bodyPart.body.data,
+          "base64"
+        ).toString("utf8").replace(/\0/g,"");
+
+      }
+
+      emails.push({
+
+        id:mail.data.id,
+
+        from:getHeader("From"),
+
+        to:getHeader("To"),
+
+        subject:getHeader("Subject"),
+
+        date:getHeader("Date"),
+
+        snippet:mail.data.snippet,
+
+        body,
+
+        labels:mail.data.labelIds || []
+
+      });
+
+    }
+
+    res.json(emails);
+
+  } catch(err){
+
+    console.error(err);
+
+    res.status(500).json(err);
+
+  }
+
+});
+app.get("/gmail/sent", async (req, res) => {
+
+  try {
+
+    oauth2Client.setCredentials(global.gmailTokens);
+
+    const gmail = google.gmail({
+      version: "v1",
+      auth: oauth2Client
+    });
+
+    const list = await gmail.users.messages.list({
+
+      userId: "me",
+
+      labelIds: ["SENT"],
+
+      maxResults: 20
+
+    });
+
+    const emails = [];
+
+    for (const message of list.data.messages || []) {
+
+      const mail = await gmail.users.messages.get({
+
+        userId: "me",
+
+        id: message.id
+
+      });
+
+      const headers = mail.data.payload.headers;
+
+      const getHeader = (name) =>
+        headers.find(h => h.name === name)?.value || "";
+
+      const bodyPart = mail.data.payload.parts
+        ? mail.data.payload.parts.find(
+            part => part.mimeType === "text/plain"
+          )
+        : mail.data.payload;
+
+      let body = "";
+
+      if (bodyPart?.body?.data) {
+
+        body = Buffer.from(bodyPart.body.data, "base64")
+          .toString("utf8")
+          .replace(/\0/g, "");
+
+      }
+
+      emails.push({
+
+        id: mail.data.id,
+
+        from: getHeader("From"),
+
+        to: getHeader("To"),
+
+        subject: getHeader("Subject"),
+
+        date: getHeader("Date"),
+
+        snippet: mail.data.snippet,
+
+        body,
+        starred: mail.data.labelIds?.includes("STARRED")
+
+      });
+
+    }
+
+    res.json(emails);
+
+  } catch (err) {
+
+    console.error(err);
+
+    res.status(500).json(err);
+
+  }
+
+});
+app.get("/gmail/drafts", async (req, res) => {
+
+  try {
+
+    oauth2Client.setCredentials(global.gmailTokens);
+
+    const gmail = google.gmail({
+      version: "v1",
+      auth: oauth2Client
+    });
+
+    const list = await gmail.users.drafts.list({
+
+      userId: "me"
+
+    });
+
+    const emails = [];
+
+    for (const draft of list.data.drafts || []) {
+
+      const mail = await gmail.users.drafts.get({
+
+        userId: "me",
+
+        id: draft.id
+
+      });
+
+      const headers = mail.data.message.payload.headers;
+
+      const getHeader = (name) =>
+        headers.find(h => h.name === name)?.value || "";
+
+      const bodyPart = mail.data.message.payload.parts
+        ? mail.data.message.payload.parts.find(
+            part => part.mimeType === "text/plain"
+          )
+        : mail.data.message.payload;
+
+      let body = "";
+
+      if (bodyPart?.body?.data) {
+
+        body = Buffer.from(bodyPart.body.data, "base64")
+          .toString("utf8")
+          .replace(/\0/g, "");
+
+      }
+
+      emails.push({
+
+        id: mail.data.message.id,
+
+        from: getHeader("From"),
+
+        to: getHeader("To"),
+
+        subject: getHeader("Subject"),
+
+        date: getHeader("Date"),
+
+        snippet: mail.data.message.snippet,
+
+        body,
+        starred: mail.data.message.labelIds?.includes("STARRED")
+
+      });
+
+    }
+
+    res.json(emails);
+
+  } catch (err) {
+
+    console.error(err);
+
+    res.status(500).json(err);
+
+  }
+
+});
+app.get("/gmail/archive", async (req, res) => {
+
+  try {
+
+    oauth2Client.setCredentials(global.gmailTokens);
+
+    const gmail = google.gmail({
+      version: "v1",
+      auth: oauth2Client
+    });
+
+    const list = await gmail.users.messages.list({
+
+      userId: "me",
+
+      labelIds: ["CATEGORY_PERSONAL"],
+
+      q: "-label:INBOX",
+
+      maxResults: 20
+
+    });
+
+    const emails = [];
+
+    for (const message of list.data.messages || []) {
+
+      const mail = await gmail.users.messages.get({
+
+        userId: "me",
+
+        id: message.id
+
+      });
+
+      const headers = mail.data.payload.headers;
+
+      const getHeader = (name) =>
+        headers.find(h => h.name === name)?.value || "";
+
+      const bodyPart = mail.data.payload.parts
+        ? mail.data.payload.parts.find(
+            part => part.mimeType === "text/plain"
+          )
+        : mail.data.payload;
+
+      let body = "";
+
+      if (bodyPart?.body?.data) {
+
+        body = Buffer.from(bodyPart.body.data, "base64")
+          .toString("utf8")
+          .replace(/\0/g, "");
+
+      }
+
+      emails.push({
+
+        id: mail.data.id,
+
+        from: getHeader("From"),
+
+        to: getHeader("To"),
+
+        subject: getHeader("Subject"),
+
+        date: getHeader("Date"),
+
+        snippet: mail.data.snippet,
+
+        body,
+        starred: mail.data.labelIds?.includes("STARRED")
+
+      });
+
+    }
+
+    res.json(emails);
+
+  } catch (err) {
+
+    console.error(err);
+
+    res.status(500).json(err);
+
+  }
+
+});
+app.get("/gmail/trash", async (req, res) => {
+
+  try {
+
+    oauth2Client.setCredentials(global.gmailTokens);
+
+    const gmail = google.gmail({
+      version: "v1",
+      auth: oauth2Client
+    });
+
+    const list = await gmail.users.messages.list({
+
+      userId: "me",
+
+      labelIds: ["TRASH"],
+
+      maxResults: 20
+
+    });
+
+    const emails = [];
+
+    for (const message of list.data.messages || []) {
+
+      const mail = await gmail.users.messages.get({
+
+        userId: "me",
+
+        id: message.id
+
+      });
+
+      const headers = mail.data.payload.headers;
+
+      const getHeader = (name) =>
+        headers.find(h => h.name === name)?.value || "";
+
+      const bodyPart = mail.data.payload.parts
+        ? mail.data.payload.parts.find(
+            part => part.mimeType === "text/plain"
+          )
+        : mail.data.payload;
+
+      let body = "";
+
+      if (bodyPart?.body?.data) {
+
+        body = Buffer.from(bodyPart.body.data, "base64")
+          .toString("utf8")
+          .replace(/\0/g, "");
+
+      }
+
+      emails.push({
+
+        id: mail.data.id,
+
+        from: getHeader("From"),
+
+        to: getHeader("To"),
+
+        subject: getHeader("Subject"),
+
+        date: getHeader("Date"),
+
+        snippet: mail.data.snippet,
+
+        body,
+        starred: mail.data.labelIds?.includes("STARRED")
+
+      });
+
+    }
+
+    res.json(emails);
+
+  } catch (err) {
+
+    console.error(err);
+
+    res.status(500).json(err);
+
+  }
+
+});
+app.post("/gmail/trash", async (req, res) => {
+
+  try {
+
+    oauth2Client.setCredentials(global.gmailTokens);
+
+    const gmail = google.gmail({
+      version: "v1",
+      auth: oauth2Client
+    });
+
+    const { messageId } = req.body;
+
+    await gmail.users.messages.trash({
+
+      userId: "me",
+
+      id: messageId
+
+    });
+
+    res.json({
+
+      success: true
+
+    });
+
+  } catch (err) {
+
+    console.error(err);
+
+    res.status(500).json({
+
+      success: false,
+
+      error: err.message
+
+    });
+
+  }
+
+});
+app.post("/gmail/star", async (req, res) => {
+
+  try {
+
+    oauth2Client.setCredentials(global.gmailTokens);
+
+    const gmail = google.gmail({
+      version: "v1",
+      auth: oauth2Client
+    });
+
+    const { messageId } = req.body;
+
+    await gmail.users.messages.modify({
+
+      userId: "me",
+
+      id: messageId,
+
+      requestBody: {
+
+        addLabelIds: ["STARRED"]
+
+      }
+
+    });
+
+    res.json({
+      success: true
+    });
+
+  } catch (err) {
+
+    console.error(err);
+
+    res.status(500).json({
+      success: false,
+      error: err.message
+    });
+
+  }
+
+});
+app.post("/gmail/unstar", async (req, res) => {
+
+  try {
+
+    oauth2Client.setCredentials(global.gmailTokens);
+
+    const gmail = google.gmail({
+      version: "v1",
+      auth: oauth2Client
+    });
+
+    const { messageId } = req.body;
+
+    await gmail.users.messages.modify({
+
+      userId: "me",
+
+      id: messageId,
+
+      requestBody: {
+
+        removeLabelIds: ["STARRED"]
+
+      }
+
+    });
+
+    res.json({
+
+      success: true
+
+    });
+
+  } catch (err) {
+
+    console.error(err);
+
+    res.status(500).json({
+
+      success: false,
+
+      error: err.message
+
+    });
+
+  }
+
+});
+
+app.get("/gmail/counts", async (req, res) => {
+
+    try {
+
+        oauth2Client.setCredentials(global.gmailTokens);
+
+        const gmail = google.gmail({
+            version: "v1",
+            auth: oauth2Client
+        });
+
+        async function getCount(options) {
+
+            const result = await gmail.users.messages.list({
+                userId: "me",
+                maxResults: 1,
+                ...options
+            });
+
+            return result.data.resultSizeEstimate || 0;
+
+        }
+
+        const counts = {
+
+            inbox: await getCount({
+                labelIds: ["INBOX"],
+                q: "is:unread"
+            }),
+
+            starred: await getCount({
+                labelIds: ["STARRED"],
+                q: "is:unread"
+            }),
+
+            important: await getCount({
+                labelIds: ["IMPORTANT"],
+                q: "is:unread"
+            }),
+
+            sent: await getCount({
+                labelIds: ["SENT"],
+                q: "is:unread"
+            }),
+
+            drafts: (await gmail.users.drafts.list({
+                userId: "me"
+            })).data.drafts?.length || 0,
+
+            archive: await getCount({
+                q: "-label:INBOX"
+            }),
+
+            spam: await getCount({
+                labelIds: ["SPAM"]
+            }),
+
+            trash: await getCount({
+                labelIds: ["TRASH"]
+            })
+
+        };
+
+        res.json(counts);
+
+    } catch (err) {
+
+        console.error(err);
+
+        res.status(500).json({
+            error: err.message
+        });
+
+    }
+
+});
+
+
+app.get("/livekit/token", async (req, res) => {
+
+    try {
+
+        const token = new AccessToken(
+            process.env.LIVEKIT_API_KEY,
+            process.env.LIVEKIT_API_SECRET,
+            {
+                identity: "Vasavi",
+                name: "Vasavi"
+            }
+        );
+
+        token.addGrant({
+            roomJoin: true,
+            room: "workspace-demo",
+            canPublish: true,
+            canSubscribe: true
+        });
+
+        res.json({
+            success: true,
+            token: await token.toJwt(),
+            url: process.env.LIVEKIT_URL
+        });
+
+    } catch (err) {
+
+        console.error(err);
+
+        res.status(500).json({
+            success: false,
+            message: err.message
+        });
+
+    }
+
+});
+app.post("/livekit/token", async (req, res) => {
+
+    try {
+
+        const {
+
+            roomName,
+
+            participantName
+
+        } = req.body;
+
+        if (!roomName || !participantName) {
+
+            return res.status(400).json({
+
+                success: false,
+
+                message: "roomName and participantName are required"
+
+            });
+
+        }
+
+        const token = new AccessToken(
+
+            process.env.LIVEKIT_API_KEY,
+
+            process.env.LIVEKIT_API_SECRET,
+
+            {
+
+                identity: participantName,
+
+                name: participantName
+
+            }
+
+        );
+
+        token.addGrant({
+
+            roomJoin: true,
+
+            room: roomName,
+
+            canPublish: true,
+
+            canSubscribe: true,
+
+            canPublishData: true
+
+        });
+
+        res.json({
+
+            success: true,
+
+            token: await token.toJwt(),
+
+            url: process.env.LIVEKIT_URL
+
+        });
+
+    }
+
+    catch (err) {
+
+        console.error(err);
+
+        res.status(500).json({
+
+            success: false,
+
+            message: err.message
+
+        });
+
+    }
+
+});
 
 
 

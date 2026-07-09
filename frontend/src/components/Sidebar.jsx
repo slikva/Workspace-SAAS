@@ -7,7 +7,9 @@ import {
   RiCalendarLine,
   RiMessage2Line,
   RiSettings3Line,
-  RiLogoutBoxLine
+  RiLogoutBoxLine,
+  RiMailAddLine,
+  RiVideoLine
 } from "react-icons/ri";
 
 export default function Sidebar() {
@@ -112,7 +114,15 @@ const handleLogout = () => {
           )}
 
         </Link>
-
+         {currentUser?.role === "Manager" && (
+         <Link to="/mail" className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/10">
+          <RiMailAddLine />
+          Email
+        </Link>)}
+         <Link to="/meet" className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/10">
+          <RiVideoLine />
+          Meet
+        </Link>
         <Link to="/settings" className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/10">
           <RiSettings3Line />
           Settings

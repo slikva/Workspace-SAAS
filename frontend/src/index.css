@@ -130,3 +130,11 @@
     border-radius: 2px;
   }
 }
+.ql-container{
+    min-height:340px !important;
+}
+
+.ql-editor{
+    min-height:340px !important;
+    font-size:15px;
+}
