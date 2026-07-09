@@ -21,7 +21,7 @@ const CompanyDetailsPage = lazy(() => import("./pages/CompanyDetails"));
 const OwnerSettingsPage = lazy(() => import("./pages/OwnerSettingsPage"));
 const TermsPage=lazy(()=> import("./pages/TermsPage"));
 const PrivacyPage=lazy(()=> import("./pages/PrivacyPage"));
-const MailPage = lazy(() => import("./pages/MailPAge"));
+const MailPage = lazy(() => import("./pages/MailPage"));
 const MeetPage = lazy(() => import("./pages/MeetPage"));
 const MeetingRoom = lazy(() => import("./pages/MeetingRoom"));
 function App() {
