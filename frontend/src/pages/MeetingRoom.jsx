@@ -40,7 +40,7 @@ import { motion, AnimatePresence } from "framer-motion";
 
 const API = import.meta.env.VITE_API_URL;
 
-// --- PREMIUM UTILITY AUDIO ALERTS ---
+
 const playAlertSound = () => {
     try {
         const ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -59,7 +59,7 @@ const playAlertSound = () => {
     }
 };
 
-// --- WORKSPACE PARTICIPANT VIEWPORT GRID ---
+
 function CustomParticipantTile({ participantTrack, raisedHands }) {
     const { participant, source, publication } = participantTrack;
     const { identity } = useParticipantInfo({ participant });
@@ -78,7 +78,7 @@ function CustomParticipantTile({ participantTrack, raisedHands }) {
                 <VideoTrack trackRef={participantTrack} className="w-full h-full object-contain bg-slate-950/80 rounded-2xl" />
             ) : (
                 <div className="flex flex-col items-center justify-center select-none">
-                    <div className="w-20 h-20 rounded-full bg-[#163F68] shadow-2xl flex items-center justify-center font-bold text-3xl text-white tracking-wide border border-white/5 uppercase">
+                    <div className="w-20 h-20 rounded-full bg-[#C99328] shadow-2xl flex items-center justify-center font-bold text-3xl text-white tracking-wide border border-white/5 uppercase">
                         {initialLetter}
                     </div>
                 </div>
@@ -93,7 +93,7 @@ function CustomParticipantTile({ participantTrack, raisedHands }) {
                         animate={{ scale: 1, rotate: 0 }} 
                         className="bg-[#C99328] text-white p-2 rounded-xl shadow-md border border-white/10"
                     >
-                        <RiHand size={16} />
+                        <RiHand size={20} />
                     </motion.div>
                 )}
             </div>
@@ -108,7 +108,7 @@ function CustomParticipantTile({ participantTrack, raisedHands }) {
     );
 }
 
-// --- ACTIVE VIDEO CANVAS GRID ---
+
 function ActiveVideoGrid({ raisedHands }) {
     const tracks = useTracks([
         { source: Track.Source.Camera, withPlaceholder: true },
@@ -134,7 +134,7 @@ function ActiveVideoGrid({ raisedHands }) {
     );
 }
 
-// --- ENTERPRISE CHAT DRAWER PANEL ---
+
 function RightChatPanel({ isOpen, onClose }) {
     const { send, chatMessages } = useChat();
     const [messageText, setMessageText] = useState("");
@@ -164,10 +164,10 @@ function RightChatPanel({ isOpen, onClose }) {
             className="w-80 h-[calc(100vh-96px)] bg-[#0F172A] border-l border-slate-800 flex flex-col z-40 shadow-2xl relative"
         >
             <div className="p-4 h-16 border-b border-slate-800/80 flex items-center justify-between bg-slate-950/20">
-                <h3 className="font-bold text-white tracking-wider text-xs uppercase flex items-center gap-2">
-                    <RiChat3Line className="text-[#163F68]" size={16} /> Workspace Chat
+                <h3 className="font-bold text-white tracking-wider text-normal uppercase flex items-center gap-2">
+                    <RiChat3Line className="text-[#C99328]" size={18} /> Workspace Chat
                 </h3>
-                <button onClick={onClose} className="p-1.5 hover:bg-slate-800/60 rounded-xl text-slate-400 hover:text-white transition">
+                <button onClick={onClose} className="p-1.5 hover:bg-[#C99328] rounded-xl text-slate-400 hover:text-white transition">
                     <RiCloseLine size={18} />
                 </button>
             </div>
@@ -175,13 +175,13 @@ function RightChatPanel({ isOpen, onClose }) {
             <div className="flex-1 overflow-y-auto p-4 space-y-4 flex flex-col">
                 {chatMessages.length === 0 ? (
                     <div className="my-auto text-center px-4">
-                        <p className="text-xs text-slate-500 leading-relaxed">No messages yet. Send a broadcast to all active workspace delegates.</p>
+                        <p className="text-xs text-slate-500 leading-relaxed">No messages yet.</p>
                     </div>
                 ) : (
                     chatMessages.map((msg, index) => (
                         <div key={index} className={`flex flex-col ${msg.from?.isLocal ? 'items-end' : 'items-start'}`}>
-                            <span className="text-[10px] text-slate-500 mb-1 font-semibold">{msg.from?.name || "Participant"}</span>
-                            <div className={`px-3 py-2 rounded-2xl text-xs max-w-[85%] break-words shadow-sm leading-relaxed ${msg.from?.isLocal ? 'bg-[#163F68] text-white rounded-tr-none' : 'bg-slate-800 text-slate-200 rounded-tl-none'}`}>
+                            <span className="text-[10px] text-white mb-1 font-semibold">{msg.from?.name || "Participant"}</span>
+                            <div className={`px-3 py-2 rounded-2xl text-xs font-semibold max-w-[85%] break-words shadow-sm leading-relaxed ${msg.from?.isLocal ? 'bg-[#C99328] text-white rounded-tr-none' : 'bg-slate-800 text-slate-200 rounded-tl-none'}`}>
                                 {msg.message}
                             </div>
                         </div>
@@ -198,7 +198,7 @@ function RightChatPanel({ isOpen, onClose }) {
                     placeholder="Type a message..."
                     className="flex-1 bg-slate-950 border border-slate-800/80 rounded-xl px-3 py-2.5 text-xs text-white placeholder-slate-600 focus:outline-none focus:border-[#163F68] transition-colors"
                 />
-                <button type="submit" className="p-2.5 bg-[#163F68] hover:bg-[#163F68]/90 rounded-xl transition text-white shadow-md active:scale-95">
+                <button type="submit" className="p-2.5 bg-[#163F68] hover:bg-[#C99328]/90 rounded-xl transition text-white shadow-md active:scale-95">
                     <RiSendPlane2Fill size={15}/>
                 </button>
             </form>
@@ -206,7 +206,7 @@ function RightChatPanel({ isOpen, onClose }) {
     );
 }
 
-// --- ENTERPRISE PARTICIPANTS DRAWER PANEL ---
+
 function ParticipantsSidebar({ isOpen, onClose, raisedHands }) {
     const participants = useParticipants();
     if (!isOpen) return null;
@@ -221,9 +221,9 @@ function ParticipantsSidebar({ isOpen, onClose, raisedHands }) {
         >
             <div className="p-4 h-16 border-b border-slate-800/80 flex items-center justify-between bg-slate-950/20">
                 <h3 className="font-bold tracking-wider text-xs uppercase flex items-center gap-2">
-                    <RiGroupLine className="text-[#163F68]" size={16} /> Room Roster ({participants.length})
+                    <RiGroupLine className="text-[#C99328]" size={20} /> Participants ({participants.length})
                 </h3>
-                <button onClick={onClose} className="p-1.5 hover:bg-slate-800/60 rounded-xl text-slate-400 hover:text-white transition">
+                <button onClick={onClose} className="p-1.5 hover:bg-[#C99328] rounded-xl text-slate-400 hover:text-white transition">
                     <RiCloseLine size={18} />
                 </button>
             </div>
@@ -270,18 +270,52 @@ function ParticipantsSidebar({ isOpen, onClose, raisedHands }) {
     );
 }
 
-// --- INTEGRATED HUMAN-DESIGNED MEETING TOOLS SUB-PANEL SYSTEM ---
+
 function MeetingToolsSidebar({ 
     isOpen, onClose, timerConfig, onStartTimer, onCancelTimer,
     recordingState, handleToggleRecording
 }) {
-    const [currentSubPage, setCurrentSubPage] = useState("main"); // "main" | "settings" | "timer" | "recording"
+    const room = useRoomContext();
+    const remoteParticipants = useParticipants();
+    const [currentSubPage, setCurrentSubPage] = useState("main"); 
     const [devices, setDevices] = useState([]);
     
-    // Timer state references
+    
     const [timerH, setTimerH] = useState("0");
-    const [timerM, setTimerM] = useState("15");
+    const [timerM, setTimerM] = useState("5"); 
     const [timerS, setTimerS] = useState("0");
+    const [selectedPresenter, setSelectedPresenter] = useState("");
+
+    
+    const activePresenters = useMemo(() => {
+        const list = [];
+        if (room.localParticipant.isScreenShareEnabled) {
+            list.push({
+                identity: room.localParticipant.identity,
+                name: room.localParticipant.name || "You"
+            });
+        }
+        remoteParticipants.forEach(p => {
+            if (p.isScreenShareEnabled) {
+                list.push({
+                    identity: p.identity,
+                    name: p.name || p.identity
+                });
+            }
+        });
+        return list;
+    }, [remoteParticipants, room.localParticipant.isScreenShareEnabled, room.localParticipant.identity, room.localParticipant.name]);
+
+    
+    useEffect(() => {
+        if (activePresenters.length > 0) {
+            if (!selectedPresenter || !activePresenters.some(p => p.identity === selectedPresenter)) {
+                setSelectedPresenter(activePresenters[0].identity);
+            }
+        } else {
+            setSelectedPresenter("");
+        }
+    }, [activePresenters, selectedPresenter]);
 
     useEffect(() => {
         if (isOpen && currentSubPage === "settings") {
@@ -295,7 +329,7 @@ function MeetingToolsSidebar({
         e.preventDefault();
         const totalSec = (parseInt(timerH) || 0) * 3600 + (parseInt(timerM) || 0) * 60 + (parseInt(timerS) || 0);
         if (totalSec <= 0) return;
-        onStartTimer(totalSec);
+        onStartTimer(totalSec, selectedPresenter);
     };
 
     return (
@@ -306,7 +340,7 @@ function MeetingToolsSidebar({
             transition={{ type: "tween", duration: 0.22 }}
             className="w-80 h-[calc(100vh-96px)] bg-[#0F172A] border-l border-slate-800 flex flex-col z-40 shadow-2xl text-white"
         >
-            {/* STICKY HEADER CAPTURE LAYER */}
+           
             <div className="p-4 h-16 border-b border-slate-800/80 flex items-center justify-between bg-slate-950/20">
                 <div className="flex items-center gap-2">
                     {currentSubPage !== "main" && (
@@ -314,37 +348,35 @@ function MeetingToolsSidebar({
                             onClick={() => setCurrentSubPage("main")}
                             className="p-1 hover:bg-slate-800/80 rounded-lg text-slate-400 hover:text-white transition mr-1"
                         >
-                            <RiArrowLeftLine size={16} />
+                            <RiArrowLeftLine size={20} />
                         </button>
                     )}
                     <h3 className="font-bold tracking-wider text-xs uppercase flex items-center gap-2">
-                        <RiToolsLine className="text-[#163F68]" size={16} /> 
+                        <RiToolsLine className="text-[#C99328]" size={18} /> 
                         {currentSubPage === "main" && "Meeting Tools"}
-                        {currentSubPage === "settings" && "Hardware Controls"}
-                        {currentSubPage === "timer" && "Room Countdown"}
-                        {currentSubPage === "recording" && "Session Capture"}
+                        {currentSubPage === "settings" && "Default Controls"}
+                        {currentSubPage === "timer" && " Timer"}
                     </h3>
                 </div>
-                <button onClick={onClose} className="p-1.5 hover:bg-slate-800/60 rounded-xl text-slate-400 hover:text-white transition">
+                <button onClick={onClose} className="p-1.5 hover:bg-[#C99328] rounded-xl text-slate-400 hover:text-white transition">
                     <RiCloseLine size={18} />
                 </button>
             </div>
 
-            {/* NESTED LAYER NAVIGATION ROUTING VIEWPORTS */}
+           
             <div className="flex-1 overflow-y-auto p-4 space-y-4">
                 {currentSubPage === "main" && (
                     <div className="space-y-3 pt-2">
                         <button 
                             onClick={() => setCurrentSubPage("settings")}
-                            className="w-full text-left p-4 bg-slate-950/40 hover:bg-slate-950/80 border border-slate-800/60 hover:border-[#163F68]/60 rounded-xl transition group flex items-center justify-between"
+                            className="w-full text-left p-4 bg-slate-950/40 hover:bg-slate-950/80 border border-slate-800/60 hover:border-[#C99328]/60 rounded-xl transition group flex items-center justify-between"
                         >
                             <div className="flex items-center gap-3">
-                                <div className="p-2 rounded-lg bg-slate-900 group-hover:bg-[#163F68]/20 border border-slate-800 transition">
-                                    <RiSettings3Line className="text-slate-400 group-hover:text-white" size={16} />
+                                <div className="p-2 rounded-lg bg-slate-900 group-hover:bg-[#C99328]/20 border border-slate-800 transition">
+                                    <RiSettings3Line className="text-white group-hover:text-[#C99328]" size={20} />
                                 </div>
                                 <div className="flex flex-col">
                                     <span className="text-xs font-semibold text-slate-200">Device Settings</span>
-                                    <span className="text-[10px] text-slate-500 mt-0.5">Configure hardware routing sources.</span>
                                 </div>
                             </div>
                         </button>
@@ -355,120 +387,31 @@ function MeetingToolsSidebar({
                         >
                             <div className="flex items-center gap-3">
                                 <div className="p-2 rounded-lg bg-slate-900 group-hover:bg-[#C99328]/20 border border-slate-800 transition">
-                                    <RiTimerLine className="text-slate-400 group-hover:text-[#C99328]" size={16} />
+                                    <RiTimerLine className="text-white group-hover:text-[#C99328]" size={20} />
                                 </div>
                                 <div className="flex flex-col">
                                     <span className="text-xs font-semibold text-slate-200">Presentation Timer</span>
-                                    <span className="text-[10px] text-slate-500 mt-0.5">Synchronize meeting clocks globally.</span>
                                 </div>
                             </div>
                             {timerConfig.isActive && (
                                 <span className="w-2 h-2 rounded-full bg-[#C99328] animate-pulse" />
                             )}
                         </button>
-
-                        <button 
-                            onClick={() => setCurrentSubPage("recording")}
-                            className="w-full text-left p-4 bg-slate-950/40 hover:bg-slate-950/80 border border-slate-800/60 hover:border-red-900/40 rounded-xl transition group flex items-center justify-between"
-                        >
-                            <div className="flex items-center gap-3">
-                                <div className="p-2 rounded-lg bg-slate-900 group-hover:bg-red-500/10 border border-slate-800 transition">
-                                    <RiRecordCircleLine className={`text-slate-400 ${recordingState.isRecording ? 'text-red-500 animate-pulse' : 'group-hover:text-red-400'}`} size={16} />
-                                </div>
-                                <div className="flex flex-col">
-                                    <span className="text-xs font-semibold text-slate-200">Recording Control</span>
-                                    <span className="text-[10px] text-slate-500 mt-0.5">Capture workspace video stream assets.</span>
-                                </div>
-                            </div>
-                            {recordingState.isRecording && (
-                                <span className="w-2 h-2 rounded-full bg-red-500 animate-ping" />
-                            )}
-                        </button>
                     </div>
                 )}
 
-                {/* --- HARDWARE CONFIGURATION SUBPAGE --- */}
-                {currentSubPage === "settings" && (
-                    <div className="space-y-4 pt-1 animate-fade-in">
-                        <div className="space-y-1.5">
-                            <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
-                                <RiVideoLine size={14} className="text-[#163F68]" /> Video Capture Feed
-                            </label>
-                            <select className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-xs focus:outline-none focus:border-[#163F68] text-slate-200">
-                                {devices.filter(d => d.kind === "videoinput").map(d => (
-                                    <option key={d.deviceId} value={d.deviceId}>{d.label || `Camera Source Option (${d.deviceId.slice(0,4)})`}</option>
-                                ))}
-                            </select>
-                        </div>
-
-                        <div className="space-y-1.5">
-                            <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
-                                <RiMicLine size={14} className="text-[#163F68]" /> Audio Capture Microphone
-                            </label>
-                            <select className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-xs focus:outline-none focus:border-[#163F68] text-slate-200">
-                                {devices.filter(d => d.kind === "audioinput").map(d => (
-                                    <option key={d.deviceId} value={d.deviceId}>{d.label || `Audio In Pipeline (${d.deviceId.slice(0,4)})`}</option>
-                                ))}
-                            </select>
-                        </div>
-
-                        <div className="space-y-1.5">
-                            <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
-                                <RiVolumeUpLine size={14} className="text-[#163F68]" /> Speaker System Output
-                            </label>
-                            <select className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-xs focus:outline-none focus:border-[#163F68] text-slate-200">
-                                {devices.filter(d => d.kind === "audiooutput").map(d => (
-                                    <option key={d.deviceId} value={d.deviceId}>{d.label || `Audio Receiver Port (${d.deviceId.slice(0,4)})`}</option>
-                                ))}
-                            </select>
-                        </div>
-
-                        <div className="space-y-1.5 pt-2 border-t border-slate-800/60">
-                            <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Video Profiling</label>
-                            <select className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-xs focus:outline-none focus:border-[#163F68] text-slate-200">
-                                <option value="high">High Definition Broadcast (720p)</option>
-                                <option value="medium">Standard Operational Rate (480p)</option>
-                            </select>
-                        </div>
-
-                        <div className="space-y-3 pt-2">
-                            <label className="flex items-center gap-3 text-xs font-medium cursor-pointer text-slate-300">
-                                <input type="checkbox" defaultChecked className="accent-[#163F68] h-4 w-4 rounded border-slate-800 bg-slate-950" />
-                                Intelligent Isolation Matrix
-                            </label>
-                            <label className="flex items-center gap-3 text-xs font-medium cursor-pointer text-slate-300">
-                                <input type="checkbox" defaultChecked className="accent-[#163F68] h-4 w-4 rounded border-slate-800 bg-slate-950" />
-                                Acoustic Echo Suppression
-                            </label>
-                            <label className="flex items-center gap-3 text-xs font-medium cursor-pointer text-slate-300">
-                                <input type="checkbox" defaultChecked className="accent-[#163F68] h-4 w-4 rounded border-slate-800 bg-slate-950" />
-                                Mirror Local Video Canvas
-                            </label>
-                        </div>
-
-                        <div className="space-y-1.5 pt-2 border-t border-slate-800/60">
-                            <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
-                                <RiMagicLine size={14} className="text-[#C99328]" /> Canvas Background Layer
-                            </label>
-                            <div className="grid grid-cols-2 gap-2">
-                                <button type="button" className="p-2.5 rounded-xl bg-slate-950 border-2 border-[#163F68] text-center text-xs font-semibold text-slate-200">None</button>
-                                <button type="button" className="p-2.5 rounded-xl bg-slate-950/20 border border-slate-800 text-center text-xs text-slate-600 cursor-not-allowed opacity-50">Blur Effect</button>
-                            </div>
-                        </div>
-
-                        <button onClick={() => setCurrentSubPage("main")} className="w-full mt-4 bg-[#163F68] hover:bg-[#163F68]/80 text-white font-bold text-xs uppercase tracking-wider py-3 rounded-xl transition shadow-lg active:scale-95">
-                            Apply Changes
-                        </button>
-                    </div>
-                )}
-
-                {/* --- BROADCAST TIMER SUBPAGE --- */}
+              
                 {currentSubPage === "timer" && (
                     <div className="space-y-4 pt-1 animate-fade-in">
                         {timerConfig.isActive ? (
                             <div className="text-center space-y-4 bg-slate-950/40 p-5 rounded-2xl border border-slate-800/60">
-                                <div className="text-[10px] font-bold text-[#C99328] uppercase tracking-widest animate-pulse">Synchronized Clock Running</div>
-                                <div className="text-4xl font-mono tracking-wider font-extrabold text-slate-100 py-2">
+                                <div className="text-[12px] font-bold text-[#C99328] uppercase tracking-widest animate-pulse"> Timer</div>
+                                {timerConfig.presenterIdentity && (
+                                    <p className="text-[11px] text-slate-400">
+                                        Presenting: <span className="text-white font-semibold">{timerConfig.presenterIdentity === room.localParticipant.identity ? "You" : timerConfig.presenterIdentity}</span>
+                                    </p>
+                                )}
+                                <div className="text-4xl font-mono tracking-wider font-extrabold text-white py-2">
                                     {(() => {
                                         const hours = Math.floor(timerConfig.remaining / 3600).toString().padStart(2, "0");
                                         const minutes = Math.floor((timerConfig.remaining % 3600) / 60).toString().padStart(2, "0");
@@ -476,15 +419,34 @@ function MeetingToolsSidebar({
                                         return `${hours}:${minutes}:${seconds}`;
                                     })()}
                                 </div>
-                                <button onClick={onCancelTimer} className="w-full py-2.5 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-xl text-xs uppercase tracking-wider shadow-md flex items-center justify-center gap-2 transition active:scale-95">
-                                    <RiStopFill size={14} /> Kill Countdown Session
+                                <button onClick={onCancelTimer} className="w-full py-2.5 bg-[#C99328] hover:bg-[#C99328]/80 text-white font-semibold rounded-xl text-xs uppercase tracking-wider shadow-md flex items-center justify-center gap-2 transition active:scale-95">
+                                    Stop
                                 </button>
                             </div>
                         ) : (
                             <form onSubmit={handleTimerSubmit} className="space-y-4">
-                                <p className="text-[11px] text-slate-400 text-center px-1 leading-relaxed">
-                                    Broadcast a hardware-independent room countdown to all connected delegates.
-                                </p>
+                             
+                                <div className="space-y-1.5">
+                                   
+                                    {activePresenters.length === 0 ? (
+                                        <div className="w-full bg-slate-950/60 border border-slate-800 text-white rounded-xl px-3 py-3 text-xs italic">
+                                           Select Participants
+                                        </div>
+                                    ) : (
+                                        <select
+                                            value={selectedPresenter}
+                                            onChange={(e) => setSelectedPresenter(e.target.value)}
+                                            className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-[#163F68] font-semibold"
+                                        >
+                                            {activePresenters.map((p) => (
+                                                <option key={p.identity} value={p.identity}>
+                                                    {p.name} {p.identity === room.localParticipant.identity ? "(You)" : ""}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    )}
+                                </div>
+
                                 <div className="grid grid-cols-3 gap-2">
                                     <div className="space-y-1 text-center">
                                         <label className="text-[9px] font-bold text-slate-500 uppercase tracking-wider">Hours</label>
@@ -499,53 +461,15 @@ function MeetingToolsSidebar({
                                         <input type="number" min="0" max="59" value={timerS} onChange={e => setTimerS(e.target.value)} className="w-full bg-slate-950 border border-slate-800 rounded-xl py-2 text-center font-mono font-bold text-xs focus:outline-none focus:border-[#163F68]" />
                                     </div>
                                 </div>
-                                <button type="submit" className="w-full py-3 bg-[#163F68] hover:bg-[#163F68]/80 text-white font-bold rounded-xl text-xs uppercase tracking-wider shadow-md flex items-center justify-center gap-2 transition active:scale-95">
-                                    <RiPlayFill size={14} /> Initialize Broadcast
+                                <button 
+                                    type="submit" 
+                                    disabled={activePresenters.length === 0}
+                                    className={`w-full py-3 text-white font-bold rounded-xl text-xs uppercase tracking-wider shadow-md flex items-center justify-center gap-2 transition active:scale-95 ${activePresenters.length === 0 ? "bg-slate-800 text-slate-600 cursor-not-allowed shadow-none" : "bg-[#163F68] hover:bg-[#C99328]/80"}`}
+                                >
+                                    <RiPlayFill size={14} /> Timer
                                 </button>
                             </form>
                         )}
-                    </div>
-                )}
-
-                {/* --- LOCAL SESSION CAPTURE STREAM RECORDING SUBPAGE --- */}
-                {currentSubPage === "recording" && (
-                    <div className="space-y-4 pt-1 animate-fade-in">
-                        <div className="bg-slate-950/40 p-5 rounded-2xl border border-slate-800/60 text-center space-y-4">
-                            {recordingState.isRecording ? (
-                                <>
-                                    <div className="flex items-center justify-center gap-2 text-red-500 text-xs font-bold uppercase tracking-widest animate-pulse">
-                                        <span className="w-2 h-2 rounded-full bg-red-500" />
-                                        Capturing Stream Assets
-                                    </div>
-                                    <div className="text-3xl font-mono font-black text-slate-200">
-                                        {(() => {
-                                            const h = Math.floor(recordingState.recordingTime / 3600).toString().padStart(2, "0");
-                                            const m = Math.floor((recordingState.recordingTime % 3600) / 60).toString().padStart(2, "0");
-                                            const s = (recordingState.recordingTime % 60).toString().padStart(2, "0");
-                                            return `${h}:${m}:${s}`;
-                                        })()}
-                                    </div>
-                                    <button 
-                                        onClick={handleToggleRecording}
-                                        className="w-full py-2.5 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl text-xs uppercase tracking-wider transition shadow-md flex items-center justify-center gap-2"
-                                    >
-                                        <RiStopFill size={14} /> Terminate Recording
-                                    </button>
-                                </>
-                            ) : (
-                                <>
-                                    <div className="text-slate-400 text-xs leading-relaxed px-1">
-                                        Initialize local stream buffer assembly. File artifact downloads as standard WebM upon session finalization.
-                                    </div>
-                                    <button 
-                                        onClick={handleToggleRecording}
-                                        className="w-full py-3 bg-[#163F68] hover:bg-[#163F68]/80 text-white font-bold rounded-xl text-xs uppercase tracking-wider transition shadow-md flex items-center justify-center gap-2"
-                                    >
-                                        <RiRecordCircleLine size={15} /> Initialize Local Capture
-                                    </button>
-                                </>
-                            )}
-                        </div>
                     </div>
                 )}
             </div>
@@ -553,7 +477,7 @@ function MeetingToolsSidebar({
     );
 }
 
-// --- ENTERPRISE COMPONENT CONTROLS CONTROLLER TOOLBAR SYSTEM ---
+
 function FloatingControls({ 
     onToggleChat, isChatOpen, 
     onToggleParticipants, isParticipantsOpen, 
@@ -565,6 +489,11 @@ function FloatingControls({
     const [micOn, setMicOn] = useState(room.localParticipant.isMicrophoneEnabled);
     const [camOn, setCamOn] = useState(room.localParticipant.isCameraEnabled);
     const [screenOn, setScreenOn] = useState(room.localParticipant.isScreenShareEnabled);
+
+  
+    useEffect(() => {
+        setScreenOn(room.localParticipant.isScreenShareEnabled);
+    }, [room.localParticipant.isScreenShareEnabled]);
 
     const formatTime = (seconds) => {
         const h = Math.floor(seconds / 3600).toString().padStart(2, "0");
@@ -591,7 +520,7 @@ function FloatingControls({
     return (
         <div className="h-24 bg-[#0F172A] border-t border-slate-800/80 grid grid-cols-3 items-center px-8 text-white select-none z-30 relative shadow-xl">
             
-            {/* LEFT CONTAINER SUBSECTION */}
+            
             <div className="flex items-center gap-2">
                 {recordingState.isRecording && (
                     <div className="flex items-center gap-2 bg-red-500/10 border border-red-500/20 text-red-400 px-3 py-1.5 rounded-full text-[10px] font-bold tracking-widest font-mono shadow-sm">
@@ -600,7 +529,7 @@ function FloatingControls({
                     </div>
                 )}
                 {timerConfig.isActive && (
-                    <div className="flex items-center gap-1.5 bg-[#C99328]/10 border border-[#C99328]/20 text-[#C99328] px-3 py-1.5 rounded-full text-[10px] font-bold font-mono shadow-sm">
+                    <div className="flex items-center gap-1.5 bg-[#C99328]/10 border border-[#C99328]/20 text-[#C99328] px-3 py-1.5 rounded-full text-[12px] font-bold font-mono shadow-sm">
                         <RiTimerLine className="animate-pulse" size={13} />
                         {(() => {
                             const hours = Math.floor(timerConfig.remaining / 3600).toString().padStart(2, "0");
@@ -612,7 +541,7 @@ function FloatingControls({
                 )}
             </div>
 
-            {/* CENTER OPERATIONAL COMMAND CONTROLS */}
+           
             <div className="flex items-center justify-center gap-3">
                 <motion.button whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }} onClick={toggleMic} className={`w-11 h-11 rounded-full flex items-center justify-center transition-all border border-slate-800/60 shadow-md ${micOn ? "bg-slate-800 text-slate-200 hover:bg-slate-700 hover:text-white" : "bg-red-500 text-white hover:bg-red-600"}`}>
                     {micOn ? <RiMicLine size={18}/> : <RiMicOffLine size={18}/>}
@@ -635,17 +564,17 @@ function FloatingControls({
                 </motion.button>
             </div>
 
-            {/* THREE UTILITY ICON SLOTS ALIGNED ALONG THE RIGHT DISPLACEMENT BOUNDS */}
+           
             <div className="flex items-center justify-end gap-3">
-                <motion.button whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }} onClick={onToggleParticipants} className={`w-11 h-11 rounded-xl flex items-center justify-center transition-all border border-slate-800/60 shadow-md ${isParticipantsOpen ? "bg-[#163F68] text-white border-transparent" : "bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white"}`}>
+                <motion.button whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }} onClick={onToggleParticipants} className={`w-11 h-11 rounded-xl flex items-center justify-center transition-all border border-slate-800/60 shadow-md ${isParticipantsOpen ? "bg-[#C99328] text-white border-transparent" : "bg-slate-800 text-slate-300 hover:bg-[#C99328] hover:text-white"}`}>
                     <RiGroupLine size={18}/>
                 </motion.button>
 
-                <motion.button whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }} onClick={onToggleChat} className={`w-11 h-11 rounded-xl flex items-center justify-center transition-all border border-slate-800/60 shadow-md ${isChatOpen ? "bg-[#163F68] text-white border-transparent" : "bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white"}`}>
+                <motion.button whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }} onClick={onToggleChat} className={`w-11 h-11 rounded-xl flex items-center justify-center transition-all border border-slate-800/60 shadow-md ${isChatOpen ? "bg-[#C99328] text-white border-transparent" : "bg-slate-800 text-slate-300 hover:bg-[#C99328] hover:text-white"}`}>
                     <RiChat3Line size={18}/>
                 </motion.button>
 
-                <motion.button whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }} onClick={onToggleTools} className={`w-11 h-11 rounded-xl flex items-center justify-center transition-all border border-slate-800/60 shadow-md ${isToolsOpen ? "bg-[#163F68] text-white border-transparent" : "bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white"}`}>
+                <motion.button whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }} onClick={onToggleTools} className={`w-11 h-11 rounded-xl flex items-center justify-center transition-all border border-slate-800/60 shadow-md ${isToolsOpen ? "bg-[#C99328] text-white border-transparent" : "bg-slate-800 text-slate-300 hover:bg-[#C99328] hover:text-white"}`}>
                     <RiToolsLine size={18}/>
                 </motion.button>
             </div>
@@ -654,7 +583,7 @@ function FloatingControls({
     );
 }
 
-// --- SECURE WORKSPACE MEETING ROOT CONTAINER ENVIRONMENT ---
+
 function MeetingRoomContent() {
     const room = useRoomContext();
     const [activePanel, setActivePanel] = useState(null); // 'chat' | 'participants' | 'tools' | null
@@ -663,10 +592,11 @@ function MeetingRoomContent() {
     const [timerConfig, setTimerConfig] = useState({
         isActive: false,
         total: 0,
-        remaining: 0
+        remaining: 0,
+        presenterIdentity: ""
     });
 
-    // Integrated Recording States
+    
     const [isRecording, setIsRecording] = useState(false);
     const [recordingTime, setRecordingTime] = useState(0);
     const mediaRecorderRef = useRef(null);
@@ -696,11 +626,12 @@ function MeetingRoomContent() {
         );
     };
 
-    const handleStartTimer = (durationSeconds) => {
+    const handleStartTimer = (durationSeconds, presenterIdentity) => {
         const payload = JSON.stringify({
             type: "timer_start",
             duration: durationSeconds,
-            stamp: Date.now()
+            stamp: Date.now(),
+            presenterIdentity: presenterIdentity
         });
         const data = new TextEncoder().encode(payload);
         room.localParticipant.publishData(data, { reliable: true });
@@ -708,7 +639,8 @@ function MeetingRoomContent() {
         setTimerConfig({
             isActive: true,
             total: durationSeconds,
-            remaining: durationSeconds
+            remaining: durationSeconds,
+            presenterIdentity: presenterIdentity
         });
     };
 
@@ -717,7 +649,7 @@ function MeetingRoomContent() {
         const data = new TextEncoder().encode(payload);
         room.localParticipant.publishData(data, { reliable: true });
 
-        setTimerConfig({ isActive: false, total: 0, remaining: 0 });
+        setTimerConfig({ isActive: false, total: 0, remaining: 0, presenterIdentity: "" });
     };
 
     const handleToggleRecording = async () => {
@@ -763,7 +695,7 @@ function MeetingRoomContent() {
         }
     };
 
-    // --- LIVE BROADCAST SYNC EFFECT ---
+    
     useEffect(() => {
         let interval = null;
         if (timerConfig.isActive && timerConfig.remaining > 0) {
@@ -772,16 +704,26 @@ function MeetingRoomContent() {
                     if (prev.remaining <= 1) {
                         clearInterval(interval);
                         playAlertSound();
-                        return { isActive: false, total: 0, remaining: 0 };
+                        
+                      
+                        if (prev.presenterIdentity === room.localParticipant.identity) {
+                            if (room.localParticipant.isScreenShareEnabled) {
+                                room.localParticipant.setScreenShareEnabled(false).catch(err => {
+                                    console.error("Failed to automatically terminate screen share track:", err);
+                                });
+                            }
+                        }
+
+                        return { isActive: false, total: 0, remaining: 0, presenterIdentity: "" };
                     }
                     return { ...prev, remaining: prev.remaining - 1 };
                 });
             }, 1000);
         }
         return () => clearInterval(interval);
-    }, [timerConfig.isActive, timerConfig.remaining]);
+    }, [timerConfig.isActive, timerConfig.remaining, room.localParticipant]);
 
-    // --- SECURE DISPATCH CHANNEL SUBSCRIPTIONS ---
+   
     useEffect(() => {
         const handleDataReceived = (payload, participant) => {
             try {
@@ -799,11 +741,12 @@ function MeetingRoomContent() {
                         setTimerConfig({
                             isActive: true,
                             total: data.duration,
-                            remaining: rem
+                            remaining: rem,
+                            presenterIdentity: data.presenterIdentity
                         });
                     }
                 } else if (data.type === "timer_stop") {
-                    setTimerConfig({ isActive: false, total: 0, remaining: 0 });
+                    setTimerConfig({ isActive: false, total: 0, remaining: 0, presenterIdentity: "" });
                 }
             } catch (e) {
                console.error("Data tracking exception:", e);
@@ -825,13 +768,13 @@ function MeetingRoomContent() {
     return (
         <div className="fixed inset-0 bg-slate-950 flex flex-col overflow-hidden font-sans select-none w-screen h-screen">
             
-            {/* BRANDING CAPTURE BAR */}
+           
             <div className="absolute top-5 left-6 z-50 flex items-center gap-3 bg-[#0F172A]/40 backdrop-blur-md pr-4 pl-2 py-1.5 rounded-2xl border border-slate-800/40">
-                <div className="w-10 h-10 rounded-xl bg-[#163F68] flex items-center justify-center shadow-md border border-white/5">
-                    <RiShieldCheckLine className="text-[#C99328] text-lg" />
+                <div className="w-15 h-15 rounded-xl bg-[#0F172A] flex items-center justify-center shadow-md border border-white/5 hover:bg-[#C99328] hover:text-white transition">
+                    <RiShieldCheckLine className="text-white text-lg"  />
                 </div>
                 <div>
-                    <h2 className="text-white text-sm font-black tracking-wider leading-none">SHNOOR</h2>
+                    <h2 className="text-white text-large font-bold tracking-wider leading-none">SHNOOR</h2>
                     <p className="text-slate-400 text-[10px] font-bold uppercase tracking-widest mt-0.5">Workspace Meet</p>
                 </div>
             </div>
@@ -840,10 +783,10 @@ function MeetingRoomContent() {
             
             <div className="flex flex-1 w-full h-[calc(100vh-96px)] overflow-hidden relative">
                 
-                {/* VIDEO TARGET LAYOUT FRAME */}
+               
                 <ActiveVideoGrid raisedHands={raisedHands} />
                 
-                {/* UNIFIED ENHANCED DRAWER CONTAINMENT REGION */}
+               
                 <AnimatePresence mode="wait">
                     {activePanel === 'chat' && (
                         <RightChatPanel key="chat" isOpen={true} onClose={() => setActivePanel(null)} />
@@ -883,7 +826,7 @@ function MeetingRoomContent() {
     );
 }
 
-// --- CORE CONNECTOR ENVIRONMENT ---
+
 export default function MeetingRoom() {
     const params = useMemo(() => new URLSearchParams(window.location.search), []);
     const roomName = params.get("room");
