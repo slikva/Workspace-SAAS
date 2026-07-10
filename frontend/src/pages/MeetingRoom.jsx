@@ -31,13 +31,16 @@ import {
     RiShieldCheckLine,
     RiMagicLine,
     RiPlayFill,
-    RiStopFill
+    RiStopFill,
+    RiToolsLine,
+    RiArrowLeftLine,
+    RiDownloadLine
 } from "react-icons/ri";
 import { motion, AnimatePresence } from "framer-motion";
 
 const API = import.meta.env.VITE_API_URL;
 
-// --- AUDIO ALERTS ---
+// --- PREMIUM UTILITY AUDIO ALERTS ---
 const playAlertSound = () => {
     try {
         const ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -46,23 +49,23 @@ const playAlertSound = () => {
         osc.connect(gain);
         gain.connect(ctx.destination);
         osc.type = "sine";
-        osc.frequency.setValueAtTime(587.33, ctx.currentTime); // D5 note
-        gain.gain.setValueAtTime(0.3, ctx.currentTime);
+        osc.frequency.setValueAtTime(587.33, ctx.currentTime);
+        gain.gain.setValueAtTime(0.2, ctx.currentTime);
         osc.start();
         gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.4);
         osc.stop(ctx.currentTime + 0.4);
     } catch (e) {
-        console.error("Audio clip play blocked by browser interaction restrictions", e);
+        console.error("Audio engine interaction warning:", e);
     }
 };
 
-// --- CUSTOM PARTICIPANT GRID CARD ---
+// --- WORKSPACE PARTICIPANT VIEWPORT GRID ---
 function CustomParticipantTile({ participantTrack, raisedHands }) {
     const { participant, source, publication } = participantTrack;
     const { identity } = useParticipantInfo({ participant });
     
     const isTrackEnabled = publication ? (publication.isSubscribed && !publication.isMuted) : false;
-    const displayName = identity || participant.name || "User";
+    const displayName = identity || participant.name || "Workspace User";
     const initialLetter = displayName.charAt(0).toUpperCase();
 
     const isCameraVideo = source === Track.Source.Camera && isTrackEnabled;
@@ -70,12 +73,12 @@ function CustomParticipantTile({ participantTrack, raisedHands }) {
     const hasHandRaised = raisedHands.includes(participant.identity);
 
     return (
-        <div className="relative bg-slate-900 rounded-2xl overflow-hidden border border-slate-800/80 flex items-center justify-center h-full w-full shadow-md aspect-video">
+        <div className="relative bg-[#0F172A] rounded-2xl overflow-hidden border border-slate-800/60 flex items-center justify-center h-full w-full shadow-lg aspect-video">
             {isCameraVideo || isScreenShareVideo ? (
-                <VideoTrack trackRef={participantTrack} className="w-full h-full object-contain bg-slate-950 rounded-xl" />
+                <VideoTrack trackRef={participantTrack} className="w-full h-full object-contain bg-slate-950/80 rounded-2xl" />
             ) : (
-                <div className="flex flex-col items-center justify-center">
-                    <div className="w-24 h-24 rounded-full bg-[#163F68] shadow-xl flex items-center justify-center font-bold text-4xl text-white tracking-wider border border-white/10 uppercase">
+                <div className="flex flex-col items-center justify-center select-none">
+                    <div className="w-20 h-20 rounded-full bg-[#163F68] shadow-2xl flex items-center justify-center font-bold text-3xl text-white tracking-wide border border-white/5 uppercase">
                         {initialLetter}
                     </div>
                 </div>
@@ -83,19 +86,19 @@ function CustomParticipantTile({ participantTrack, raisedHands }) {
 
             {source === Track.Source.Microphone && <AudioTrack trackRef={participantTrack} />}
 
-            <div className="absolute top-3 right-3 flex gap-2 z-10">
+            <div className="absolute top-4 right-4 flex gap-2 z-10">
                 {hasHandRaised && (
                     <motion.div 
-                        initial={{ scale: 0 }} 
-                        animate={{ scale: 1 }} 
-                        className="bg-[#C99328] text-white p-2 rounded-full shadow-lg"
+                        initial={{ scale: 0, rotate: -20 }} 
+                        animate={{ scale: 1, rotate: 0 }} 
+                        className="bg-[#C99328] text-white p-2 rounded-xl shadow-md border border-white/10"
                     >
-                        <RiHand size={18} />
+                        <RiHand size={16} />
                     </motion.div>
                 )}
             </div>
 
-            <div className="absolute bottom-3 left-3 bg-slate-950/70 backdrop-blur px-3 py-1 rounded-lg text-xs font-semibold text-slate-200 border border-slate-800/50 max-w-[85%] truncate z-10">
+            <div className="absolute bottom-4 left-4 bg-[#0F172A]/80 backdrop-blur-md px-3 py-1.5 rounded-xl text-xs font-medium text-slate-200 border border-slate-800/40 max-w-[80%] truncate z-10">
                 {source === Track.Source.ScreenShare 
                     ? `${displayName}'s Presentation` 
                     : `${displayName} ${participant.isLocal ? "(You)" : ""}`
@@ -131,7 +134,7 @@ function ActiveVideoGrid({ raisedHands }) {
     );
 }
 
-// --- ENTERPRISE SLIDING CHAT PANEL ---
+// --- ENTERPRISE CHAT DRAWER PANEL ---
 function RightChatPanel({ isOpen, onClose }) {
     const { send, chatMessages } = useChat();
     const [messageText, setMessageText] = useState("");
@@ -157,14 +160,14 @@ function RightChatPanel({ isOpen, onClose }) {
             initial={{ x: "100%" }}
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
-            transition={{ type: "tween", duration: 0.25 }}
-            className="w-85 h-[calc(100vh-96px)] bg-slate-900 border-l border-slate-800 flex flex-col z-40 shadow-2xl relative"
+            transition={{ type: "tween", duration: 0.22 }}
+            className="w-80 h-[calc(100vh-96px)] bg-[#0F172A] border-l border-slate-800 flex flex-col z-40 shadow-2xl relative"
         >
-            <div className="p-4 h-14 border-b border-slate-800 flex items-center justify-between bg-slate-950/20">
-                <h3 className="font-bold text-white tracking-wide text-xs uppercase flex items-center gap-2">
-                    <RiChat3Line className="text-[#163F68]" size={16} /> In-Meeting Chat
+            <div className="p-4 h-16 border-b border-slate-800/80 flex items-center justify-between bg-slate-950/20">
+                <h3 className="font-bold text-white tracking-wider text-xs uppercase flex items-center gap-2">
+                    <RiChat3Line className="text-[#163F68]" size={16} /> Workspace Chat
                 </h3>
-                <button onClick={onClose} className="p-1 hover:bg-slate-800 rounded-lg text-slate-400 hover:text-white transition">
+                <button onClick={onClose} className="p-1.5 hover:bg-slate-800/60 rounded-xl text-slate-400 hover:text-white transition">
                     <RiCloseLine size={18} />
                 </button>
             </div>
@@ -172,7 +175,7 @@ function RightChatPanel({ isOpen, onClose }) {
             <div className="flex-1 overflow-y-auto p-4 space-y-4 flex flex-col">
                 {chatMessages.length === 0 ? (
                     <div className="my-auto text-center px-4">
-                        <p className="text-xs text-slate-500">Messages sent here are visible to everyone in the channel.</p>
+                        <p className="text-xs text-slate-500 leading-relaxed">No messages yet. Send a broadcast to all active workspace delegates.</p>
                     </div>
                 ) : (
                     chatMessages.map((msg, index) => (
@@ -187,15 +190,15 @@ function RightChatPanel({ isOpen, onClose }) {
                 <div ref={listEndRef} />
             </div>
 
-            <form onSubmit={handleSend} className="p-3 border-t border-slate-800 bg-slate-950/40 flex gap-2 items-center sticky bottom-0">
+            <form onSubmit={handleSend} className="p-3 border-t border-slate-800/60 bg-slate-950/40 flex gap-2 items-center sticky bottom-0">
                 <input
                     type="text"
                     value={messageText}
                     onChange={(e) => setMessageText(e.target.value)}
                     placeholder="Type a message..."
-                    className="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-white placeholder-slate-600 focus:outline-none focus:border-[#163F68] transition-colors"
+                    className="flex-1 bg-slate-950 border border-slate-800/80 rounded-xl px-3 py-2.5 text-xs text-white placeholder-slate-600 focus:outline-none focus:border-[#163F68] transition-colors"
                 />
-                <button type="submit" className="p-2.5 bg-[#163F68] hover:bg-[#163F68]/80 rounded-xl transition text-white shadow-md active:scale-95">
+                <button type="submit" className="p-2.5 bg-[#163F68] hover:bg-[#163F68]/90 rounded-xl transition text-white shadow-md active:scale-95">
                     <RiSendPlane2Fill size={15}/>
                 </button>
             </form>
@@ -203,7 +206,7 @@ function RightChatPanel({ isOpen, onClose }) {
     );
 }
 
-// --- ENTERPRISE SLIDING PARTICIPANTS PANEL ---
+// --- ENTERPRISE PARTICIPANTS DRAWER PANEL ---
 function ParticipantsSidebar({ isOpen, onClose, raisedHands }) {
     const participants = useParticipants();
     if (!isOpen) return null;
@@ -213,28 +216,28 @@ function ParticipantsSidebar({ isOpen, onClose, raisedHands }) {
             initial={{ x: "100%" }}
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
-            transition={{ type: "tween", duration: 0.25 }}
-            className="w-85 h-[calc(100vh-96px)] bg-slate-900 border-l border-slate-800 flex flex-col z-40 shadow-2xl text-white"
+            transition={{ type: "tween", duration: 0.22 }}
+            className="w-80 h-[calc(100vh-96px)] bg-[#0F172A] border-l border-slate-800 flex flex-col z-40 shadow-2xl text-white"
         >
-            <div className="p-4 h-14 border-b border-slate-800 flex items-center justify-between bg-slate-950/20">
-                <h3 className="font-bold tracking-wide text-xs uppercase flex items-center gap-2">
-                    <RiGroupLine className="text-[#163F68]" size={16} /> Roster ({participants.length})
+            <div className="p-4 h-16 border-b border-slate-800/80 flex items-center justify-between bg-slate-950/20">
+                <h3 className="font-bold tracking-wider text-xs uppercase flex items-center gap-2">
+                    <RiGroupLine className="text-[#163F68]" size={16} /> Room Roster ({participants.length})
                 </h3>
-                <button onClick={onClose} className="p-1 hover:bg-slate-800 rounded-lg text-slate-400 hover:text-white transition">
+                <button onClick={onClose} className="p-1.5 hover:bg-slate-800/60 rounded-xl text-slate-400 hover:text-white transition">
                     <RiCloseLine size={18} />
                 </button>
             </div>
             <div className="flex-1 overflow-y-auto p-3 space-y-2">
                 {participants.map((p) => {
-                    const nameStr = p.identity || "User";
+                    const nameStr = p.identity || "Workspace User";
                     const isMicMuted = !p.isMicrophoneEnabled;
                     const isCamMuted = !p.isCameraEnabled;
                     const isSpeaking = p.isSpeaking;
 
                     return (
-                        <div key={p.sid} className={`flex items-center justify-between bg-slate-950/40 p-3 rounded-xl border transition-all ${isSpeaking ? 'border-[#C99328]/80 bg-slate-900' : 'border-slate-800/40'}`}>
+                        <div key={p.sid} className={`flex items-center justify-between bg-slate-950/30 p-3 rounded-xl border transition-all ${isSpeaking ? 'border-[#C99328] bg-[#0F172A]' : 'border-slate-800/40'}`}>
                             <div className="flex items-center gap-2.5 min-w-0 flex-1">
-                                <div className="w-8 h-8 rounded-full bg-slate-800 border border-slate-700 font-bold text-xs flex items-center justify-center text-slate-300 shrink-0 select-none uppercase">
+                                <div className="w-8 h-8 rounded-full bg-slate-800 border border-slate-700 font-bold text-xs flex items-center justify-center text-slate-300 shrink-0 uppercase">
                                     {nameStr.charAt(0)}
                                 </div>
                                 <div className="flex flex-col min-w-0">
@@ -242,21 +245,21 @@ function ParticipantsSidebar({ isOpen, onClose, raisedHands }) {
                                         {nameStr} {p.isLocal ? "(You)" : ""}
                                     </span>
                                     {p.isLocal && (
-                                        <span className="text-[9px] font-bold text-[#163F68] uppercase tracking-wider">Host Organizer</span>
+                                        <span className="text-[9px] font-bold text-[#163F68] uppercase tracking-widest mt-0.5">Host</span>
                                     )}
                                 </div>
                             </div>
                             <div className="flex items-center gap-2 shrink-0 ml-2">
                                 {raisedHands.includes(p.identity) && (
-                                    <div className="text-[#C99328] animate-pulse">
-                                        <RiHand size={15} />
+                                    <div className="text-[#C99328]">
+                                        <RiHand size={14} />
                                     </div>
                                 )}
-                                <div className={`p-1.5 rounded-md ${isMicMuted ? 'bg-red-500/10 text-red-400' : 'bg-slate-800 text-slate-400'}`}>
-                                    {isMicMuted ? <RiMicOffLine size={13} /> : <RiMicLine size={13} />}
+                                <div className={`p-1.5 rounded-lg ${isMicMuted ? 'bg-red-500/10 text-red-400' : 'bg-slate-800 text-slate-400'}`}>
+                                    {isMicMuted ? <RiMicOffLine size={12} /> : <RiMicLine size={12} />}
                                 </div>
-                                <div className={`p-1.5 rounded-md ${isCamMuted ? 'bg-red-500/10 text-red-400' : 'bg-slate-800 text-slate-400'}`}>
-                                    {isCamMuted ? <RiVideoOffLine size={13} /> : <RiVideoLine size={13} />}
+                                <div className={`p-1.5 rounded-lg ${isCamMuted ? 'bg-red-500/10 text-red-400' : 'bg-slate-800 text-slate-400'}`}>
+                                    {isCamMuted ? <RiVideoOffLine size={12} /> : <RiVideoLine size={12} />}
                                 </div>
                             </div>
                         </div>
@@ -267,17 +270,30 @@ function ParticipantsSidebar({ isOpen, onClose, raisedHands }) {
     );
 }
 
-// --- SYNCHRONIZED PRESENTATION TIMER MANAGEMENT PANEL ---
-function PresentationTimerPanel({ isOpen, onClose, timerConfig, onStartTimer, onCancelTimer }) {
-    const [h, setH] = useState("0");
-    const [m, setM] = useState("15");
-    const [s, setS] = useState("0");
+// --- INTEGRATED HUMAN-DESIGNED MEETING TOOLS SUB-PANEL SYSTEM ---
+function MeetingToolsSidebar({ 
+    isOpen, onClose, timerConfig, onStartTimer, onCancelTimer,
+    recordingState, handleToggleRecording
+}) {
+    const [currentSubPage, setCurrentSubPage] = useState("main"); // "main" | "settings" | "timer" | "recording"
+    const [devices, setDevices] = useState([]);
+    
+    // Timer state references
+    const [timerH, setTimerH] = useState("0");
+    const [timerM, setTimerM] = useState("15");
+    const [timerS, setTimerS] = useState("0");
+
+    useEffect(() => {
+        if (isOpen && currentSubPage === "settings") {
+            navigator.mediaDevices.enumerateDevices().then(setDevices).catch(console.error);
+        }
+    }, [isOpen, currentSubPage]);
 
     if (!isOpen) return null;
 
-    const handleSubmit = (e) => {
+    const handleTimerSubmit = (e) => {
         e.preventDefault();
-        const totalSec = (parseInt(h) || 0) * 3600 + (parseInt(m) || 0) * 60 + (parseInt(s) || 0);
+        const totalSec = (parseInt(timerH) || 0) * 3600 + (parseInt(timerM) || 0) * 60 + (parseInt(timerS) || 0);
         if (totalSec <= 0) return;
         onStartTimer(totalSec);
     };
@@ -287,190 +303,268 @@ function PresentationTimerPanel({ isOpen, onClose, timerConfig, onStartTimer, on
             initial={{ x: "100%" }}
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
-            transition={{ type: "tween", duration: 0.25 }}
-            className="w-85 h-[calc(100vh-96px)] bg-slate-900 border-l border-slate-800 flex flex-col z-40 shadow-2xl text-white"
+            transition={{ type: "tween", duration: 0.22 }}
+            className="w-80 h-[calc(100vh-96px)] bg-[#0F172A] border-l border-slate-800 flex flex-col z-40 shadow-2xl text-white"
         >
-            <div className="p-4 h-14 border-b border-slate-800 flex items-center justify-between bg-slate-950/20">
-                <h3 className="font-bold tracking-wide text-xs uppercase flex items-center gap-2">
-                    <RiTimerLine className="text-[#163F68]" size={16} /> Live Timer Controller
-                </h3>
-                <button onClick={onClose} className="p-1 hover:bg-slate-800 rounded-lg text-slate-400 hover:text-white transition">
+            {/* STICKY HEADER CAPTURE LAYER */}
+            <div className="p-4 h-16 border-b border-slate-800/80 flex items-center justify-between bg-slate-950/20">
+                <div className="flex items-center gap-2">
+                    {currentSubPage !== "main" && (
+                        <button 
+                            onClick={() => setCurrentSubPage("main")}
+                            className="p-1 hover:bg-slate-800/80 rounded-lg text-slate-400 hover:text-white transition mr-1"
+                        >
+                            <RiArrowLeftLine size={16} />
+                        </button>
+                    )}
+                    <h3 className="font-bold tracking-wider text-xs uppercase flex items-center gap-2">
+                        <RiToolsLine className="text-[#163F68]" size={16} /> 
+                        {currentSubPage === "main" && "Meeting Tools"}
+                        {currentSubPage === "settings" && "Hardware Controls"}
+                        {currentSubPage === "timer" && "Room Countdown"}
+                        {currentSubPage === "recording" && "Session Capture"}
+                    </h3>
+                </div>
+                <button onClick={onClose} className="p-1.5 hover:bg-slate-800/60 rounded-xl text-slate-400 hover:text-white transition">
                     <RiCloseLine size={18} />
                 </button>
             </div>
-            
-            <div className="flex-1 p-5 space-y-6 flex flex-col justify-center">
-                {timerConfig.isActive ? (
-                    <div className="text-center space-y-4">
-                        <div className="text-xs font-bold text-[#C99328] uppercase tracking-widest animate-pulse">Meeting Count Down Active</div>
-                        <div className="text-5xl font-mono tracking-wider font-extrabold text-slate-100 bg-slate-950/60 py-6 rounded-2xl border border-slate-800">
-                            {(() => {
-                                const hours = Math.floor(timerConfig.remaining / 3600).toString().padStart(2, "0");
-                                const minutes = Math.floor((timerConfig.remaining % 3600) / 60).toString().padStart(2, "0");
-                                const seconds = (timerConfig.remaining % 60).toString().padStart(2, "0");
-                                return `${hours}:${minutes}:${seconds}`;
-                            })()}
-                        </div>
-                        <button onClick={onCancelTimer} className="w-full py-3 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-xl text-xs uppercase tracking-wider shadow-lg flex items-center justify-center gap-2 transition active:scale-95">
-                            <RiStopFill size={15} /> Abort Timer Session
+
+            {/* NESTED LAYER NAVIGATION ROUTING VIEWPORTS */}
+            <div className="flex-1 overflow-y-auto p-4 space-y-4">
+                {currentSubPage === "main" && (
+                    <div className="space-y-3 pt-2">
+                        <button 
+                            onClick={() => setCurrentSubPage("settings")}
+                            className="w-full text-left p-4 bg-slate-950/40 hover:bg-slate-950/80 border border-slate-800/60 hover:border-[#163F68]/60 rounded-xl transition group flex items-center justify-between"
+                        >
+                            <div className="flex items-center gap-3">
+                                <div className="p-2 rounded-lg bg-slate-900 group-hover:bg-[#163F68]/20 border border-slate-800 transition">
+                                    <RiSettings3Line className="text-slate-400 group-hover:text-white" size={16} />
+                                </div>
+                                <div className="flex flex-col">
+                                    <span className="text-xs font-semibold text-slate-200">Device Settings</span>
+                                    <span className="text-[10px] text-slate-500 mt-0.5">Configure hardware routing sources.</span>
+                                </div>
+                            </div>
+                        </button>
+
+                        <button 
+                            onClick={() => setCurrentSubPage("timer")}
+                            className="w-full text-left p-4 bg-slate-950/40 hover:bg-slate-950/80 border border-slate-800/60 hover:border-[#C99328]/60 rounded-xl transition group flex items-center justify-between"
+                        >
+                            <div className="flex items-center gap-3">
+                                <div className="p-2 rounded-lg bg-slate-900 group-hover:bg-[#C99328]/20 border border-slate-800 transition">
+                                    <RiTimerLine className="text-slate-400 group-hover:text-[#C99328]" size={16} />
+                                </div>
+                                <div className="flex flex-col">
+                                    <span className="text-xs font-semibold text-slate-200">Presentation Timer</span>
+                                    <span className="text-[10px] text-slate-500 mt-0.5">Synchronize meeting clocks globally.</span>
+                                </div>
+                            </div>
+                            {timerConfig.isActive && (
+                                <span className="w-2 h-2 rounded-full bg-[#C99328] animate-pulse" />
+                            )}
+                        </button>
+
+                        <button 
+                            onClick={() => setCurrentSubPage("recording")}
+                            className="w-full text-left p-4 bg-slate-950/40 hover:bg-slate-950/80 border border-slate-800/60 hover:border-red-900/40 rounded-xl transition group flex items-center justify-between"
+                        >
+                            <div className="flex items-center gap-3">
+                                <div className="p-2 rounded-lg bg-slate-900 group-hover:bg-red-500/10 border border-slate-800 transition">
+                                    <RiRecordCircleLine className={`text-slate-400 ${recordingState.isRecording ? 'text-red-500 animate-pulse' : 'group-hover:text-red-400'}`} size={16} />
+                                </div>
+                                <div className="flex flex-col">
+                                    <span className="text-xs font-semibold text-slate-200">Recording Control</span>
+                                    <span className="text-[10px] text-slate-500 mt-0.5">Capture workspace video stream assets.</span>
+                                </div>
+                            </div>
+                            {recordingState.isRecording && (
+                                <span className="w-2 h-2 rounded-full bg-red-500 animate-ping" />
+                            )}
                         </button>
                     </div>
-                ) : (
-                    <form onSubmit={handleSubmit} className="space-y-5">
-                        <div className="text-center text-xs text-slate-400 px-2 leading-relaxed">
-                            Set an orchestration countdown clock. The duration state updates dynamically for all authenticated remote workspace connections.
+                )}
+
+                {/* --- HARDWARE CONFIGURATION SUBPAGE --- */}
+                {currentSubPage === "settings" && (
+                    <div className="space-y-4 pt-1 animate-fade-in">
+                        <div className="space-y-1.5">
+                            <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+                                <RiVideoLine size={14} className="text-[#163F68]" /> Video Capture Feed
+                            </label>
+                            <select className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-xs focus:outline-none focus:border-[#163F68] text-slate-200">
+                                {devices.filter(d => d.kind === "videoinput").map(d => (
+                                    <option key={d.deviceId} value={d.deviceId}>{d.label || `Camera Source Option (${d.deviceId.slice(0,4)})`}</option>
+                                ))}
+                            </select>
                         </div>
-                        <div className="grid grid-cols-3 gap-3">
-                            <div className="space-y-1.5 text-center">
-                                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Hours</label>
-                                <input type="number" min="0" max="23" value={h} onChange={e => setH(e.target.value)} className="w-full bg-slate-950 border border-slate-800 rounded-xl py-2.5 text-center font-mono font-bold text-md focus:outline-none focus:border-[#163F68]" />
-                            </div>
-                            <div className="space-y-1.5 text-center">
-                                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Minutes</label>
-                                <input type="number" min="0" max="59" value={m} onChange={e => setM(e.target.value)} className="w-full bg-slate-950 border border-slate-800 rounded-xl py-2.5 text-center font-mono font-bold text-md focus:outline-none focus:border-[#163F68]" />
-                            </div>
-                            <div className="space-y-1.5 text-center">
-                                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Seconds</label>
-                                <input type="number" min="0" max="59" value={s} onChange={e => setS(e.target.value)} className="w-full bg-slate-950 border border-slate-800 rounded-xl py-2.5 text-center font-mono font-bold text-md focus:outline-none focus:border-[#163F68]" />
+
+                        <div className="space-y-1.5">
+                            <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+                                <RiMicLine size={14} className="text-[#163F68]" /> Audio Capture Microphone
+                            </label>
+                            <select className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-xs focus:outline-none focus:border-[#163F68] text-slate-200">
+                                {devices.filter(d => d.kind === "audioinput").map(d => (
+                                    <option key={d.deviceId} value={d.deviceId}>{d.label || `Audio In Pipeline (${d.deviceId.slice(0,4)})`}</option>
+                                ))}
+                            </select>
+                        </div>
+
+                        <div className="space-y-1.5">
+                            <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+                                <RiVolumeUpLine size={14} className="text-[#163F68]" /> Speaker System Output
+                            </label>
+                            <select className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-xs focus:outline-none focus:border-[#163F68] text-slate-200">
+                                {devices.filter(d => d.kind === "audiooutput").map(d => (
+                                    <option key={d.deviceId} value={d.deviceId}>{d.label || `Audio Receiver Port (${d.deviceId.slice(0,4)})`}</option>
+                                ))}
+                            </select>
+                        </div>
+
+                        <div className="space-y-1.5 pt-2 border-t border-slate-800/60">
+                            <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Video Profiling</label>
+                            <select className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-xs focus:outline-none focus:border-[#163F68] text-slate-200">
+                                <option value="high">High Definition Broadcast (720p)</option>
+                                <option value="medium">Standard Operational Rate (480p)</option>
+                            </select>
+                        </div>
+
+                        <div className="space-y-3 pt-2">
+                            <label className="flex items-center gap-3 text-xs font-medium cursor-pointer text-slate-300">
+                                <input type="checkbox" defaultChecked className="accent-[#163F68] h-4 w-4 rounded border-slate-800 bg-slate-950" />
+                                Intelligent Isolation Matrix
+                            </label>
+                            <label className="flex items-center gap-3 text-xs font-medium cursor-pointer text-slate-300">
+                                <input type="checkbox" defaultChecked className="accent-[#163F68] h-4 w-4 rounded border-slate-800 bg-slate-950" />
+                                Acoustic Echo Suppression
+                            </label>
+                            <label className="flex items-center gap-3 text-xs font-medium cursor-pointer text-slate-300">
+                                <input type="checkbox" defaultChecked className="accent-[#163F68] h-4 w-4 rounded border-slate-800 bg-slate-950" />
+                                Mirror Local Video Canvas
+                            </label>
+                        </div>
+
+                        <div className="space-y-1.5 pt-2 border-t border-slate-800/60">
+                            <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+                                <RiMagicLine size={14} className="text-[#C99328]" /> Canvas Background Layer
+                            </label>
+                            <div className="grid grid-cols-2 gap-2">
+                                <button type="button" className="p-2.5 rounded-xl bg-slate-950 border-2 border-[#163F68] text-center text-xs font-semibold text-slate-200">None</button>
+                                <button type="button" className="p-2.5 rounded-xl bg-slate-950/20 border border-slate-800 text-center text-xs text-slate-600 cursor-not-allowed opacity-50">Blur Effect</button>
                             </div>
                         </div>
-                        <button type="submit" className="w-full py-3 bg-[#163F68] hover:bg-[#163F68]/80 text-white font-bold rounded-xl text-xs uppercase tracking-wider shadow-xl flex items-center justify-center gap-2 transition active:scale-95">
-                            <RiPlayFill size={15} /> Initialize Broadcast Clock
+
+                        <button onClick={() => setCurrentSubPage("main")} className="w-full mt-4 bg-[#163F68] hover:bg-[#163F68]/80 text-white font-bold text-xs uppercase tracking-wider py-3 rounded-xl transition shadow-lg active:scale-95">
+                            Apply Changes
                         </button>
-                    </form>
+                    </div>
+                )}
+
+                {/* --- BROADCAST TIMER SUBPAGE --- */}
+                {currentSubPage === "timer" && (
+                    <div className="space-y-4 pt-1 animate-fade-in">
+                        {timerConfig.isActive ? (
+                            <div className="text-center space-y-4 bg-slate-950/40 p-5 rounded-2xl border border-slate-800/60">
+                                <div className="text-[10px] font-bold text-[#C99328] uppercase tracking-widest animate-pulse">Synchronized Clock Running</div>
+                                <div className="text-4xl font-mono tracking-wider font-extrabold text-slate-100 py-2">
+                                    {(() => {
+                                        const hours = Math.floor(timerConfig.remaining / 3600).toString().padStart(2, "0");
+                                        const minutes = Math.floor((timerConfig.remaining % 3600) / 60).toString().padStart(2, "0");
+                                        const seconds = (timerConfig.remaining % 60).toString().padStart(2, "0");
+                                        return `${hours}:${minutes}:${seconds}`;
+                                    })()}
+                                </div>
+                                <button onClick={onCancelTimer} className="w-full py-2.5 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-xl text-xs uppercase tracking-wider shadow-md flex items-center justify-center gap-2 transition active:scale-95">
+                                    <RiStopFill size={14} /> Kill Countdown Session
+                                </button>
+                            </div>
+                        ) : (
+                            <form onSubmit={handleTimerSubmit} className="space-y-4">
+                                <p className="text-[11px] text-slate-400 text-center px-1 leading-relaxed">
+                                    Broadcast a hardware-independent room countdown to all connected delegates.
+                                </p>
+                                <div className="grid grid-cols-3 gap-2">
+                                    <div className="space-y-1 text-center">
+                                        <label className="text-[9px] font-bold text-slate-500 uppercase tracking-wider">Hours</label>
+                                        <input type="number" min="0" max="23" value={timerH} onChange={e => setTimerH(e.target.value)} className="w-full bg-slate-950 border border-slate-800 rounded-xl py-2 text-center font-mono font-bold text-xs focus:outline-none focus:border-[#163F68]" />
+                                    </div>
+                                    <div className="space-y-1 text-center">
+                                        <label className="text-[9px] font-bold text-slate-500 uppercase tracking-wider">Minutes</label>
+                                        <input type="number" min="0" max="59" value={timerM} onChange={e => setTimerM(e.target.value)} className="w-full bg-slate-950 border border-slate-800 rounded-xl py-2 text-center font-mono font-bold text-xs focus:outline-none focus:border-[#163F68]" />
+                                    </div>
+                                    <div className="space-y-1 text-center">
+                                        <label className="text-[9px] font-bold text-slate-500 uppercase tracking-wider">Seconds</label>
+                                        <input type="number" min="0" max="59" value={timerS} onChange={e => setTimerS(e.target.value)} className="w-full bg-slate-950 border border-slate-800 rounded-xl py-2 text-center font-mono font-bold text-xs focus:outline-none focus:border-[#163F68]" />
+                                    </div>
+                                </div>
+                                <button type="submit" className="w-full py-3 bg-[#163F68] hover:bg-[#163F68]/80 text-white font-bold rounded-xl text-xs uppercase tracking-wider shadow-md flex items-center justify-center gap-2 transition active:scale-95">
+                                    <RiPlayFill size={14} /> Initialize Broadcast
+                                </button>
+                            </form>
+                        )}
+                    </div>
+                )}
+
+                {/* --- LOCAL SESSION CAPTURE STREAM RECORDING SUBPAGE --- */}
+                {currentSubPage === "recording" && (
+                    <div className="space-y-4 pt-1 animate-fade-in">
+                        <div className="bg-slate-950/40 p-5 rounded-2xl border border-slate-800/60 text-center space-y-4">
+                            {recordingState.isRecording ? (
+                                <>
+                                    <div className="flex items-center justify-center gap-2 text-red-500 text-xs font-bold uppercase tracking-widest animate-pulse">
+                                        <span className="w-2 h-2 rounded-full bg-red-500" />
+                                        Capturing Stream Assets
+                                    </div>
+                                    <div className="text-3xl font-mono font-black text-slate-200">
+                                        {(() => {
+                                            const h = Math.floor(recordingState.recordingTime / 3600).toString().padStart(2, "0");
+                                            const m = Math.floor((recordingState.recordingTime % 3600) / 60).toString().padStart(2, "0");
+                                            const s = (recordingState.recordingTime % 60).toString().padStart(2, "0");
+                                            return `${h}:${m}:${s}`;
+                                        })()}
+                                    </div>
+                                    <button 
+                                        onClick={handleToggleRecording}
+                                        className="w-full py-2.5 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl text-xs uppercase tracking-wider transition shadow-md flex items-center justify-center gap-2"
+                                    >
+                                        <RiStopFill size={14} /> Terminate Recording
+                                    </button>
+                                </>
+                            ) : (
+                                <>
+                                    <div className="text-slate-400 text-xs leading-relaxed px-1">
+                                        Initialize local stream buffer assembly. File artifact downloads as standard WebM upon session finalization.
+                                    </div>
+                                    <button 
+                                        onClick={handleToggleRecording}
+                                        className="w-full py-3 bg-[#163F68] hover:bg-[#163F68]/80 text-white font-bold rounded-xl text-xs uppercase tracking-wider transition shadow-md flex items-center justify-center gap-2"
+                                    >
+                                        <RiRecordCircleLine size={15} /> Initialize Local Capture
+                                    </button>
+                                </>
+                            )}
+                        </div>
+                    </div>
                 )}
             </div>
         </motion.div>
     );
 }
 
-// --- ENTERPRISE HARDWARE PARAMETERS CONFIGURATION MODAL ---
-function SettingsModal({ isOpen, onClose }) {
-    const [devices, setDevices] = useState([]);
-    const [videoQuality, setVideoQuality] = useState("high");
-    const [noiseSuppression, setNoiseSuppression] = useState(true);
-    const [echoCancellation, setEchoCancellation] = useState(true);
-    const [mirrorCamera, setMirrorCamera] = useState(true);
-
-    useEffect(() => {
-        if (isOpen) {
-            navigator.mediaDevices.enumerateDevices().then(setDevices).catch(console.error);
-        }
-    }, [isOpen]);
-
-    if (!isOpen) return null;
-
-    return (
-        <div className="fixed inset-0 bg-black/75 backdrop-blur-md z-50 flex items-center justify-center text-white p-4 animate-fade-in">
-            <motion.div 
-                initial={{ scale: 0.95, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                className="bg-slate-900 w-full max-w-xl rounded-2xl border border-slate-800 overflow-hidden shadow-2xl flex flex-col"
-            >
-                <div className="p-5 border-b border-slate-800 flex items-center justify-between bg-slate-950/40">
-                    <h3 className="text-xs font-bold uppercase tracking-widest flex items-center gap-2 text-slate-200">
-                        <RiSettings3Line className="text-[#C99328]" size={18} /> Device Control Configuration
-                    </h3>
-                    <button onClick={onClose} className="p-1 hover:bg-slate-800 rounded-lg transition text-slate-400 hover:text-white">
-                        <RiCloseLine size={20} />
-                    </button>
-                </div>
-                <div className="p-6 space-y-5 max-h-[65vh] overflow-y-auto">
-                    <div className="space-y-1.5">
-                        <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-1.5">
-                            <RiVideoLine size={14} /> Video Capture Device
-                        </label>
-                        <select className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-3 text-xs focus:outline-none focus:border-[#163F68] text-slate-200">
-                            {devices.filter(d => d.kind === "videoinput").map(d => (
-                                <option key={d.deviceId} value={d.deviceId}>{d.label || `Camera Source Option (${d.deviceId.slice(0,5)})`}</option>
-                            ))}
-                        </select>
-                    </div>
-                    <div className="space-y-1.5">
-                        <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-1.5">
-                            <RiMicLine size={14} /> Audio Mic input
-                        </label>
-                        <select className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-3 text-xs focus:outline-none focus:border-[#163F68] text-slate-200">
-                            {devices.filter(d => d.kind === "audioinput").map(d => (
-                                <option key={d.deviceId} value={d.deviceId}>{d.label || `Audio Line Capture (${d.deviceId.slice(0,5)})`}</option>
-                            ))}
-                        </select>
-                    </div>
-                    <div className="space-y-1.5">
-                        <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-1.5">
-                            <RiVolumeUpLine size={14} /> Speaker Audio Output
-                        </label>
-                        <select className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-3 text-xs focus:outline-none focus:border-[#163F68] text-slate-200">
-                            {devices.filter(d => d.kind === "audiooutput").map(d => (
-                                <option key={d.deviceId} value={d.deviceId}>{d.label || `Audio Receiver Pipeline (${d.deviceId.slice(0,5)})`}</option>
-                            ))}
-                        </select>
-                    </div>
-
-                    <div className="border-t border-slate-800/80 my-2 pt-4 grid grid-cols-1 md:grid-cols-2 gap-5">
-                        <div className="space-y-2">
-                            <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Resolution Profile</label>
-                            <select value={videoQuality} onChange={(e) => setVideoQuality(e.target.value)} className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-3 text-xs focus:outline-none focus:border-[#163F68] text-slate-200">
-                                <option value="high">HD Broadcast Quality (720p)</option>
-                                <option value="medium">Balanced Output Rate (480p)</option>
-                                <option value="low">Optimized Low-Bandwidth Mode</option>
-                            </select>
-                        </div>
-                        <div className="space-y-2.5 flex flex-col justify-center">
-                            <label className="flex items-center gap-3 text-xs font-medium cursor-pointer select-none text-slate-300">
-                                <input type="checkbox" checked={noiseSuppression} onChange={(e) => setNoiseSuppression(e.target.checked)} className="accent-[#163F68] h-4 w-4 rounded" />
-                                Intelligent Noise Isolation
-                            </label>
-                            <label className="flex items-center gap-3 text-xs font-medium cursor-pointer select-none text-slate-300">
-                                <input type="checkbox" checked={echoCancellation} onChange={(e) => setEchoCancellation(e.target.checked)} className="accent-[#163F68] h-4 w-4 rounded" />
-                                Acoustic Echo Cancellation
-                            </label>
-                            <label className="flex items-center gap-3 text-xs font-medium cursor-pointer select-none text-slate-300">
-                                <input type="checkbox" checked={mirrorCamera} onChange={(e) => setMirrorCamera(e.target.checked)} className="accent-[#163F68] h-4 w-4 rounded" />
-                                Mirror Local Display Feed
-                            </label>
-                        </div>
-                    </div>
-
-                    <div className="space-y-2 pt-1 border-t border-slate-800/40">
-                        <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-1.5">
-                            <RiMagicLine size={14} className="text-[#C99328]" /> Virtual Background Filters
-                        </label>
-                        <div className="grid grid-cols-3 gap-2">
-                            <button type="button" className="p-3 rounded-xl bg-slate-950 border-2 border-[#163F68] text-center text-xs font-semibold text-slate-200">None</button>
-                            <button type="button" className="p-3 rounded-xl bg-slate-950/40 border border-slate-800 text-center text-xs text-slate-500 cursor-not-allowed opacity-60">Blur Filter</button>
-                            <button type="button" className="p-3 rounded-xl bg-slate-950/40 border border-slate-800 text-center text-xs text-slate-500 cursor-not-allowed opacity-60">Office Matte</button>
-                        </div>
-                    </div>
-                </div>
-                <div className="p-4 bg-slate-950/50 border-t border-slate-800 flex justify-end">
-                    <button onClick={onClose} className="bg-[#163F68] hover:bg-[#163F68]/80 text-white font-bold text-xs uppercase tracking-wider px-6 py-3 rounded-xl transition shadow-lg active:scale-95">
-                        Apply Configuration
-                    </button>
-                </div>
-            </motion.div>
-        </div>
-    );
-}
-
-// --- ENTERPRISE COMPONENT CONTROLS TOOLBAR SYSTEM ---
+// --- ENTERPRISE COMPONENT CONTROLS CONTROLLER TOOLBAR SYSTEM ---
 function FloatingControls({ 
     onToggleChat, isChatOpen, 
     onToggleParticipants, isParticipantsOpen, 
-    onToggleTimer, isTimerOpen, 
+    onToggleTools, isToolsOpen,
     onToggleHand, hasHandRaised, 
-    onToggleSettings, timerConfig 
+    timerConfig, recordingState, handleToggleRecording
 }) {
     const room = useRoomContext();
     const [micOn, setMicOn] = useState(room.localParticipant.isMicrophoneEnabled);
     const [camOn, setCamOn] = useState(room.localParticipant.isCameraEnabled);
     const [screenOn, setScreenOn] = useState(room.localParticipant.isScreenShareEnabled);
-
-    const [isRecording, setIsRecording] = useState(false);
-    const [recordingTime, setRecordingTime] = useState(0);
-    const mediaRecorderRef = useRef(null);
-    const recordedChunksRef = useRef([]);
-    const recordingIntervalRef = useRef(null);
 
     const formatTime = (seconds) => {
         const h = Math.floor(seconds / 3600).toString().padStart(2, "0");
@@ -494,62 +588,19 @@ function FloatingControls({
         setScreenOn(!screenOn);
     };
 
-    const handleToggleRecording = async () => {
-        if (!isRecording) {
-            try {
-                const stream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: true });
-                recordedChunksRef.current = [];
-                const recorder = new MediaRecorder(stream, { mimeType: "video/webm; codecs=vp9" });
-                
-                recorder.ondataavailable = (e) => {
-                    if (e.data && e.data.size > 0) {
-                        recordedChunksRef.current.push(e.data);
-                    }
-                };
-
-                recorder.onstop = () => {
-                    const blob = new Blob(recordedChunksRef.current, { type: "video/webm" });
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement("a");
-                    a.href = url;
-                    a.download = `Meeting-Recording-${Date.now()}.webm`;
-                    a.click();
-                    stream.getTracks().forEach(track => track.stop());
-                };
-
-                mediaRecorderRef.current = recorder;
-                recorder.start(1000);
-                setIsRecording(true);
-                setRecordingTime(0);
-                recordingIntervalRef.current = setInterval(() => {
-                    setRecordingTime(prev => prev + 1);
-                }, 1000);
-            } catch (err) {
-                console.error("Local screen recording resource generation aborted.", err);
-            }
-        } else {
-            if (mediaRecorderRef.current) {
-                mediaRecorderRef.current.stop();
-            }
-            clearInterval(recordingIntervalRef.current);
-            setIsRecording(false);
-            setRecordingTime(0);
-        }
-    };
-
     return (
-        <div className="h-24 bg-slate-900 border-t border-slate-800 grid grid-cols-3 items-center px-8 text-white select-none z-30 relative shadow-xl">
+        <div className="h-24 bg-[#0F172A] border-t border-slate-800/80 grid grid-cols-3 items-center px-8 text-white select-none z-30 relative shadow-xl">
             
-            {/* LEFT AREA SECTION */}
+            {/* LEFT CONTAINER SUBSECTION */}
             <div className="flex items-center gap-2">
-                {isRecording && (
-                    <div className="flex items-center gap-2 bg-[#EF4444]/10 border border-[#EF4444]/30 text-[#EF4444] px-3 py-1.5 rounded-full text-[10px] font-bold tracking-widest font-mono shadow-sm">
-                        <span className="w-2 h-2 rounded-full bg-[#EF4444] animate-ping" />
-                        REC {formatTime(recordingTime)}
+                {recordingState.isRecording && (
+                    <div className="flex items-center gap-2 bg-red-500/10 border border-red-500/20 text-red-400 px-3 py-1.5 rounded-full text-[10px] font-bold tracking-widest font-mono shadow-sm">
+                        <span className="w-2 h-2 rounded-full bg-red-500 animate-ping" />
+                        REC {formatTime(recordingState.recordingTime)}
                     </div>
                 )}
                 {timerConfig.isActive && (
-                    <div className="flex items-center gap-1.5 bg-[#C99328]/10 border border-[#C99328]/30 text-[#C99328] px-3 py-1.5 rounded-full text-[10px] font-bold font-mono shadow-sm">
+                    <div className="flex items-center gap-1.5 bg-[#C99328]/10 border border-[#C99328]/20 text-[#C99328] px-3 py-1.5 rounded-full text-[10px] font-bold font-mono shadow-sm">
                         <RiTimerLine className="animate-pulse" size={13} />
                         {(() => {
                             const hours = Math.floor(timerConfig.remaining / 3600).toString().padStart(2, "0");
@@ -561,49 +612,41 @@ function FloatingControls({
                 )}
             </div>
 
-            {/* CENTER CONTROL AREA SECTION */}
+            {/* CENTER OPERATIONAL COMMAND CONTROLS */}
             <div className="flex items-center justify-center gap-3">
-                <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={toggleMic} className={`w-11 h-11 rounded-full flex items-center justify-center transition-all border border-slate-800/80 shadow-md ${micOn ? "bg-slate-800 text-slate-200 hover:bg-slate-700 hover:text-white" : "bg-[#EF4444] text-white hover:bg-[#EF4444]/90"}`}>
+                <motion.button whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }} onClick={toggleMic} className={`w-11 h-11 rounded-full flex items-center justify-center transition-all border border-slate-800/60 shadow-md ${micOn ? "bg-slate-800 text-slate-200 hover:bg-slate-700 hover:text-white" : "bg-red-500 text-white hover:bg-red-600"}`}>
                     {micOn ? <RiMicLine size={18}/> : <RiMicOffLine size={18}/>}
                 </motion.button>
 
-                <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={toggleCamera} className={`w-11 h-11 rounded-full flex items-center justify-center transition-all border border-slate-800/80 shadow-md ${camOn ? "bg-slate-800 text-slate-200 hover:bg-slate-700 hover:text-white" : "bg-[#EF4444] text-white hover:bg-[#EF4444]/90"}`}>
+                <motion.button whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }} onClick={toggleCamera} className={`w-11 h-11 rounded-full flex items-center justify-center transition-all border border-slate-800/60 shadow-md ${camOn ? "bg-slate-800 text-slate-200 hover:bg-slate-700 hover:text-white" : "bg-red-500 text-white hover:bg-red-600"}`}>
                     {camOn ? <RiVideoLine size={18}/> : <RiVideoOffLine size={18}/>}
                 </motion.button>
 
-                <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={toggleScreen} className={`w-11 h-11 rounded-full flex items-center justify-center transition-all border border-slate-800/80 shadow-md ${screenOn ? "bg-[#163F68] text-white hover:bg-[#163F68]/90" : "bg-slate-800 text-slate-200 hover:bg-slate-700 hover:text-white"}`}>
+                <motion.button whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }} onClick={toggleScreen} className={`w-11 h-11 rounded-full flex items-center justify-center transition-all border border-slate-800/60 shadow-md ${screenOn ? "bg-[#163F68] text-white hover:bg-[#163F68]/90" : "bg-slate-800 text-slate-200 hover:bg-slate-700 hover:text-white"}`}>
                     <RiComputerLine size={18}/>
                 </motion.button>
 
-                <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={onToggleHand} className={`w-11 h-11 rounded-full flex items-center justify-center transition-all border border-slate-800/80 shadow-md ${hasHandRaised ? "bg-[#C99328] text-white" : "bg-slate-800 text-slate-200 hover:bg-slate-700 hover:text-white"}`}>
+                <motion.button whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }} onClick={onToggleHand} className={`w-11 h-11 rounded-full flex items-center justify-center transition-all border border-slate-800/60 shadow-md ${hasHandRaised ? "bg-[#C99328] text-white" : "bg-slate-800 text-slate-200 hover:bg-slate-700 hover:text-white"}`}>
                     <RiHand size={18}/>
                 </motion.button>
 
-                <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={onToggleTimer} className={`w-11 h-11 rounded-full flex items-center justify-center transition-all border border-slate-800/80 shadow-md ${isTimerOpen ? "bg-[#163F68] text-white" : "bg-slate-800 text-slate-200 hover:bg-slate-700 hover:text-white"}`}>
-                    <RiTimerLine size={18}/>
-                </motion.button>
-
-                <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={handleToggleRecording} className={`w-11 h-11 rounded-full flex items-center justify-center transition-all border border-slate-800/80 shadow-md ${isRecording ? "bg-[#EF4444] text-white animate-pulse border-transparent" : "bg-slate-800 text-slate-200 hover:bg-slate-700 hover:text-white"}`}>
-                    <RiRecordCircleLine size={18}/>
-                </motion.button>
-
-                <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={() => { room.disconnect(); window.close(); }} className="w-14 h-11 bg-[#EF4444] hover:bg-[#EF4444]/90 text-white rounded-full flex items-center justify-center transition-all shadow-lg border border-transparent ml-2">
+                <motion.button whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }} onClick={() => { room.disconnect(); window.close(); }} className="w-14 h-11 bg-red-600 hover:bg-red-700 text-white rounded-full flex items-center justify-center transition-all shadow-xl border border-transparent ml-2">
                     <RiPhoneFill size={19}/>
                 </motion.button>
             </div>
 
-            {/* RIGHT SIDEBAR TRIGGER AREA SECTION */}
+            {/* THREE UTILITY ICON SLOTS ALIGNED ALONG THE RIGHT DISPLACEMENT BOUNDS */}
             <div className="flex items-center justify-end gap-3">
-                <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={onToggleParticipants} className={`w-11 h-11 rounded-xl flex items-center justify-center transition-all border border-slate-800/80 shadow-md ${isParticipantsOpen ? "bg-[#163F68] text-white border-transparent" : "bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white"}`}>
+                <motion.button whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }} onClick={onToggleParticipants} className={`w-11 h-11 rounded-xl flex items-center justify-center transition-all border border-slate-800/60 shadow-md ${isParticipantsOpen ? "bg-[#163F68] text-white border-transparent" : "bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white"}`}>
                     <RiGroupLine size={18}/>
                 </motion.button>
 
-                <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={onToggleChat} className={`w-11 h-11 rounded-xl flex items-center justify-center transition-all border border-slate-800/80 shadow-md ${isChatOpen ? "bg-[#163F68] text-white border-transparent" : "bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white"}`}>
+                <motion.button whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }} onClick={onToggleChat} className={`w-11 h-11 rounded-xl flex items-center justify-center transition-all border border-slate-800/60 shadow-md ${isChatOpen ? "bg-[#163F68] text-white border-transparent" : "bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white"}`}>
                     <RiChat3Line size={18}/>
                 </motion.button>
 
-                <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={onToggleSettings} className="w-11 h-11 rounded-xl flex items-center justify-center transition-all border border-slate-800/80 bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white shadow-md">
-                    <RiSettings3Line size={18}/>
+                <motion.button whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }} onClick={onToggleTools} className={`w-11 h-11 rounded-xl flex items-center justify-center transition-all border border-slate-800/60 shadow-md ${isToolsOpen ? "bg-[#163F68] text-white border-transparent" : "bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white"}`}>
+                    <RiToolsLine size={18}/>
                 </motion.button>
             </div>
 
@@ -614,8 +657,7 @@ function FloatingControls({
 // --- SECURE WORKSPACE MEETING ROOT CONTAINER ENVIRONMENT ---
 function MeetingRoomContent() {
     const room = useRoomContext();
-    const [activePanel, setActivePanel] = useState(null); // 'chat' | 'participants' | 'timer' | null
-    const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+    const [activePanel, setActivePanel] = useState(null); // 'chat' | 'participants' | 'tools' | null
     const [raisedHands, setRaisedHands] = useState([]);
     
     const [timerConfig, setTimerConfig] = useState({
@@ -623,6 +665,13 @@ function MeetingRoomContent() {
         total: 0,
         remaining: 0
     });
+
+    // Integrated Recording States
+    const [isRecording, setIsRecording] = useState(false);
+    const [recordingTime, setRecordingTime] = useState(0);
+    const mediaRecorderRef = useRef(null);
+    const recordedChunksRef = useRef([]);
+    const recordingIntervalRef = useRef(null);
 
     const hasHandRaised = raisedHands.includes(room.localParticipant.identity);
 
@@ -671,7 +720,50 @@ function MeetingRoomContent() {
         setTimerConfig({ isActive: false, total: 0, remaining: 0 });
     };
 
-    // --- COUNTDOWN SCHEDULER EFFECT ---
+    const handleToggleRecording = async () => {
+        if (!isRecording) {
+            try {
+                const stream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: true });
+                recordedChunksRef.current = [];
+                const recorder = new MediaRecorder(stream, { mimeType: "video/webm; codecs=vp9" });
+                
+                recorder.ondataavailable = (e) => {
+                    if (e.data && e.data.size > 0) {
+                        recordedChunksRef.current.push(e.data);
+                    }
+                };
+
+                recorder.onstop = () => {
+                    const blob = new Blob(recordedChunksRef.current, { type: "video/webm" });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement("a");
+                    a.href = url;
+                    a.download = `Workspace-Capture-${Date.now()}.webm`;
+                    a.click();
+                    stream.getTracks().forEach(track => track.stop());
+                };
+
+                mediaRecorderRef.current = recorder;
+                recorder.start(1000);
+                setIsRecording(true);
+                setRecordingTime(0);
+                recordingIntervalRef.current = setInterval(() => {
+                    setRecordingTime(prev => prev + 1);
+                }, 1000);
+            } catch (err) {
+                console.error("Local tracking resource access denied:", err);
+            }
+        } else {
+            if (mediaRecorderRef.current) {
+                mediaRecorderRef.current.stop();
+            }
+            clearInterval(recordingIntervalRef.current);
+            setIsRecording(false);
+            setRecordingTime(0);
+        }
+    };
+
+    // --- LIVE BROADCAST SYNC EFFECT ---
     useEffect(() => {
         let interval = null;
         if (timerConfig.isActive && timerConfig.remaining > 0) {
@@ -689,7 +781,7 @@ function MeetingRoomContent() {
         return () => clearInterval(interval);
     }, [timerConfig.isActive, timerConfig.remaining]);
 
-    // --- DATA BROADCAST CHANNEL SYNC SUBSCRIPTION ---
+    // --- SECURE DISPATCH CHANNEL SUBSCRIPTIONS ---
     useEffect(() => {
         const handleDataReceived = (payload, participant) => {
             try {
@@ -714,7 +806,7 @@ function MeetingRoomContent() {
                     setTimerConfig({ isActive: false, total: 0, remaining: 0 });
                 }
             } catch (e) {
-               console.error("Data tracking process runtime mapping exception", e);
+               console.error("Data tracking exception:", e);
             }
         };
 
@@ -733,9 +825,9 @@ function MeetingRoomContent() {
     return (
         <div className="fixed inset-0 bg-slate-950 flex flex-col overflow-hidden font-sans select-none w-screen h-screen">
             
-            {/* BRANDING HEADER BACKGROUND CONTAINER AREA */}
-            <div className="absolute top-5 left-6 z-50 flex items-center gap-3 bg-slate-950/40 backdrop-blur-sm pr-4 pl-2 py-1.5 rounded-2xl border border-slate-800/30">
-                <div className="w-10 h-10 rounded-xl bg-[#163F68] flex items-center justify-center shadow-md border border-white/10">
+            {/* BRANDING CAPTURE BAR */}
+            <div className="absolute top-5 left-6 z-50 flex items-center gap-3 bg-[#0F172A]/40 backdrop-blur-md pr-4 pl-2 py-1.5 rounded-2xl border border-slate-800/40">
+                <div className="w-10 h-10 rounded-xl bg-[#163F68] flex items-center justify-center shadow-md border border-white/5">
                     <RiShieldCheckLine className="text-[#C99328] text-lg" />
                 </div>
                 <div>
@@ -748,10 +840,10 @@ function MeetingRoomContent() {
             
             <div className="flex flex-1 w-full h-[calc(100vh-96px)] overflow-hidden relative">
                 
-                {/* VIDEO TILES AREA */}
+                {/* VIDEO TARGET LAYOUT FRAME */}
                 <ActiveVideoGrid raisedHands={raisedHands} />
                 
-                {/* SLIDING ENHANCED RIGHT SIDEBAR SYSTEM */}
+                {/* UNIFIED ENHANCED DRAWER CONTAINMENT REGION */}
                 <AnimatePresence mode="wait">
                     {activePanel === 'chat' && (
                         <RightChatPanel key="chat" isOpen={true} onClose={() => setActivePanel(null)} />
@@ -759,14 +851,16 @@ function MeetingRoomContent() {
                     {activePanel === 'participants' && (
                         <ParticipantsSidebar key="participants" isOpen={true} onClose={() => setActivePanel(null)} raisedHands={raisedHands} />
                     )}
-                    {activePanel === 'timer' && (
-                        <PresentationTimerPanel 
-                            key="timer" 
+                    {activePanel === 'tools' && (
+                        <MeetingToolsSidebar 
+                            key="tools" 
                             isOpen={true} 
                             onClose={() => setActivePanel(null)} 
                             timerConfig={timerConfig}
                             onStartTimer={handleStartTimer}
                             onCancelTimer={handleCancelTimer}
+                            recordingState={{ isRecording, recordingTime }}
+                            handleToggleRecording={handleToggleRecording}
                         />
                     )}
                 </AnimatePresence>
@@ -777,20 +871,19 @@ function MeetingRoomContent() {
                 isChatOpen={activePanel === 'chat'} 
                 onToggleParticipants={() => togglePanel('participants')}
                 isParticipantsOpen={activePanel === 'participants'}
-                onToggleTimer={() => togglePanel('timer')}
-                isTimerOpen={activePanel === 'timer'}
+                onToggleTools={() => togglePanel('tools')}
+                isToolsOpen={activePanel === 'tools'}
                 onToggleHand={toggleHandRaise}
                 hasHandRaised={hasHandRaised}
-                onToggleSettings={() => setIsSettingsOpen(true)}
                 timerConfig={timerConfig}
+                recordingState={{ isRecording, recordingTime }}
+                handleToggleRecording={handleToggleRecording}
             />
-
-            <SettingsModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} />
         </div>
     );
 }
 
-// --- OUTER BOOTSTRAPPING CONTROLLER CONTAINER ---
+// --- CORE CONNECTOR ENVIRONMENT ---
 export default function MeetingRoom() {
     const params = useMemo(() => new URLSearchParams(window.location.search), []);
     const roomName = params.get("room");
@@ -807,13 +900,13 @@ export default function MeetingRoom() {
                     `${API}/livekit/token`,
                     {
                         roomName,
-                        participantName: currentUser.full_name || "Enterprise Workspace User",
+                        participantName: currentUser.full_name || "Workspace Delegate",
                     }
                 );
                 setToken(res.data.token);
                 setServerUrl(res.data.url);
             } catch(err){
-                console.error("Token ingestion server request failed", err);
+                console.error("Token orchestration failure:", err);
             } finally{
                 setLoading(false);
             }
@@ -826,8 +919,8 @@ export default function MeetingRoom() {
     if (loading) {
         return (
             <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center text-white font-sans">
-                <div className="w-9 h-9 border-4 border-[#163F68] border-t-[#C99328] rounded-full animate-spin mb-4"></div>
-                <p className="text-[10px] font-bold uppercase tracking-widest text-slate-500">Securing Live Room Connection Layer...</p>
+                <div className="w-8 h-8 border-4 border-[#163F68] border-t-[#C99328] rounded-full animate-spin mb-4"></div>
+                <p className="text-[10px] font-bold uppercase tracking-widest text-slate-500">Connecting to secure cluster...</p>
             </div>
         );
     }
