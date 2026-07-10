@@ -208,7 +208,132 @@ function RightChatPanel({ isOpen, onClose }) {
 
 
 function ParticipantsSidebar({ isOpen, onClose, raisedHands }) {
+    const room = useRoomContext();
     const participants = useParticipants();
+    
+    
+    const [waitingUsers, setWaitingUsers] = useState([]);
+
+   
+    const [activeMenuParticipant, setActiveMenuParticipant] = useState(null);
+    const [participantMenuOpen, setParticipantMenuOpen] = useState(false);
+    const [menuCoords, setMenuCoords] = useState({ top: 0, left: 0 });
+    const [loadingAction, setLoadingAction] = useState(false);
+    const [toastMessage, setToastMessage] = useState("");
+    const [confirmRemoveTarget, setConfirmRemoveTarget] = useState(null);
+
+   
+    useEffect(() => {
+        if (!isOpen || !room.name) return;
+
+        const fetchWaitingRoom = async () => {
+            try {
+                const res = await axios.get(`${API}/meeting/pending-users/${room.name}`);
+                if (res.data && res.data.success && Array.isArray(res.data.users)) {
+                    setWaitingUsers(res.data.users);
+                }
+            } catch (err) {
+                console.error("Failed to load backend waiting list:", err);
+            }
+        };
+
+        fetchWaitingRoom();
+        const interval = setInterval(fetchWaitingRoom, 2000);
+        return () => clearInterval(interval);
+    }, [isOpen, room.name]);
+
+   
+    const handleOpenMenu = (e, participant) => {
+        e.preventDefault();
+        const rect = e.currentTarget.getBoundingClientRect();
+        setMenuCoords({ top: rect.bottom + window.scrollY - 10, left: rect.left + window.scrollX - 160 });
+        setActiveMenuParticipant(participant);
+        setParticipantMenuOpen(true);
+    };
+
+    const showToast = (msg) => {
+        setToastMessage(msg);
+        setTimeout(() => setToastMessage(""), 4000);
+    };
+
+   
+    const handleMuteAction = async () => {
+        if (!activeMenuParticipant) return;
+        try {
+            setLoadingAction(true);
+            await axios.post(`${API}/meeting/mute`, { identity: activeMenuParticipant.identity, roomName: room.name });
+            showToast(`You muted ${activeMenuParticipant.identity || "Participant"}.`);
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setLoadingAction(false);
+            setParticipantMenuOpen(false);
+        }
+    };
+
+    const handleStopShareAction = async () => {
+        if (!activeMenuParticipant) return;
+        try {
+            setLoadingAction(true);
+            await axios.post(`${API}/meeting/stop-share`, { identity: activeMenuParticipant.identity, roomName: room.name });
+            showToast(`Stopped screen share for ${activeMenuParticipant.identity || "Participant"}.`);
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setLoadingAction(false);
+            setParticipantMenuOpen(false);
+        }
+    };
+
+    const handleMakePresenterAction = async () => {
+        if (!activeMenuParticipant) return;
+        try {
+            setLoadingAction(true);
+            await axios.post(`${API}/meeting/make-presenter`, { identity: activeMenuParticipant.identity, roomName: room.name });
+            showToast(`${activeMenuParticipant.identity || "Participant"} is now the presenter.`);
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setLoadingAction(false);
+            setParticipantMenuOpen(false);
+        }
+    };
+
+const handleRemoveParticipant = async () => {
+        if (!menuParticipant) return;
+        try {
+            const participantIdentity = menuParticipant.identity || menuParticipant.name;
+
+            
+            await axios.post(`${API}/meeting/remove`, { 
+                roomName: room.name, 
+                identity: participantIdentity 
+            });
+            
+            showToast(`Removed ${participantIdentity} from meeting.`);
+        } catch (err) {
+            console.error("Failed to remove active participant from session:", err);
+            showToast("Failed to remove participant.");
+        } finally {
+            setParticipantMenuOpen(false);
+            setMenuParticipant(null);
+        }
+    };
+   const handleWaitingRoomDecision = async (pUserId, name, decision) => {
+        try {
+          
+            await axios.post(`${API}/meeting/${decision}`, { 
+                roomName: room.name, 
+                userId: pUserId 
+            });
+           
+            setWaitingUsers(prev => prev.filter(u => String(u.user_id) !== String(pUserId)));
+            showToast(`${name} has been ${decision}ted.`);
+        } catch (err) {
+            console.error(`Failed to execute waiting room ${decision} action:`, err);
+            showToast("Failed to process request.");
+        }
+    };
     if (!isOpen) return null;
 
     return (
@@ -217,8 +342,9 @@ function ParticipantsSidebar({ isOpen, onClose, raisedHands }) {
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{ type: "tween", duration: 0.22 }}
-            className="w-80 h-[calc(100vh-96px)] bg-[#0F172A] border-l border-slate-800 flex flex-col z-40 shadow-2xl text-white"
+            className="w-80 h-[calc(100vh-96px)] bg-[#0F172A] border-l border-slate-800 flex flex-col z-40 shadow-2xl text-white relative"
         >
+          
             <div className="p-4 h-16 border-b border-slate-800/80 flex items-center justify-between bg-slate-950/20">
                 <h3 className="font-bold tracking-wider text-xs uppercase flex items-center gap-2">
                     <RiGroupLine className="text-[#C99328]" size={20} /> Participants ({participants.length})
@@ -227,45 +353,153 @@ function ParticipantsSidebar({ isOpen, onClose, raisedHands }) {
                     <RiCloseLine size={18} />
                 </button>
             </div>
-            <div className="flex-1 overflow-y-auto p-3 space-y-2">
-                {participants.map((p) => {
-                    const nameStr = p.identity || "Workspace User";
-                    const isMicMuted = !p.isMicrophoneEnabled;
-                    const isCamMuted = !p.isCameraEnabled;
-                    const isSpeaking = p.isSpeaking;
 
-                    return (
-                        <div key={p.sid} className={`flex items-center justify-between bg-slate-950/30 p-3 rounded-xl border transition-all ${isSpeaking ? 'border-[#C99328] bg-[#0F172A]' : 'border-slate-800/40'}`}>
-                            <div className="flex items-center gap-2.5 min-w-0 flex-1">
-                                <div className="w-8 h-8 rounded-full bg-slate-800 border border-slate-700 font-bold text-xs flex items-center justify-center text-slate-300 shrink-0 uppercase">
-                                    {nameStr.charAt(0)}
+            <div className="flex-1 overflow-y-auto p-3 space-y-4">
+               
+                <div className="space-y-2">
+                   
+                    {waitingUsers.length > 0 ? (
+                        <div className="bg-slate-950/50 rounded-xl p-1.5 border border-slate-800/40 space-y-1.5">
+                            {waitingUsers.map(user => (
+                                <div key={user.user_id} className="flex items-center justify-between bg-slate-900/40 p-2 rounded-lg border border-slate-800/30">
+                                    <span className="text-xs font-semibold text-slate-300 truncate max-w-[100px]">{user.full_name}</span>
+                                    <div className="flex items-center gap-1.5">
+                                        <button 
+                                            onClick={() => handleWaitingRoomDecision(user.user_id, user.full_name, "admit")}
+                                            className="px-2.5 py-1 bg-[#163F68] hover:bg-[#163F68]/80 text-white font-bold text-[10px] rounded-md transition"
+                                        >
+                                            Admit
+                                        </button>
+                                        <button 
+                                            onClick={() => handleWaitingRoomDecision(user.user_id, user.full_name, "reject")}
+                                            className="px-2.5 py-1 bg-slate-800 hover:bg-red-950/40 border border-slate-700 text-slate-400 hover:text-red-400 font-bold text-[10px] rounded-md transition"
+                                        >
+                                            Reject
+                                        </button>
+                                    </div>
                                 </div>
-                                <div className="flex flex-col min-w-0">
-                                    <span className="text-xs font-semibold truncate text-slate-200">
-                                        {nameStr} {p.isLocal ? "(You)" : ""}
-                                    </span>
-                                    {p.isLocal && (
-                                        <span className="text-[9px] font-bold text-[#163F68] uppercase tracking-widest mt-0.5">Host</span>
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="bg-slate-950/30 rounded-xl p-3 border border-slate-800/40 text-center text-[11px] font-medium text-slate-500 italic">
+                            No Pending Requests
+                        </div>
+                    )}
+                </div>
+
+                {/* 2. Active Session Core Participant Roster list */}
+                <div className="space-y-2">
+                    <div className="text-[9px] font-bold tracking-widest text-slate-500 uppercase px-1">Active Roster</div>
+                    {participants.map((p) => {
+                        const nameStr = p.identity || "Workspace User";
+                        const isMicMuted = !p.isMicrophoneEnabled;
+                        const isCamMuted = !p.isCameraEnabled;
+                        const isSpeaking = p.isSpeaking;
+
+                        return (
+                            <div key={p.sid} className={`flex items-center justify-between bg-slate-950/30 p-2.5 rounded-xl border transition-all ${isSpeaking ? 'border-[#C99328] bg-[#0F172A]' : 'border-slate-800/40'}`}>
+                                <div className="flex items-center gap-2 min-w-0 flex-1">
+                                    <div className="w-7 h-7 rounded-full bg-slate-800 border border-slate-700 font-bold text-[11px] flex items-center justify-center text-slate-300 shrink-0 uppercase">
+                                        {nameStr.charAt(0)}
+                                    </div>
+                                    <div className="flex flex-col min-w-0">
+                                        <span className="text-xs font-semibold truncate text-slate-200">
+                                            {nameStr} {p.isLocal ? "(You)" : ""}
+                                        </span>
+                                    </div>
+                                </div>
+                                
+                                <div className="flex items-center gap-1.5 shrink-0 ml-1.5">
+                                    {raisedHands.includes(p.identity) && (
+                                        <div className="text-[#C99328] mr-0.5"><RiHand size={13} /></div>
+                                    )}
+                                    <div className={`p-1 rounded-md ${isMicMuted ? 'bg-red-500/10 text-red-400' : 'bg-slate-800 text-slate-400'}`}>
+                                        {isMicMuted ? <RiMicOffLine size={11} /> : <RiMicLine size={11} />}
+                                    </div>
+                                    <div className={`p-1 rounded-md ${isCamMuted ? 'bg-red-500/10 text-red-400' : 'bg-slate-800 text-slate-400'}`}>
+                                        {isCamMuted ? <RiVideoOffLine size={11} /> : <RiVideoLine size={11} />}
+                                    </div>
+                                    
+                                   {/* Strict verification: Display Context Command Matrix row trigger ONLY if you are Host */}
+                                    {!p.isLocal && (
+                                        <button 
+                                            onClick={(e) => handleOpenMenu(e, p)}
+                                            className="p-1 hover:bg-slate-800 rounded-md text-slate-400 hover:text-white transition"
+                                        >
+                                            <span className="font-bold tracking-tight text-sm leading-none block px-0.5">⋮</span>
+                                        </button>
                                     )}
                                 </div>
                             </div>
-                            <div className="flex items-center gap-2 shrink-0 ml-2">
-                                {raisedHands.includes(p.identity) && (
-                                    <div className="text-[#C99328]">
-                                        <RiHand size={14} />
-                                    </div>
-                                )}
-                                <div className={`p-1.5 rounded-lg ${isMicMuted ? 'bg-red-500/10 text-red-400' : 'bg-slate-800 text-slate-400'}`}>
-                                    {isMicMuted ? <RiMicOffLine size={12} /> : <RiMicLine size={12} />}
-                                </div>
-                                <div className={`p-1.5 rounded-lg ${isCamMuted ? 'bg-red-500/10 text-red-400' : 'bg-slate-800 text-slate-400'}`}>
-                                    {isCamMuted ? <RiVideoOffLine size={12} /> : <RiVideoLine size={12} />}
-                                </div>
-                            </div>
-                        </div>
-                    );
-                })}
+                        );
+                    })}
+                </div>
             </div>
+
+            {/* Microservice Operational Context Action Flow Portal */}
+            {participantMenuOpen && activeMenuParticipant && (
+                <>
+                    <div className="fixed inset-0 z-40" onClick={() => setParticipantMenuOpen(false)} />
+                    <div 
+                        style={{ top: menuCoords.top, left: menuCoords.left }}
+                        className="fixed w-44 bg-[#0F172A] border border-slate-800 rounded-xl shadow-2xl p-1 z-50 animate-fade-in space-y-0.5"
+                    >
+                        {loadingAction ? (
+                            <div className="text-center py-3 text-[10px] font-bold uppercase tracking-widest text-slate-500">Processing...</div>
+                        ) : (
+                            <>
+                                <button onClick={handleMuteAction} className="w-full text-left px-3 py-2 text-xs font-semibold hover:bg-slate-900 rounded-lg text-slate-200 flex items-center gap-2 transition">
+                                    <RiMicOffLine className="text-red-400" size={13} /> Mute Participant
+                                </button>
+                                <button onClick={handleStopShareAction} className="w-full text-left px-3 py-2 text-xs font-semibold hover:bg-slate-900 rounded-lg text-slate-200 flex items-center gap-2 transition">
+                                    <RiComputerLine className="text-[#C99328]" size={13} /> Stop Screen Share
+                                </button>
+                                <button onClick={handleMakePresenterAction} className="w-full text-left px-3 py-2 text-xs font-semibold hover:bg-slate-900 rounded-lg text-slate-200 flex items-center gap-2 transition">
+                                    <RiMagicLine className="text-blue-400" size={13} /> Make Presenter
+                                </button>
+                                <div className="border-t border-slate-800/80 my-1" />
+                                <button onClick={() => setConfirmRemoveTarget(activeMenuParticipant)} className="w-full text-left px-3 py-2 text-xs font-semibold hover:bg-red-950/30 rounded-lg text-red-400 flex items-center gap-2 transition">
+                                    <RiCloseLine size={13} /> Remove From Meeting
+                                </button>
+                                <button onClick={() => setParticipantMenuOpen(false)} className="w-full text-left px-3 py-1.5 text-[10px] uppercase font-bold tracking-wider hover:bg-slate-900 rounded-lg text-slate-500 transition">
+                                    Cancel
+                                </button>
+                            </>
+                        )}
+                    </div>
+                </>
+            )}
+
+            {/* Modal Removal Intercept Layer */}
+            {confirmRemoveTarget && (
+                <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+                    <motion.div initial={{ scale: 0.95 }} animate={{ scale: 1 }} className="w-full max-w-xs bg-[#0F172A] border border-slate-800 rounded-2xl p-5 space-y-4 shadow-2xl text-center">
+                        <p className="text-xs font-semibold text-slate-200">Remove {confirmRemoveTarget.identity} from Meeting?</p>
+                        <div className="flex gap-2 justify-center">
+                            <button onClick={() => setConfirmRemoveTarget(null)} className="px-3 py-1.5 bg-slate-900 border border-slate-800 text-slate-400 rounded-lg text-xs font-bold transition">
+                                Cancel
+                            </button>
+                            <button onClick={handleRemoveParticipant} className="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white rounded-lg text-xs font-bold transition">
+                                Remove
+                            </button>
+                        </div>
+                    </motion.div>
+                </div>
+            )}
+
+            {/* Status Feedback Toast Node */}
+            <AnimatePresence>
+                {toastMessage && (
+                    <motion.div 
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0 }}
+                        className="absolute bottom-4 left-4 right-4 bg-[#163F68] border border-[#C99328]/30 text-white text-xs font-bold px-3 py-2.5 rounded-xl shadow-lg z-50"
+                    >
+                        {toastMessage}
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </motion.div>
     );
 }
@@ -399,7 +633,42 @@ function MeetingToolsSidebar({
                         </button>
                     </div>
                 )}
+                {/* --- SETTINGS / LOCK MEETING CAPABILITY --- */}
+                {currentSubPage === "settings" && (
+                    <div className="space-y-4 pt-1 animate-fade-in">
+                        <div className="bg-slate-950/40 p-4 rounded-xl border border-slate-800/60 space-y-4">
+                            <div className="flex items-center justify-between">
+                                <div className="flex flex-col">
+                                    <span className="text-xs font-semibold text-slate-200">Lock Meeting</span>
+                                    <span className="text-[10px] text-slate-500 mt-0.5">Prevent new participants from request joining</span>
+                                </div>
+                                <button
+                                    onClick={async () => {
+                                        const nextLockState = !room.isLocked; 
+                                        // Dynamic state assignment simulated to track state directly on room reference object
+                                        room.isLocked = nextLockState;
+                                        try {
+                                            await axios.post(`${API}/meeting/${nextLockState ? "lock" : "unlock"}`, { roomName: room.name });
+                                            // Simple operational trace update triggers a component re-render
+                                            setCurrentSubPage("main");
+                                        } catch (err) {
+                                            console.error("Lock endpoint negotiation failure:", err);
+                                        }
+                                    }}
+                                    className={`w-10 h-6 flex items-center rounded-full p-0.5 transition-colors duration-200 focus:outline-none ${room.isLocked ? "bg-[#C99328]" : "bg-slate-800"}`}
+                                >
+                                    <div className={`bg-white w-5 h-5 rounded-full shadow-md transform transition-transform duration-200 ${room.isLocked ? "translate-x-4" : "translate-x-0"}`} />
+                                </button>
+                            </div>
+                            <div className="text-[10px] text-slate-400 flex items-center gap-1.5 bg-slate-950/60 px-2.5 py-1.5 rounded-lg">
+                                <RiShieldCheckLine className="text-[#C99328]" size={12} />
+                                Status: <span className="font-bold uppercase tracking-wider text-white">{room.isLocked ? "Session Locked" : "Session Open"}</span>
+                            </div>
+                        </div>
+                    </div>
+                )}
 
+                
               
                 {currentSubPage === "timer" && (
                     <div className="space-y-4 pt-1 animate-fade-in">
@@ -826,24 +1095,89 @@ function MeetingRoomContent() {
     );
 }
 
-
 export default function MeetingRoom() {
     const params = useMemo(() => new URLSearchParams(window.location.search), []);
     const roomName = params.get("room");
     const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
 
+    const userId = currentUser.user_id || currentUser.id || "74";
+    const fullName = currentUser.full_name || currentUser.fullName || "Workspace Delegate";
+    const email = currentUser.email || "abc@gmail.com";
+
     const [token, setToken] = useState("");
     const [serverUrl, setServerUrl] = useState("");
     const [loading, setLoading] = useState(true);
 
+    const [waitingStatus, setWaitingStatus] = useState("requesting");
+
+   
     useEffect(() => {
-        async function loadToken() {
+        if (!roomName) return;
+
+        async function orchestrateMeetingFlow() {
+            try {
+                const res = await axios.get(`${API}/meeting/by-room/${roomName}`);
+                if (res.data && res.data.success && res.data.meeting) {
+                    const meeting = res.data.meeting;
+                    
+                  if (String(userId) === String(meeting.created_by) || String(currentUser.user_id) === String(meeting.created_by)) {
+                      
+                        setWaitingStatus("approved");
+                    } else {
+                       
+                        await axios.post(`${API}/meeting/request-join`, {
+                            roomName,
+                            userId,
+                            fullName,
+                            email
+                        });
+                        setWaitingStatus("waiting");
+                    }
+                } else {
+                    setWaitingStatus("waiting");
+                }
+            } catch (err) {
+                console.error("Meeting authorization checking error:", err);
+                setWaitingStatus("waiting");
+            }
+        }
+        orchestrateMeetingFlow();
+    }, [roomName, userId, fullName, email]);
+
+   
+    useEffect(() => {
+        if (waitingStatus !== "waiting" || !roomName) return;
+
+        const pollStatus = async () => {
+            try {
+                const res = await axios.get(`${API}/meeting/status/${roomName}/${userId}`);
+                if (res.data && res.data.success) {
+                    const currentStatus = res.data.status; 
+                    if (currentStatus === "approved" || currentStatus === "rejected") {
+                        setWaitingStatus(currentStatus);
+                    }
+                }
+            } catch (err) {
+                console.error("Waiting status lookup error:", err);
+            }
+        };
+
+        const interval = setInterval(pollStatus, 3000);
+        return () => clearInterval(interval);
+    }, [waitingStatus, roomName, userId]);
+
+    
+    useEffect(() => {
+        if (waitingStatus !== "approved" || !roomName) return;
+
+       async function loadToken() {
             try {
                 const res = await axios.post(
                     `${API}/livekit/token`,
                     {
                         roomName,
-                        participantName: currentUser.full_name || "Workspace Delegate",
+                        participantName: fullName,
+                        userId: userId 
                     }
                 );
                 setToken(res.data.token);
@@ -854,16 +1188,99 @@ export default function MeetingRoom() {
                 setLoading(false);
             }
         }
-        if (roomName) {
-            loadToken();
-        }
-    }, [roomName, currentUser.full_name]);
+        loadToken();
+    }, [waitingStatus, roomName, fullName]);
 
-    if (loading) {
+   
+    if (waitingStatus === "requesting" || (waitingStatus === "approved" && loading)) {
         return (
             <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center text-white font-sans">
                 <div className="w-8 h-8 border-4 border-[#163F68] border-t-[#C99328] rounded-full animate-spin mb-4"></div>
-                <p className="text-[10px] font-bold uppercase tracking-widest text-slate-500">Connecting to secure cluster...</p>
+                <p className="text-[10px] font-bold uppercase tracking-widest text-slate-500">Loading...</p>
+            </div>
+        );
+    }
+
+   
+    if (waitingStatus === "rejected") {
+        return (
+            <div className="min-h-screen w-screen bg-slate-950 flex flex-col items-center justify-center font-sans select-none text-white p-4 relative">
+                <div className="absolute top-8 left-8 flex items-center gap-3 bg-[#0F172A]/40 backdrop-blur-md pr-4 pl-2 py-1.5 rounded-2xl border border-slate-800/40">
+                    <div className="w-12 h-12 rounded-xl bg-[#0F172A] flex items-center justify-center shadow-md border border-white/5">
+                        <RiShieldCheckLine className="text-white text-lg" />
+                    </div>
+                    <div>
+                        <h2 className="text-white text-sm font-bold tracking-wider leading-none">SHNOOR</h2>
+                        <p className="text-slate-400 text-[9px] font-bold uppercase tracking-widest mt-0.5">Workspace Meet</p>
+                    </div>
+                </div>
+
+                <motion.div 
+                    initial={{ opacity: 0, y: 15 }} 
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="w-full max-w-md bg-[#0F172A] border border-slate-800 rounded-2xl p-8 shadow-2xl text-center space-y-6"
+                >
+                    <div className="w-16 h-16 bg-red-950/20 border border-red-900/40 rounded-2xl flex items-center justify-center mx-auto text-red-500">
+                        <RiCloseLine size={28} />
+                    </div>
+                    <div className="space-y-2">
+                        <h3 className="text-lg font-bold text-white tracking-wide">Request Rejected</h3>
+                        <p className="text-xs text-slate-400 leading-relaxed max-w-xs mx-auto">
+                            The host did not approve your request.
+                        </p>
+                    </div>
+                    <div className="pt-2">
+                        <button 
+                            onClick={() => { window.close(); window.location.href = "/"; }}
+                            className="px-5 py-2.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-200 font-semibold rounded-xl text-xs uppercase tracking-wider transition active:scale-95"
+                        >
+                            Return Home
+                        </button>
+                    </div>
+                </motion.div>
+            </div>
+        );
+    }
+
+   
+    if (waitingStatus === "waiting") {
+        return (
+            <div className="min-h-screen w-screen bg-slate-950 flex flex-col items-center justify-center font-sans select-none text-white p-4 relative">
+                <div className="absolute top-8 left-8 flex items-center gap-3 bg-[#0F172A]/40 backdrop-blur-md pr-4 pl-2 py-1.5 rounded-2xl border border-slate-800/40">
+                    <div className="w-12 h-12 rounded-xl bg-[#0F172A] flex items-center justify-center shadow-md border border-white/5">
+                        <RiShieldCheckLine className="text-white text-lg" />
+                    </div>
+                    <div>
+                        <h2 className="text-white text-sm font-bold tracking-wider leading-none">SHNOOR</h2>
+                        <p className="text-slate-400 text-[9px] font-bold uppercase tracking-widest mt-0.5">Workspace Meet</p>
+                    </div>
+                </div>
+
+                <motion.div 
+                    initial={{ opacity: 0, y: 15 }} 
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="w-full max-w-md bg-[#0F172A] border border-slate-800 rounded-2xl p-8 shadow-2xl text-center space-y-6"
+                >
+                    <div className="w-16 h-16 bg-[#163F68]/20 border border-[#163F68]/40 rounded-2xl flex items-center justify-center mx-auto text-[#C99328]">
+                        <RiGroupLine size={28} className="animate-pulse" />
+                    </div>
+                    <div className="space-y-2">
+                        <h3 className="text-lg font-bold text-white tracking-wide">Waiting for Host Approval</h3>
+                        <p className="text-xs text-slate-400 leading-relaxed max-w-xs mx-auto">
+                            Please wait while the meeting host reviews your request. This page updates automatically.
+                        </p>
+                    </div>
+                    <div className="pt-2">
+                        <button 
+                            onClick={() => { window.close(); window.location.href = "/"; }}
+                            className="px-5 py-2.5 bg-slate-900 hover:bg-red-950/40 border border-slate-800 text-slate-400 hover:text-red-400 font-semibold rounded-xl text-xs uppercase tracking-wider transition active:scale-95"
+                        >
+                            Cancel Request
+                        </button>
+                    </div>
+                </motion.div>
             </div>
         );
     }

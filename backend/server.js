@@ -3691,6 +3691,493 @@ app.get("/livekit/token", async (req, res) => {
     }
 
 });
+app.post("/meeting/request-join", async (req, res) => {
+
+    try {
+
+        const {
+
+            roomName,
+            userId,
+            fullName,
+            email
+
+        } = req.body;
+
+        if (!roomName || !userId || !fullName) {
+
+            return res.status(400).json({
+
+                success: false,
+                message: "Missing required fields"
+
+            });
+
+        }
+
+        // Check if request already exists
+        const existing = await pool.query(
+
+            `
+            SELECT *
+            FROM waiting_room
+            WHERE room_name=$1
+            AND user_id=$2
+            AND status='waiting'
+            `,
+
+            [roomName, userId]
+
+        );
+
+        if (existing.rows.length > 0) {
+
+            return res.json({
+
+                success: true,
+                message: "Already waiting"
+
+            });
+
+        }
+
+        await pool.query(
+
+            `
+            INSERT INTO waiting_room
+            (
+                room_name,
+                user_id,
+                full_name,
+                email,
+                status
+            )
+            VALUES
+            ($1,$2,$3,$4,'waiting')
+            `,
+
+            [
+
+                roomName,
+                userId,
+                fullName,
+                email
+
+            ]
+
+        );
+
+        res.json({
+
+            success: true,
+            message: "Waiting for host approval"
+
+        });
+
+    }
+
+    catch (err) {
+
+        console.error(err);
+
+        res.status(500).json({
+
+            success: false,
+            message: err.message
+
+        });
+
+    }
+
+});
+app.get("/meeting/pending-users/:roomName", async (req, res) => {
+
+    try {
+
+        const { roomName } = req.params;
+
+        const result = await pool.query(
+
+            `
+            SELECT
+                id,
+                user_id,
+                full_name,
+                email,
+                status
+            FROM waiting_room
+            WHERE room_name = $1
+            AND status = 'waiting'
+            ORDER BY requested_at ASC
+            `,
+
+            [roomName]
+
+        );
+
+        res.json({
+
+            success: true,
+
+            users: result.rows
+
+        });
+
+    }
+
+    catch (err) {
+
+        console.error(err);
+
+        res.status(500).json({
+
+            success: false,
+
+            message: err.message
+
+        });
+
+    }
+
+});
+app.post("/meeting/admit", async (req, res) => {
+
+    try {
+
+        const {
+
+            roomName,
+            userId
+
+        } = req.body;
+
+        if (!roomName || !userId) {
+
+            return res.status(400).json({
+
+                success: false,
+                message: "roomName and userId are required"
+
+            });
+
+        }
+
+        const result = await pool.query(
+
+            `
+            UPDATE waiting_room
+            SET
+                status = 'approved'
+            WHERE
+                room_name = $1
+            AND
+                user_id = $2
+            AND
+                status = 'waiting'
+            RETURNING *
+            `,
+
+            [
+
+                roomName,
+                userId
+
+            ]
+
+        );
+
+        if (result.rows.length === 0) {
+
+            return res.status(404).json({
+
+                success: false,
+                message: "Waiting request not found"
+
+            });
+
+        }
+
+        res.json({
+
+            success: true,
+            message: "Participant admitted successfully",
+            participant: result.rows[0]
+
+        });
+
+    }
+
+    catch (err) {
+
+        console.error(err);
+
+        res.status(500).json({
+
+            success: false,
+            message: err.message
+
+        });
+
+    }
+
+});
+app.post("/meeting/reject", async (req, res) => {
+
+    try {
+
+        const {
+
+            roomName,
+            userId
+
+        } = req.body;
+
+        if (!roomName || !userId) {
+
+            return res.status(400).json({
+
+                success: false,
+                message: "roomName and userId are required"
+
+            });
+
+        }
+
+        const result = await pool.query(
+
+            `
+            UPDATE waiting_room
+            SET
+                status = 'rejected'
+            WHERE
+                room_name = $1
+            AND
+                user_id = $2
+            AND
+                status = 'waiting'
+            RETURNING *
+            `,
+
+            [
+
+                roomName,
+                userId
+
+            ]
+
+        );
+
+        if (result.rows.length === 0) {
+
+            return res.status(404).json({
+
+                success: false,
+                message: "Waiting request not found"
+
+            });
+
+        }
+
+        res.json({
+
+            success: true,
+            message: "Participant rejected successfully",
+            participant: result.rows[0]
+
+        });
+
+    }
+
+    catch (err) {
+
+        console.error(err);
+
+        res.status(500).json({
+
+            success: false,
+            message: err.message
+
+        });
+
+    }
+
+});
+app.get("/meeting/status/:roomName/:userId", async (req, res) => {
+
+    try {
+
+        const {
+
+            roomName,
+            userId
+
+        } = req.params;
+
+        const result = await pool.query(
+
+            `
+            SELECT
+                status
+            FROM waiting_room
+            WHERE
+                room_name = $1
+            AND
+                user_id = $2
+            ORDER BY requested_at DESC
+            LIMIT 1
+            `,
+
+            [
+
+                roomName,
+                userId
+
+            ]
+
+        );
+
+        if (result.rows.length === 0) {
+
+            return res.status(404).json({
+
+                success: false,
+                message: "Request not found"
+
+            });
+
+        }
+
+        res.json({
+
+            success: true,
+
+            status: result.rows[0].status
+
+        });
+
+    }
+
+    catch (err) {
+
+        console.error(err);
+
+        res.status(500).json({
+
+            success: false,
+
+            message: err.message
+
+        });
+
+    }
+
+});
+app.get("/meeting/by-room/:roomName", async (req, res) => {
+
+    try {
+
+        const { roomName } = req.params;
+
+        const result = await pool.query(
+
+            `
+            SELECT
+                meeting_id,
+                title,
+                description,
+                meeting_date,
+                meeting_time,
+                meeting_type,
+                employee_id,
+                group_id,
+                created_by,
+                room_name
+            FROM meetings
+            WHERE room_name = $1
+            LIMIT 1
+            `,
+
+            [roomName]
+
+        );
+
+        if (result.rows.length === 0) {
+
+            return res.status(404).json({
+
+                success: false,
+                message: "Meeting not found"
+
+            });
+
+        }
+
+        res.json({
+
+            success: true,
+
+            meeting: result.rows[0]
+
+        });
+
+    }
+
+    catch (err) {
+
+        console.error(err);
+
+        res.status(500).json({
+
+            success: false,
+            message: err.message
+
+        });
+
+    }
+
+});
+app.post("/meeting/remove", async (req, res) => {
+    try {
+        const { roomName, identity } = req.body;
+        if (!roomName || !identity) {
+            return res.status(400).json({ success: false, message: "roomName and identity are required" });
+        }
+
+        
+        const findUser = await pool.query(
+            `SELECT user_id FROM waiting_room WHERE room_name = $1 AND full_name = $2 LIMIT 1`,
+            [roomName, identity]
+        );
+
+        if (findUser.rows.length > 0) {
+            const dbUserId = findUser.rows[0].user_id;
+           
+            await pool.query(
+                `UPDATE waiting_room SET status = 'rejected' WHERE room_name = $1 AND user_id = $2`,
+                [roomName, dbUserId]
+            );
+        }
+
+        
+        if (process.env.LIVEKIT_API_KEY && process.env.LIVEKIT_API_SECRET && process.env.LIVEKIT_URL) {
+            try {
+                const { RoomServiceClient } = require("livekit-server-sdk");
+                const host = process.env.LIVEKIT_URL.replace(/^ws(s)?:\/\//, "https://");
+                const roomService = new RoomServiceClient(host, process.env.LIVEKIT_API_KEY, process.env.LIVEKIT_API_SECRET);
+                
+                await roomService.removeParticipant(roomName, identity);
+                console.log(`LiveKit Success: Booted ${identity}`);
+            } catch (lkErr) {
+                console.error("LiveKit Engine Eviction safe-catch:", lkErr.message);
+            }
+        }
+
+        res.json({ success: true, message: "Participant completely removed." });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ success: false, message: err.message });
+    }
+});
 app.post("/livekit/token", async (req, res) => {
 
     try {
@@ -3779,4 +4266,5 @@ const PORT = process.env.PORT || 5001;
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
+  console.log("Remove route loaded");
 });
