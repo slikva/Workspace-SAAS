@@ -643,11 +643,11 @@ function MeetingToolsSidebar({
                                 <button
                                     onClick={async () => {
                                         const nextLockState = !room.isLocked; 
-                                        // Dynamic state assignment simulated to track state directly on room reference object
+                                       
                                         room.isLocked = nextLockState;
                                         try {
                                             await axios.post(`${API}/meeting/${nextLockState ? "lock" : "unlock"}`, { roomName: room.name });
-                                            // Simple operational trace update triggers a component re-render
+                                            
                                             setCurrentSubPage("main");
                                         } catch (err) {
                                             console.error("Lock endpoint negotiation failure:", err);
@@ -1224,9 +1224,7 @@ export default function MeetingRoom() {
                     </div>
                     <div className="space-y-2">
                         <h3 className="text-lg font-bold text-white tracking-wide">Request Rejected</h3>
-                        <p className="text-xs text-slate-400 leading-relaxed max-w-xs mx-auto">
-                            The host did not approve your request.
-                        </p>
+                        
                     </div>
                     <div className="pt-2">
                         <button 
@@ -1266,9 +1264,7 @@ export default function MeetingRoom() {
                     </div>
                     <div className="space-y-2">
                         <h3 className="text-lg font-bold text-white tracking-wide">Waiting for Host Approval</h3>
-                        <p className="text-xs text-slate-400 leading-relaxed max-w-xs mx-auto">
-                            Please wait while the meeting host reviews your request. This page updates automatically.
-                        </p>
+                        
                     </div>
                     <div className="pt-2">
                         <button 
