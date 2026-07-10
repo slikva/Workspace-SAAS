@@ -84,7 +84,7 @@ export default function MeetPage() {
         return "Completed";
     }
 
-    // Opens LiveKit workspace interface securely into a true clean dedicated viewport
+   
     const joinMeeting = async (meeting) => {
         setConnectingMeeting(true);
         try {
@@ -101,7 +101,7 @@ console.log("participantName:", currentUser.full_name);
 
             const { token, url } = response.data;
             
-            // Encode details cleanly for safe handoff over search params
+            
             const targetUrl = `/meeting-room?room=${encodeURIComponent(roomName)}&title=${encodeURIComponent(meeting.title)}`;
             window.open(targetUrl, "_blank", "noopener,noreferrer");
 
@@ -118,10 +118,9 @@ console.log("participantName:", currentUser.full_name);
 
     try {
 
-        // Create a unique room name
+       
         const roomName = `call-${currentUser.user_id}-${user.user_id}-${Date.now()}`;
 
-        // Get LiveKit token
         const response = await axios.post(
             `${API}/livekit/token`,
             {
@@ -131,8 +130,6 @@ console.log("participantName:", currentUser.full_name);
         );
 
         const { token, url } = response.data;
-
-        // Open Meeting Room
         const targetUrl =
             `/meeting-room?` +
             `token=${encodeURIComponent(token)}` +
@@ -228,7 +225,7 @@ console.log("participantName:", currentUser.full_name);
                                                 </div>
                                                 <div className="p-6 space-y-4">
                                                     <div className="text-sm text-slate-600">{formatDate(meeting.meeting_date)} at {formatTime(meeting.meeting_time)}</div>
-                                                    <button onClick={() => joinMeeting(meeting)} className="w-full bg-[#163F68] hover:bg-[#C99328] text-white rounded-xl py-3 font-semibold transition">Join Call (New Tab)</button>
+                                                    <button onClick={() => joinMeeting(meeting)} className="w-full bg-[#163F68] hover:bg-[#C99328] text-white rounded-xl py-3 font-semibold transition">Join Call </button>
                                                 </div>
                                             </div>
                                         ))}
