@@ -126,13 +126,7 @@ const memoryUpload = multer({
 const pool = require("./db");
 const cors = require("cors");
 app.use(express.json());
-app.use(cors({
-    origin: [
-        "http://localhost:5173",
-        "https://workspace-saas-lime.vercel.app/"
-    ],
-    credentials: true
-}));
+app.use(cors());
 const nodemailer = require("nodemailer"); 
 const transporter = nodemailer.createTransport({
   service: "gmail",
