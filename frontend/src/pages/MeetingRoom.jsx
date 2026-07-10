@@ -29,9 +29,8 @@ import {
     RiCloseLine,
     RiVolumeUpLine,
     RiShieldCheckLine,
-    RiSparklesLine,
-    RiPlayFill,
     RiMagicLine,
+    RiPlayFill,
     RiStopFill
 } from "react-icons/ri";
 import { motion, AnimatePresence } from "framer-motion";
@@ -435,7 +434,7 @@ function SettingsModal({ isOpen, onClose }) {
 
                     <div className="space-y-2 pt-1 border-t border-slate-800/40">
                         <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-1.5">
-                            <RiSparklesLine size={14} className="text-[#C99328]" /> Virtual Background Filters
+                            <RiMagicLine size={14} className="text-[#C99328]" /> Virtual Background Filters
                         </label>
                         <div className="grid grid-cols-3 gap-2">
                             <button type="button" className="p-3 rounded-xl bg-slate-950 border-2 border-[#163F68] text-center text-xs font-semibold text-slate-200">None</button>
@@ -444,16 +443,6 @@ function SettingsModal({ isOpen, onClose }) {
                         </div>
                     </div>
                 </div>
-                <div className="space-y-2 pt-1 border-t border-slate-800/40">
-    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-1.5">
-        <RiMagicLine size={14} className="text-[#C99328]" /> Virtual Background Filters
-    </label>
-    <div className="grid grid-cols-3 gap-2">
-        <button type="button" className="p-3 rounded-xl bg-slate-950 border-2 border-[#163F68] text-center text-xs font-semibold text-slate-200">None</button>
-        <button type="button" className="p-3 rounded-xl bg-slate-950/40 border border-slate-800 text-center text-xs text-slate-500 cursor-not-allowed opacity-60">Blur Filter</button>
-        <button type="button" className="p-3 rounded-xl bg-slate-950/40 border border-slate-800 text-center text-xs text-slate-500 cursor-not-allowed opacity-60">Office Matte</button>
-    </div>
-</div>
                 <div className="p-4 bg-slate-950/50 border-t border-slate-800 flex justify-end">
                     <button onClick={onClose} className="bg-[#163F68] hover:bg-[#163F68]/80 text-white font-bold text-xs uppercase tracking-wider px-6 py-3 rounded-xl transition shadow-lg active:scale-95">
                         Apply Configuration
