@@ -222,7 +222,7 @@ function FloatingControls({ onToggleChat, isChatOpen, onSendEmoji }) {
 
                 <button
                     onClick={toggleScreen}
-                    className={`w-12 h-12 rounded-full flex items-center justify-center transition-all duration-200 ${screenOn ? "bg-green-600 hover:bg-green-500" : "bg-slate-800 hover:bg-slate-700"}`}
+                    className={`w-12 h-12 rounded-full flex items-center justify-center transition-all duration-200 ${screenOn ? "bg-[#C99232] hover:bg-[#C99232]" : "bg-slate-800 hover:bg-slate-700"}`}
                 >
                     <RiComputerLine size={22}/>
                 </button>
