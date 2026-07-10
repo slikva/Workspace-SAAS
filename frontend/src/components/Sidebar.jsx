@@ -114,11 +114,7 @@ const handleLogout = () => {
           )}
 
         </Link>
-         {currentUser?.role === "Manager" && (
-         <Link to="/mail" className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/10">
-          <RiMailAddLine />
-          Email
-        </Link>)}
+         
          <Link to="/meet" className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/10">
           <RiVideoLine />
           Meet
