@@ -458,9 +458,7 @@ const handleRemoveParticipant = async () => {
                                     <RiMagicLine className="text-blue-400" size={13} /> Make Presenter
                                 </button>
                                 <div className="border-t border-slate-800/80 my-1" />
-                                <button onClick={() => setConfirmRemoveTarget(activeMenuParticipant)} className="w-full text-left px-3 py-2 text-xs font-semibold hover:bg-red-950/30 rounded-lg text-red-400 flex items-center gap-2 transition">
-                                    <RiCloseLine size={13} /> Remove From Meeting
-                                </button>
+                              
                                 <button onClick={() => setParticipantMenuOpen(false)} className="w-full text-left px-3 py-1.5 text-[10px] uppercase font-bold tracking-wider hover:bg-slate-900 rounded-lg text-slate-500 transition">
                                     Cancel
                                 </button>
